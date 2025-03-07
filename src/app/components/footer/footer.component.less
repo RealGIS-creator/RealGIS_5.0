@@ -1,0 +1,38 @@
+@import '../../../styles/variables.less';
+
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 2.5rem;
+    background-color: @light-gray;
+    padding: 0px 5px!important;
+}
+
+.container-scale {
+    background-color: @primary-color;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    min-width: fit-content; /* Permite que el contenedor se expanda según el contenido */
+    padding: 0 1rem;
+}
+
+.dynamic-text {
+    display: inline-block; /* Permite que el `<p>` solo ocupe lo necesario */
+    text-align: center;
+    color: #fff;
+    font-size: 10px;
+    margin: 0;
+}
+
+.range-scale {
+    color: @primary-color;
+    margin: 0;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.logo-banistmo {
+    height: 2rem;
+}
