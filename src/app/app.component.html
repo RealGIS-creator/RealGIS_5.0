@@ -1,11 +1,25 @@
-<app-navbar></app-navbar>
+<div class="container-fluid d-flex flex-column min-vh-100 p-0 m-0">
 
-<div class="container">
-  <!-- <app-sidebar></app-sidebar> -->
-  
-  <main class="content center">
-    <router-outlet></router-outlet>
-  </main>
+  <div class="row g-0 m-0">
+    <div class="col p-0">
+      <app-navbar></app-navbar>
+    </div>
+  </div>
+
+  <div class="row g-0 flex-grow-1 m-0">
+    <div class="col-1 p-0 sideBarContainer">
+      <app-sidebar></app-sidebar>
+    </div>
+
+    <div class="col p-0">
+      <div class="d-flex flex-column h-100">
+        <div class="flex-grow-1">
+          <router-outlet></router-outlet>
+        </div>
+        <div>
+          <app-footer></app-footer>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-
-<app-footer></app-footer>
