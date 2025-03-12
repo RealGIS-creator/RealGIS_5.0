@@ -1,6 +1,71 @@
+@import '../../../styles/variables.less';
+
 .sidebar {
-    background-color: white;
-    display: block;
-    min-height: calc(100vh - 88px);
-    margin: 0;
+  background-color: white;
+  display: block;
+  min-height: calc(100vh - 88px);
+  margin: 0;
 }
+
+.icon-sidebar {
+  height: 50px;
+  cursor: pointer;
+}
+
+ul {
+  list-style: none;
+  padding: 0px;
+}
+
+.descarga-sidebar {
+    position: absolute;
+    left: 70px; 
+    top: 100px;
+    background-color: #fff;
+    padding: 10px 15px;
+    border-radius: 0px 25px 25px 0px;
+    display: none;
+    width: 120px;
+    height: 50px;
+
+    p {
+        color: @primary-color;
+    }
+}
+
+//
+// .sidebar {
+//     position: relative;
+// }
+
+// .sidebar-item {
+//     position: relative;
+//     list-style: none;
+// }
+
+// .icon-sidebar {
+//     cursor: pointer;
+// }
+
+// .descarga-sidebar {
+//     position: absolute;
+//     left: 50px; /* Ajusta según el diseño */
+//     top: 50%;
+//     transform: translateY(-50%);
+//     background-color: white;
+//     padding: 10px 15px;
+//     border-radius: 5px;
+//     // box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+//     white-space: nowrap;
+//     display: none;
+// }
+
+// .descarga-sidebar.show {
+//     display: block;
+// }
+
+//
+.descarga-sidebar.show {
+    display: block;
+}
+

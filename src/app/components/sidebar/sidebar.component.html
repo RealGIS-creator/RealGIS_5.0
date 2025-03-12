@@ -1,17 +1,15 @@
 <div class="sidebar d-flex flex-column align-items-center">
-    <button class="btn my-2">
-        <img src="assets/icons/search.svg" alt="Buscar">
-    </button>
-    <button class="btn my-2">
-        <img src="assets/icons/layer.svg" alt="Capas">
-    </button>
-    <button class="btn my-2">
-        <img src="assets/icons/print.svg" alt="Imprimir">
-    </button>
-    <button class="btn my-2">
-        <img src="assets/icons/download.svg" alt="Descargar">
-    </button>
-    <button class="btn my-2">
-        <img src="assets/icons/chart.svg" alt="Estadísticas">
-    </button>
+    <ul class="mt-4">
+        <li *ngFor="let img of imagesDefault">
+            <img class="icon-sidebar mb-2" [src]="'assets/icon/' + img.image + '_' + img.type + '.svg'" (click)="onChangeImage(img.id, img.type)" [alt]="img.image">
+
+            <div class="descarga-sidebar" [ngClass]="{'show': activeIndex === img.id}">
+                <p> {{ img.image }} </p>
+            </div>
+        </li>
+    </ul>
 </div>
+
+<!-- <div class="descarga-sidebar" [ngClass]="{'show': isSidebarOpen}">
+    <p>Descargas</p>
+</div> -->
