@@ -1,4 +1,4 @@
-@import '../../../styles/variables.less';
+@import "../../../styles/variables.less";
 
 .sidebar {
   background-color: white;
@@ -18,54 +18,29 @@ ul {
 }
 
 .descarga-sidebar {
-    position: absolute;
-    left: 70px; 
-    top: 100px;
-    background-color: #fff;
-    padding: 10px 15px;
-    border-radius: 0px 25px 25px 0px;
-    display: none;
-    width: 120px;
-    height: 50px;
+  position: absolute;
+  left: 64px;
+  top: 0;
+  background-color: #fff;
+  padding: 10px 15px;
+  border-radius: 0px 25px 25px 0px;
+  display: none;
+  min-width: 120px; 
+  min-height: 50px; 
+  width: auto; 
+  height: 50px; 
 
-    p {
-        color: @primary-color;
-    }
+  p {
+    color: @secondary-color;
+    font-weight: bold;
+  }
 }
 
-//
-// .sidebar {
-//     position: relative;
-// }
-
-// .sidebar-item {
-//     position: relative;
-//     list-style: none;
-// }
-
-// .icon-sidebar {
-//     cursor: pointer;
-// }
-
-// .descarga-sidebar {
-//     position: absolute;
-//     left: 50px; /* Ajusta según el diseño */
-//     top: 50%;
-//     transform: translateY(-50%);
-//     background-color: white;
-//     padding: 10px 15px;
-//     border-radius: 5px;
-//     // box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-//     white-space: nowrap;
-//     display: none;
-// }
-
-// .descarga-sidebar.show {
-//     display: block;
-// }
-
-//
 .descarga-sidebar.show {
-    display: block;
+  display: block;
+  white-space: nowrap;
 }
 
+.item-position {
+  position: relative;
+}

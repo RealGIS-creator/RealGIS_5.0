@@ -1,15 +1,11 @@
 <div class="sidebar d-flex flex-column align-items-center">
     <ul class="mt-4">
-        <li *ngFor="let img of imagesDefault">
+        <li *ngFor="let img of imagesDefault" class="item-position"> 
             <img class="icon-sidebar mb-2" [src]="'assets/icon/' + img.image + '_' + img.type + '.svg'" (click)="onChangeImage(img.id, img.type)" [alt]="img.image">
 
             <div class="descarga-sidebar" [ngClass]="{'show': activeIndex === img.id}">
-                <p> {{ img.image }} </p>
+                <p> {{ img.label }} </p>
             </div>
         </li>
     </ul>
 </div>
-
-<!-- <div class="descarga-sidebar" [ngClass]="{'show': isSidebarOpen}">
-    <p>Descargas</p>
-</div> -->

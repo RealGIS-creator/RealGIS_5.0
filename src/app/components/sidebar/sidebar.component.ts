@@ -13,12 +13,12 @@ export class SidebarComponent {
     activeIndex: number | null = null;
 
     public imagesDefault = [ 
-        { image: 'layer', type: 'dark', id: 1 },
-        { image: 'search', type: 'dark', id: 2 },
-        { image: 'add_layer', type: 'dark', id: 3 },
-        { image: 'print', type: 'dark', id: 4 },
-        { image: 'download', type: 'dark', id: 5 },
-        { image: 'statistics', type: 'dark', id: 6 },
+        { image: 'layer', type: 'dark', id: 1, label: 'Capas' },
+        { image: 'search', type: 'dark', id: 2, label: 'Búsqueda' },
+        { image: 'add_layer', type: 'dark', id: 3, label: 'Importar Capa' },
+        { image: 'print', type: 'dark', id: 4, label: 'Imprimir' },
+        { image: 'download', type: 'dark', id: 5, label: 'Descargas' },
+        { image: 'statistics', type: 'dark', id: 6, label: 'Estadísticas' },
     ];
 
     // public imagesOpenClick = [ 
@@ -32,15 +32,11 @@ export class SidebarComponent {
 
     onChangeImage(id: number, type: string): void {
         this.activeIndex = this.activeIndex === id ? null : id;
+
+        this.imagesDefault.forEach(element => {
+            element.type = element.type == 'ligth' ? 'dark' : 'dark'
+        })
         
-        type == 'dark' ? this.imagesDefault[id-1].type = 'ligth' : this.imagesDefault[id-1].type = 'dark' ;
+        this.imagesDefault[id-1].type = type == 'dark' ? 'ligth' : 'dark' ;
     }
-
-    // isSidebarOpen = false;
-
-    // activeIndex: number | null = null;
-
-    // toggleSidebar(index: number) {
-    //     this.activeIndex = this.activeIndex === index ? null : index;
-    // }
 }
