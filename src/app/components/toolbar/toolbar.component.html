@@ -1,0 +1,5 @@
+<div class="mapa-toolbar d-flex align-items-center">
+    <div *ngFor="let img of imagesDefault">
+        <img class="icon-tool" [src]="'assets/icon/' + img.image + '_' + img.type + '.svg'" (click)="onChangeImage(img.id, img.type)" [alt]="img.image">
+    </div>
+</div>

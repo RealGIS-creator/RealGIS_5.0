@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { FooterService } from '../../core/services/footer.service';
+import { Footer } from '../../interfaces/footer';
 
 @Component({
     selector: 'app-footer',
@@ -8,4 +10,18 @@ import { Component } from '@angular/core';
 })
 export class FooterComponent {
 
+    public logoCompany?: string;
+
+    constructor(
+        private footerService: FooterService
+    ) {}
+
+    ngOnInit() {
+        this.getIconCompany();
+    }
+
+    getIconCompany(): void {
+        const logo = this.footerService.getFooterLogo();
+        this.logoCompany = logo.logoCompany
+    }
 }

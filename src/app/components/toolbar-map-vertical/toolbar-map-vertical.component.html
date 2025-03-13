@@ -1,0 +1,26 @@
+<div class="mapa-toolbar d-flex flex-column align-items-center">
+  <ul>
+    <li *ngFor="let img of imagesDefault">
+      <div>
+        <img
+          class="icon-tool"
+          [src]="'assets/icon/' + img.image + '.svg'"
+          [alt]="img.image"
+        />
+      </div>
+    </li>
+    <img
+      class="icon-tool"
+      src="assets/icon/toolbar_vertical_maximize.svg"
+      alt="maximize"
+    />
+    <div class="slidecontainer">
+      <input type="range" min="0" max="23" class="range icon-tool" [(ngModel)]="rangeValue" (input)="onRangeChange()"/>
+    </div>
+    <img
+      class="icon-tool"
+      src="assets/icon/toolbar_vertical_minimize.svg"
+      alt="minimize"
+    />
+  </ul>
+</div>

@@ -1,42 +1,38 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { SidebarService } from '../../core/services/sidebar.service';
+import { SideBar } from '../../interfaces/sidebar';
 
 @Component({
-    selector: 'app-sidebar',
-    standalone: true,
-    imports: [CommonModule],
-    templateUrl: './sidebar.component.html',
-    styleUrl: './sidebar.component.less'
+  selector: 'app-sidebar',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './sidebar.component.html',
+  styleUrl: './sidebar.component.less',
 })
 export class SidebarComponent {
+  activeIndex: number | null = null;
+  imagesDefault: SideBar[] = [];
 
-    activeIndex: number | null = null;
+  constructor(
+    private sidebarService: SidebarService
+  ) {}
 
-    public imagesDefault = [ 
-        { image: 'layer', type: 'dark', id: 1, label: 'Capas' },
-        { image: 'search', type: 'dark', id: 2, label: 'Búsqueda' },
-        { image: 'add_layer', type: 'dark', id: 3, label: 'Importar Capa' },
-        { image: 'print', type: 'dark', id: 4, label: 'Imprimir' },
-        { image: 'download', type: 'dark', id: 5, label: 'Descargas' },
-        { image: 'statistics', type: 'dark', id: 6, label: 'Estadísticas' },
-    ];
+  ngOnInit() {
+    this.getIcons()
+  }
 
-    // public imagesOpenClick = [ 
-    //     { image: 'layer', type: 'ligth', id: 1 },
-    //     { image: 'search', type: 'ligth', id: 2 },
-    //     { image: 'add_layer', type: 'ligth', id: 3 },
-    //     { image: 'print', type: 'ligth', id: 4 },
-    //     { image: 'download', type: 'ligth', id: 5 },
-    //     { image: 'statistics', type: 'ligth', id: 6 },
-    // ];
+  getIcons(): void {
+    this.imagesDefault = this.sidebarService.getSideBar();
+  }
 
-    onChangeImage(id: number, type: string): void {
-        this.activeIndex = this.activeIndex === id ? null : id;
+  onChangeImage(id: number, type: string): void {
+    this.activeIndex = this.activeIndex === id ? null : id;
 
-        this.imagesDefault.forEach(element => {
-            element.type = element.type == 'ligth' ? 'dark' : 'dark'
-        })
-        
-        this.imagesDefault[id-1].type = type == 'dark' ? 'ligth' : 'dark' ;
-    }
+    this.imagesDefault.forEach((element) => {
+      element.type = element.type == 'ligth' ? 'dark' : 'dark';
+    });
+
+    this.imagesDefault[id - 1].type = type == 'dark' ? 'ligth' : 'dark';
+  }
 }
