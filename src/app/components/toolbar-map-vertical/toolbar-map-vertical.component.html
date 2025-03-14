@@ -9,18 +9,12 @@
         />
       </div>
     </li>
-    <img
-      class="icon-tool"
-      src="assets/icon/toolbar_vertical_maximize.svg"
-      alt="maximize"
+    <img class="icon-tool" src="assets/icon/toolbar_vertical_maximize.svg" alt="maximize" (click)="zoomIn()"
     />
     <div class="slidecontainer">
-      <input type="range" min="0" max="23" class="range icon-tool" [(ngModel)]="rangeValue" (input)="onRangeChange()"/>
+      <input type="range" min="3" max="18" class="range icon-tool" [(ngModel)]="zoomLevel" (input)="onRangeChange($event)" />
     </div>
-    <img
-      class="icon-tool"
-      src="assets/icon/toolbar_vertical_minimize.svg"
-      alt="minimize"
+    <img class="icon-tool" src="assets/icon/toolbar_vertical_minimize.svg" alt="minimize" (click)="zoomOut()"
     />
   </ul>
 </div>

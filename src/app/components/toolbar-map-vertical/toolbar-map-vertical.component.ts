@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ToolbarMapVerticalService } from '../../core/services/toolbar-map-vertical.service';
@@ -13,9 +13,14 @@ import { ToolBarVertical } from '../../interfaces/toolbar-vertical';
 export class ToolbarMapVerticalComponent {
   activeIndex: number | null = null;
   imagesDefault: ToolBarVertical[] = [];
-  rangeValue: number = 12;
 
-  constructor(private toolbarMapVerticalService: ToolbarMapVerticalService) {}
+  @Output() zoomChange = new EventEmitter<number>(); 
+  @Input() zoomLevel: number = 3; 
+
+  constructor (
+    private toolbarMapVerticalService: ToolbarMapVerticalService
+  ) 
+  {}
 
   ngOnInit() {
     this.getIcons();
@@ -25,7 +30,22 @@ export class ToolbarMapVerticalComponent {
     this.imagesDefault = this.toolbarMapVerticalService.getToolBarVertical();
   }
 
-  onRangeChange(): void {
-    console.log("Valor del rango:", this.rangeValue);
+  onRangeChange(event: any): void {
+    this.zoomLevel = event.target.value;
+    this.zoomChange.emit(this.zoomLevel);
+  }
+
+  zoomIn(): void {
+    if (this.zoomLevel < 23) {
+      this.zoomLevel++;
+      this.zoomChange.emit(this.zoomLevel);
+    }
+  }
+
+  zoomOut(): void {
+    if (this.zoomLevel > 0) {
+      this.zoomLevel--;
+      this.zoomChange.emit(this.zoomLevel);
+    }
   }
 }

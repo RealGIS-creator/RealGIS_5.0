@@ -1,3 +1,5 @@
-<div class="map">
-    <p>probando</p>
-</div>
+<div id="map"></div>
+<app-toolbar></app-toolbar>
+<app-toolbar-map-vertical  
+    (zoomChange)="onZoomChange($event)" [zoomLevel]="zoomLevel">
+</app-toolbar-map-vertical>
