@@ -1,5 +1,11 @@
 <div id="map"></div>
 <app-toolbar></app-toolbar>
 <app-toolbar-map-vertical  
-    (zoomChange)="onZoomChange($event)" [zoomLevel]="zoomLevel">
+    (resetMapEvent)="resetMap()"
+    (zoomInEvent)="zoomIn()"
+    (zoomOutEvent)="zoomOut()"
+    [zoomLevel]="zoomLevel"
+    (rangeChangeEvent)="onRangeChange($event)"
+    (locateUserEvent)="locateUser()"
+    >
 </app-toolbar-map-vertical>

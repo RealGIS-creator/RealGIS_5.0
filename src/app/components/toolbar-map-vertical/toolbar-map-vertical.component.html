@@ -1,6 +1,6 @@
 <div class="mapa-toolbar d-flex flex-column align-items-center">
   <ul>
-    <li *ngFor="let img of imagesDefault">
+    <!-- <li *ngFor="let img of imagesDefault">
       <div>
         <img
           class="icon-tool"
@@ -8,13 +8,33 @@
           [alt]="img.image"
         />
       </div>
+    </li> -->
+    <li>
+      <img src="../../../assets/icon/toolbar_vertical_compass.svg" class="icon-tool" alt="" (click)="locateUserClick()">
+      <img src="../../../assets/icon/toolbar_vertical_locate.svg" class="icon-tool" alt="">
+      <img src="../../../assets/icon/toolbar_vertical_home.svg" class="icon-tool" alt="" (click)="resetMap()">
     </li>
-    <img class="icon-tool" src="assets/icon/toolbar_vertical_maximize.svg" alt="maximize" (click)="zoomIn()"
+    <img
+      class="icon-tool"
+      src="assets/icon/toolbar_vertical_maximize.svg"
+      alt="maximize"
+      (click)="zoomInClick()"
     />
     <div class="slidecontainer">
-      <input type="range" min="3" max="18" class="range icon-tool" [(ngModel)]="zoomLevel" (input)="onRangeChange($event)" />
+      <input
+        type="range"
+        min="3"
+        max="18"
+        class="range icon-tool"
+        [ngModel]="zoomLevel"
+        (input)="onRangeChange($event)"
+      />
     </div>
-    <img class="icon-tool" src="assets/icon/toolbar_vertical_minimize.svg" alt="minimize" (click)="zoomOut()"
+    <img
+      class="icon-tool"
+      src="assets/icon/toolbar_vertical_minimize.svg"
+      alt="minimize"
+      (click)="zoomOutClick()"
     />
   </ul>
 </div>

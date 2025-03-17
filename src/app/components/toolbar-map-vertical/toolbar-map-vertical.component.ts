@@ -1,4 +1,10 @@
-import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ToolbarMapVerticalService } from '../../core/services/toolbar-map-vertical.service';
@@ -13,14 +19,14 @@ import { ToolBarVertical } from '../../interfaces/toolbar-vertical';
 export class ToolbarMapVerticalComponent {
   activeIndex: number | null = null;
   imagesDefault: ToolBarVertical[] = [];
+  @Input() zoomLevel: number = 8;
+  @Output() resetMapEvent = new EventEmitter<void>();
+  @Output() zoomInEvent = new EventEmitter<void>();
+  @Output() zoomOutEvent = new EventEmitter<void>();
+  @Output() rangeChangeEvent = new EventEmitter<number>();
+  @Output() locateUserEvent = new EventEmitter<void>();
 
-  @Output() zoomChange = new EventEmitter<number>(); 
-  @Input() zoomLevel: number = 3; 
-
-  constructor (
-    private toolbarMapVerticalService: ToolbarMapVerticalService
-  ) 
-  {}
+  constructor(private toolbarMapVerticalService: ToolbarMapVerticalService) {}
 
   ngOnInit() {
     this.getIcons();
@@ -30,22 +36,23 @@ export class ToolbarMapVerticalComponent {
     this.imagesDefault = this.toolbarMapVerticalService.getToolBarVertical();
   }
 
+  resetMap(): void {
+    this.resetMapEvent.emit();
+  }
+
+  zoomInClick(): void {
+    this.zoomInEvent.emit();
+  }
+
+  zoomOutClick(): void {
+    this.zoomOutEvent.emit();
+  }
+
   onRangeChange(event: any): void {
-    this.zoomLevel = event.target.value;
-    this.zoomChange.emit(this.zoomLevel);
+    this.rangeChangeEvent.emit(event.target.value);
   }
 
-  zoomIn(): void {
-    if (this.zoomLevel < 23) {
-      this.zoomLevel++;
-      this.zoomChange.emit(this.zoomLevel);
-    }
-  }
-
-  zoomOut(): void {
-    if (this.zoomLevel > 0) {
-      this.zoomLevel--;
-      this.zoomChange.emit(this.zoomLevel);
-    }
+  locateUserClick(): void {
+    this.locateUserEvent.emit();
   }
 }

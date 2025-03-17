@@ -4,7 +4,6 @@ import 'leaflet.markercluster';
 import { ToolbarComponent } from "../toolbar/toolbar.component";
 import { ToolbarMapVerticalComponent } from "../toolbar-map-vertical/toolbar-map-vertical.component";
 import { LocationService } from '../../core/services/map/location.service';
-import { LocationMap } from '../../interfaces/location-map';
 
 @Component({
   selector: 'app-map-main',
@@ -25,25 +24,17 @@ export class MapMainComponent {
     this.getLocateMap()
   }
 
-  private initMap(): void {
+  private initMap() {
+    const baseMapURl = "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" + (L.Browser.retina ? '@2x.png' : '.png')     
     this.map = L.map('map', {
-      center:  [ 9.0, -80.0 ],
-      zoom: this.zoom,
       zoomControl: false
     });
-
-    const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 18,
-      minZoom: 3,
-      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    });
-
-    tiles.addTo(this.map);
-
+    L.tileLayer(baseMapURl).addTo(this.map);
+    this.resetMap();
+    // this.mapService.setMap(this.map);
     this.map.on('zoomend', () => {
       this.zoomLevel = this.map.getZoom();
     });
-    // const marker = L.marker([ 90.730610, -73.935242 ]).addTo(this.map);
   }
 
   ngAfterViewInit(): void {
@@ -61,5 +52,47 @@ export class MapMainComponent {
   onZoomChange(newZoom: number): void {
     this.zoomLevel = newZoom;
     this.map.setZoom(this.zoomLevel);
+  }
+
+  resetMap(): void {
+    this.map.setView(this.location, this.zoom);
+  }
+
+  zoomIn(): void {
+    if (this.zoomLevel < 18) {
+      this.zoomLevel++;
+      this.onZoomChange(this.zoomLevel);
+    }
+  }
+
+  zoomOut(): void {
+    if (this.zoomLevel > 3) {
+      this.zoomLevel--;
+      this.onZoomChange(this.zoomLevel);
+    }
+  }
+
+  onRangeChange(newZoom: number): void {
+    this.zoomLevel = newZoom;
+    this.onZoomChange(this.zoomLevel);
+  }
+
+  locateUser(): void {
+    this.map.locate({ setView: true, maxZoom: 16 });
+    this.map.on('locationfound', (e: any) => this.onLocationFound(e));
+    this.map.on('locationerror', (e: any) => this.onLocationError(e));
+  }
+
+  onLocationFound(e: any): void {
+    const radius = e.accuracy / 2;
+    L.marker(e.latlng).addTo(this.map).bindPopup('You are within ' + radius + ' meters from this point').openPopup();
+
+    L.circle(e.latlng, {
+      radius: radius,
+    }).addTo(this.map);
+  }
+
+  onLocationError(e: any): void {
+    alert(e.message);
   }
 }

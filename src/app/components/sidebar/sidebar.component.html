@@ -4,7 +4,7 @@
             <img class="icon-sidebar mb-2" [src]="'assets/icon/' + img.image + '_' + img.type + '.svg'" (click)="onChangeImage(img.id, img.type)" [alt]="img.image">
 
             <div class="descarga-sidebar" [ngClass]="{'show': activeIndex === img.id}">
-                <p class="label-image"> {{ img.label }} </p>
+                <p class="label-image" (click)="openDialog(img)"> {{ img.label }} </p>
             </div>
         </li>
     </ul>

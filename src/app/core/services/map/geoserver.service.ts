@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { retry, catchError } from 'rxjs/operators';
+import { environment } from '../../../../environment/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GeoserverService {
-  private baseUrl: any = 'http://100.29.108.250:8080/geoserver/';
+  private baseUrl: string = environment.geoserverURL;
   private headers = new HttpHeaders();
 
   constructor(private http: HttpClient) {}
@@ -37,6 +38,11 @@ export class GeoserverService {
     return this.http
       .get<any>(url, httpOptions)
       .pipe(retry(1), catchError(this.handleError));
+  }
+
+  
+  getWorkspace(): string[] {
+    return ['d'];
   }
 
   handleError(error: {
