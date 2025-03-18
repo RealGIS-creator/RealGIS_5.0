@@ -20,9 +20,8 @@ export class SearcherSidebarComponent {
   public isVisible: boolean = false;
   public infoUser: InfoUser[] = [];
   public selectedOption: string = 'Criterio de Búsqueda';
-  public isDisplayUp = true;
 
-  @Input() data: Detalle1Data | undefined; 
+  data: Detalle1Data | undefined; 
   
   constructor(private searcherSidebarService: SearcherSidebarService) 
   {
@@ -36,17 +35,15 @@ export class SearcherSidebarComponent {
 
   clickSearcher(): void {
     this.isVisible = this.isVisible ? false : true;
-    this.isDisplayUp = !this.isDisplayUp;
   }
 
   selectOption(option: string) {
     this.selectedOption = option;
     this.isVisible = false; 
-    this.isDisplayUp = true; 
   }
 
   get displayIcon() {
-    return this.isDisplayUp ? 'display_up.svg' : 'display_down.svg';
+    return this.isVisible ? 'display_down.svg' : 'display_up.svg';
   }
 
   searchInformation(): void {

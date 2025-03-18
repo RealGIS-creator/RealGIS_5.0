@@ -1,0 +1,98 @@
+<app-movable-card [initialX]="100" [initialY]="90">
+    <div class="card-title">
+        <div class="d-flex justify-content-between align-items-center">
+            <b>Tarjeta de Contacto</b>
+            <div>
+                <img class="icon button-header" src="assets/icon/toolbar_vertical_compass.svg" alt="">
+                <img class="icon button-header" src="assets/icon/toolbar_vertical_compass.svg" alt="">
+                <img class="icon button-header" src="assets/icon/toolbar_vertical_compass.svg" alt="">
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <div class="title id-credit">ID DE CRÉDITO : 0000000000000000</div>
+            <div>Identificación : 1-711-2213</div>
+            <div>Nombre : PEDRO PEREZ</div>
+            <div>No. Acreditado : 52815670</div>
+            <div class="title">CIS : 000000000</div>
+        </div>
+        <img class="icon-user" src="assets/icon/contact_card_user.svg" alt="icono desplegar">
+    </div>
+
+    <div class="col">
+        <div class="title">Estrategia</div>
+        <span class="badge bg-strategy">TDD</span> <!-- se elige azul el activo: traer de la db-->
+        <span class="badge bg-strategy">TDC</span>
+        <span class="badge bg-strategy">TOKENIZACIÓN</span>
+        <span class="badge bg-strategy">DESCUENTO DIRECTO</span>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="title mt-2">Tipo de producto</div>
+            <div class="col">
+                <span class="badge bg-product">Préstamo Hipotecario</span> <!-- color fijo para enfoque-->
+            </div>
+        </div>
+        <div class="col">
+            <div class="title mt-2">Dias de mora / Gaveta</div>
+            <div class="col">
+                <span class="badge bg-days">170</span> <!-- color fijo para enfoque-->
+            </div>
+        </div>
+    </div>
+
+    <div class="title mt-2">Tipo de Predio</div>
+    <div>
+        <span class="badge bg-property">Residencial</span> <!-- se elige azul el activo: traer de la db-->
+        <span class="badge bg-property">Comercial</span>
+        <span class="badge bg-property">Industrial</span>
+    </div>
+
+    <div class="title mt-2">Saldo de Producto</div>
+    <div class="badge bg-product"><b>$ 5000,32 USD</b></div>
+
+    <div>
+        <div class="bg-info mt-3 d-flex justify-content-between align-items-center" (click)="showInformationEmployment()">
+            <div class="title">Información Laboral</div>
+            <img class="icon button-header" [src]="'assets/icon/' + displayIconEmployment" alt="icono desplegar">
+        </div>
+
+        <div class="row" *ngIf="isVisibleInformacionEmployment">
+            <div class="col"><b>Nombre:</b> Realtix SAS</div>
+            <div class="col"><b>Teléfono:</b> 0000000000</div>
+            <div class="col"><b>Dirección Laboral:</b> Mz x Casa 31 Barrio</div>
+        </div>
+    </div>
+
+    <div>
+        <div class="bg-info mt-3 d-flex justify-content-between align-items-center" (click)="showInformationPersonal()">
+            <div class="title">Información Personal</div>
+            <img class="icon button-header" [src]="'assets/icon/' + displayIconPersonal" alt="icono desplegar">
+        </div>
+        <div *ngIf="isVisibleInformacionPersonal">
+            <div class="col"><b>Dirección Residencial:</b> Mz x Casa 31 Barrio XXXX</div>
+            <div class="col"><b>Teléfonos de Contacto:</b></div>
+            <div class="col"><b>Móvil(es)</b>:</div>
+            <div class="col">3124545 - 451111 - 7888888</div>
+            <div class="col"><b>Residencial(es)</b>:</div>
+            <div class="col">(507) 5247198 - (507) 6324781 - (507) 2574186</div>
+            <div class="col"><b>Otros</b>:</div>
+            <div class="col">(507) 5247198 - (507) 6324781 - (507) 2574186</div>
+            <div class="col"><b>Email de contacto</b>:</div>
+            <div class="col">1.</div>
+            <div class="col">2.</div>
+        </div>
+    </div>
+
+    <div class="mt-2">
+        <div class="badge bg-product">FINCAS ASOCIADAS</div>
+    </div>
+
+    <div class="bg-info location mt-3 d-flex justify-content-center align-items-center">
+        <img class="icon" src="assets/icon/contact_card_location.svg" alt="">
+        8.11127 , -80.97002
+    </div>
+</app-movable-card>

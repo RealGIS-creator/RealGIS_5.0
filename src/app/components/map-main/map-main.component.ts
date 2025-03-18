@@ -4,10 +4,11 @@ import 'leaflet.markercluster';
 import { ToolbarComponent } from "../toolbar/toolbar.component";
 import { ToolbarMapVerticalComponent } from "../toolbar-map-vertical/toolbar-map-vertical.component";
 import { LocationService } from '../../core/services/map/location.service';
+import { ContactCardComponent } from '../contact-card/contact-card.component';
 
 @Component({
   selector: 'app-map-main',
-  imports: [ToolbarComponent, ToolbarMapVerticalComponent],
+  imports: [ToolbarComponent, ToolbarMapVerticalComponent, ContactCardComponent],
   templateUrl: './map-main.component.html',
   styleUrl: './map-main.component.less'
 })
