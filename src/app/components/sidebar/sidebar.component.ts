@@ -40,7 +40,7 @@ export class SidebarComponent {
   }
 
   openDialog(img: any) {
-    this.activeIndex = img.id;
+    this.activeIndex = 0;
     let componentToLoad: any = null;
     let dialogData: any = null;
 

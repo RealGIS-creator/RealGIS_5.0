@@ -19,22 +19,32 @@
     </div>
     <div class="content-select mt-2 content-seacher">
       <div class="search-container-option">
-        <!-- <img class="logo search-icon" src="assets/icon/circle.svg" alt="administrador"> -->
         <div class="select-option" (click)="clickSearcher()">
-          Criterio de Búsqueda
+          <img class="logo search-icon" src="assets/icon/circle_light.svg" alt="circle">
+          {{ selectedOption }}
+          <img class="logo search-icon" [src]="'assets/icon/' + displayIcon" alt="icono desplegar">
         </div>
-        <!-- <img class="logo search-icon" src="assets/icon/circle.svg" alt="circle"> -->
       </div>
     </div>
     <div class="form-select-option" *ngIf="isVisible">
-      <div class="search-container-option" *ngFor="let option of optionSearch">
-        <!-- <img class="logo search-icon" src="assets/icon/circle.svg" alt="administrador"> -->
-        <p class="option">{{ option }}</p>
+      <div class="search-container-option" *ngFor="let option of optionSearch" (click)="selectOption(option)">
+        <p class="option">
+          <img class="logo search-icon" src="assets/icon/circle_light.svg" alt="administrador">
+          {{ option }}
+        </p>
       </div>
     </div>
-    <div class="d-flex justify-content-around mt-2 mb-2">
-      <button class="btn btn-card-windows">Buscar</button>
-      <button class="btn btn-card-windows">Limpiar</button>
+    <div class="d-flex justify-content-around mt-2 mb-4">
+      <button class="btn btn-card-windows" (click)="searchInformation()">Buscar</button>
+      <button class="btn btn-card-windows" (click)="clearInformation()">Limpiar</button>
+    </div>
+    <div class="option-info-user mb-4" *ngIf="infoUser.length > 0">
+      <div class="search-container-option" *ngFor="let info of infoUser">
+        <p class="option option-tc d-flex justify-content-between">
+          No. Cliente: {{ info.id }}
+          <button class="btn btn-card-windows" (click)="showCardUser()">Ver TC</button>
+        </p>
+      </div>
     </div>
   </div>
 </div>

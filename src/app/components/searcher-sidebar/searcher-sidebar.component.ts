@@ -1,6 +1,7 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SearcherSidebarService } from '../../core/services/searcher-sidebar.service';
+import { InfoUser } from '../../interfaces/info-user';
 
 interface Detalle1Data {
   id: number;
@@ -17,6 +18,10 @@ interface Detalle1Data {
 export class SearcherSidebarComponent {
   public optionSearch: string[] = [];
   public isVisible: boolean = false;
+  public infoUser: InfoUser[] = [];
+  public selectedOption: string = 'Criterio de Búsqueda';
+  public isDisplayUp = true;
+
   @Input() data: Detalle1Data | undefined; 
   
   constructor(private searcherSidebarService: SearcherSidebarService) 
@@ -31,5 +36,32 @@ export class SearcherSidebarComponent {
 
   clickSearcher(): void {
     this.isVisible = this.isVisible ? false : true;
+    this.isDisplayUp = !this.isDisplayUp;
   }
+
+  selectOption(option: string) {
+    this.selectedOption = option;
+    this.isVisible = false; 
+    this.isDisplayUp = true; 
+  }
+
+  get displayIcon() {
+    return this.isDisplayUp ? 'display_up.svg' : 'display_down.svg';
+  }
+
+  searchInformation(): void {
+    if (this.selectedOption !== 'Criterio de Búsqueda') {
+      this.infoUser = this.searcherSidebarService.getInformationUser();
+    } else {
+      console.log('Debe seleccionar una opcion');
+      // generar alerta
+    }
+  }
+
+  clearInformation(): void {
+    this.infoUser = [];
+    this.selectedOption = 'Criterio de Búsqueda';
+  }
+
+  showCardUser(): void {}
 }
