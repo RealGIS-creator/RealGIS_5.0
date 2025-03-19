@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { FooterComponent } from './components/footer/footer.component';
-import { SidebarComponent } from './components/sidebar/sidebar.component';
-import { NavbarComponent } from './components/navbar/navbar.component';
-import { MapMainComponent } from "./components/map-main/map-main.component";
+import { NavbarComponent } from './components/home/navbar/navbar.component';
+import { SidebarComponent } from './components/home/sidebar/sidebar.component';
+import { FooterComponent } from './components/home/footer/footer.component';
+import { MapMainComponent } from './components/home/map-main/map-main.component';
 
 @Component({
     selector: 'app-root',

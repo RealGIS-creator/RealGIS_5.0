@@ -1,5 +1,5 @@
 <div class="card"
-    [ngStyle]="{'left.px': position.x, 'top.px': position.y, 'cursor': isDragging ? 'grabbing' : 'grab'}">
+    [ngStyle]="{'left.px': position.x, 'top.px': position.y, 'cursor': isDragging ? 'grabbing' : 'grab', 'width.rem': paramWidth}">
     <div class="card-header text-white" (mousedown)="onMouseDown($event)" style="cursor: grab;">
         <ng-content select=".card-title"></ng-content>
     </div>

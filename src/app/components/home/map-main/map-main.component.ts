@@ -1,14 +1,13 @@
 import { Component } from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet.markercluster';
-import { ToolbarComponent } from "../toolbar/toolbar.component";
-import { ToolbarMapVerticalComponent } from "../toolbar-map-vertical/toolbar-map-vertical.component";
-import { LocationService } from '../../core/services/map/location.service';
-import { ContactCardComponent } from '../contact-card/contact-card.component';
+import { ToolbarComponent } from '../../toolbar/toolbar.component';
+import { LocationService } from '../../../core/services/map/location.service';
+import { ToolbarMapVerticalComponent } from '../../toolbar-map-vertical/toolbar-map-vertical.component';
 
 @Component({
   selector: 'app-map-main',
-  imports: [ToolbarComponent, ToolbarMapVerticalComponent, ContactCardComponent],
+  imports: [ToolbarComponent, ToolbarMapVerticalComponent],
   templateUrl: './map-main.component.html',
   styleUrl: './map-main.component.less'
 })
@@ -26,9 +25,11 @@ export class MapMainComponent {
   }
 
   private initMap() {
-    const baseMapURl = "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" + (L.Browser.retina ? '@2x.png' : '.png')     
+    const baseMapURl = "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"     
     this.map = L.map('map', {
-      zoomControl: false
+      zoomControl: false,
+      maxZoom: 18,
+      minZoom: 3,
     });
     L.tileLayer(baseMapURl).addTo(this.map);
     this.resetMap();

@@ -1,40 +1,51 @@
 import { Injectable, createComponent, ApplicationRef, ComponentRef } from '@angular/core';
-import { GenericDialogComponent } from '../../components/generic-dialog/generic-dialog.component';
-
-interface DialogConfig {
-  component: any; 
-  data?: any;
-}
+import { GenericDialogComponent } from '../../components/shared/generic-dialog/generic-dialog.component';
+import { DialogConfig } from '../../interfaces/dialog-config';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DialogService {
-  private dialogComponentRef: ComponentRef<GenericDialogComponent> | null = null;
+  private dialogComponentRefs: ComponentRef<GenericDialogComponent>[] = [];
 
-  constructor(private appRef: ApplicationRef) {}
+  constructor(private appRef: ApplicationRef) { }
 
-  open(config: DialogConfig): ComponentRef<any> | null {
-    if (!this.dialogComponentRef) {
-      this.dialogComponentRef = createComponent(GenericDialogComponent, {
-        environmentInjector: this.appRef.injector,
-      });
-      document.body.appendChild(this.dialogComponentRef.location.nativeElement);
-      this.appRef.attachView(this.dialogComponentRef.hostView);
+  open(config: DialogConfig): ComponentRef<any> {
+    const dialogComponentRef = createComponent(GenericDialogComponent, {
+      environmentInjector: this.appRef.injector,
+    });
 
-      this.dialogComponentRef.instance.setCloseCallback(() => {
-        this.close();
-      });
+    document.body.appendChild(dialogComponentRef.location.nativeElement);
+    this.appRef.attachView(dialogComponentRef.hostView);
+
+    dialogComponentRef.instance.setCloseCallback(() => {
+      this.close(dialogComponentRef);
+    });
+
+    if (config.component) {
+      dialogComponentRef.instance.loadContentComponent(config.component, config.data);
     }
 
-    return this.dialogComponentRef.instance.loadContentComponent(config.component, config.data);
+    this.dialogComponentRefs?.push(dialogComponentRef);
+
+    return dialogComponentRef;
   }
 
-  close() {
-    if (this.dialogComponentRef) {
-      this.appRef.detachView(this.dialogComponentRef.hostView);
-      this.dialogComponentRef.destroy();
-      this.dialogComponentRef = null;
+  close(dialogRef: ComponentRef<any>) {
+    console.log(dialogRef);
+    const index = this.dialogComponentRefs.indexOf(dialogRef);
+    if (index !== -1) {
+      this.appRef.detachView(dialogRef.hostView);
+      dialogRef.destroy();
+      this.dialogComponentRefs.splice(index, 1);
     }
+  }
+
+  closeAll() {
+    this.dialogComponentRefs?.forEach(dialogRef => {
+      this.appRef.detachView(dialogRef.hostView);
+      dialogRef.destroy();
+    });
+    this.dialogComponentRefs = [];
   }
 }

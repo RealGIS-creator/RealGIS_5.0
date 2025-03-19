@@ -1,5 +1,4 @@
 import { Component, Input, ViewChild, ViewContainerRef, ComponentRef, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-generic-dialog',

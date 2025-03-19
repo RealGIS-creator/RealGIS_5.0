@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { FooterService } from '../../core/services/footer.service';
-import { Footer } from '../../interfaces/footer';
+import { FooterService } from '../../../core/services/footer.service';
 
 @Component({
     selector: 'app-footer',

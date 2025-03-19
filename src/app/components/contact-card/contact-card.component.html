@@ -1,11 +1,12 @@
-<app-movable-card [initialX]="100" [initialY]="90">
+<app-movable-card [initialX]="100" [initialY]="100" [paramWidth]="30">
     <div class="card-title">
         <div class="d-flex justify-content-between align-items-center">
             <b>Tarjeta de Contacto</b>
             <div>
-                <img class="icon button-header" src="assets/icon/toolbar_vertical_compass.svg" alt="">
-                <img class="icon button-header" src="assets/icon/toolbar_vertical_compass.svg" alt="">
-                <img class="icon button-header" src="assets/icon/toolbar_vertical_compass.svg" alt="">
+                <img class="icon button-header" src="assets/icon/banistmo_white.svg" alt="">
+                <img class="icon-header button-header" src="assets/icon/contact_card_download.svg" alt="" (click)="download()">
+                <img class="icon-header button-header" src="assets/icon/contact_card_minimize.svg" alt="" (click)="minimize()">
+                <img class="icon-header button-header" src="assets/icon/contact_card_close.svg" alt="" (click)="close()">
             </div>
         </div>
     </div>
@@ -55,7 +56,8 @@
     <div class="badge bg-product"><b>$ 5000,32 USD</b></div>
 
     <div>
-        <div class="bg-info mt-3 d-flex justify-content-between align-items-center" (click)="showInformationEmployment()">
+        <div class="bg-info mt-3 d-flex justify-content-between align-items-center"
+            (click)="showInformationEmployment()">
             <div class="title">Información Laboral</div>
             <img class="icon button-header" [src]="'assets/icon/' + displayIconEmployment" alt="icono desplegar">
         </div>
@@ -88,11 +90,13 @@
     </div>
 
     <div class="mt-2">
-        <div class="badge bg-product">FINCAS ASOCIADAS</div>
+        <div class="badge bg-product" (click)="openAssociatedFarmsContactCard()">FINCAS ASOCIADAS</div>
+        <!-- por defecto azul, se pone verde cuando se le da click y sale la otra ventana-->
     </div>
 
     <div class="bg-info location mt-3 d-flex justify-content-center align-items-center">
         <img class="icon" src="assets/icon/contact_card_location.svg" alt="">
         8.11127 , -80.97002
     </div>
+
 </app-movable-card>

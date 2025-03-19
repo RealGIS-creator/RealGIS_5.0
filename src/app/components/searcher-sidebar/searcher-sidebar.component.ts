@@ -1,7 +1,9 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SearcherSidebarService } from '../../core/services/searcher-sidebar.service';
 import { InfoUser } from '../../interfaces/info-user';
+import { DialogService } from '../../core/services/dialog.service';
+import { ContactCardComponent } from '../contact-card/contact-card.component';
 
 interface Detalle1Data {
   id: number;
@@ -22,8 +24,11 @@ export class SearcherSidebarComponent {
   public selectedOption: string = 'Criterio de Búsqueda';
 
   data: Detalle1Data | undefined; 
+  private dialogService = inject(DialogService);
   
-  constructor(private searcherSidebarService: SearcherSidebarService) 
+  constructor(
+    private searcherSidebarService: SearcherSidebarService,
+  ) 
   {
     this.getSearchCriteria()
   }
@@ -60,5 +65,8 @@ export class SearcherSidebarComponent {
     this.selectedOption = 'Criterio de Búsqueda';
   }
 
-  showCardUser(): void {}
+  showCardUser(): void {
+    this.dialogService.closeAll()
+    this.dialogService.open({ component: ContactCardComponent });
+  }
 }

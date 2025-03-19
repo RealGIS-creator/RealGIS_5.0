@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
-import { SidebarService } from '../../core/services/sidebar.service';
-import { SideBar } from '../../interfaces/sidebar';
-import { DialogService } from '../../core/services/dialog.service';
-import { SearcherSidebarComponent } from '../searcher-sidebar/searcher-sidebar.component';
+import { Component, ComponentRef, inject } from '@angular/core';
+import { SidebarService } from '../../../core/services/sidebar.service';
+import { SideBar } from '../../../interfaces/sidebar';
+import { DialogService } from '../../../core/services/dialog.service';
+import { SearcherSidebarComponent } from '../../searcher-sidebar/searcher-sidebar.component';
+import { GenericDialogComponent } from '../../shared/generic-dialog/generic-dialog.component';
+import { SidebarShowDataService } from '../../../core/services/sidebar-show-data.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -16,13 +18,18 @@ export class SidebarComponent {
   activeIndex: number | null = null;
   imagesDefault: SideBar[] = [];
   private dialogService = inject(DialogService);
+  dialog: ComponentRef<GenericDialogComponent> | null | any = null;
 
   constructor(
-    private sidebarService: SidebarService
+    private sidebarService: SidebarService,
+    private sidebarShowDataService: SidebarShowDataService
   ) {}
 
   ngOnInit() {
-    this.getIcons()
+    this.getIcons();
+    this.sidebarShowDataService.data$.subscribe((data) => {
+      this.activeIndex = data.activeIndex; 
+    });
   }
 
   getIcons(): void {
@@ -30,6 +37,7 @@ export class SidebarComponent {
   }
 
   onChangeImage(id: number, type: string): void {
+    this.dialogService.closeAll();
     this.activeIndex = this.activeIndex === id ? null : id;
 
     this.imagesDefault.forEach((element) => {

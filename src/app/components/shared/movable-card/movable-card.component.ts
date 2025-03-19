@@ -9,16 +9,23 @@ import { Component, ElementRef, HostListener, Input } from '@angular/core';
 })
 export class MovableCardComponent {
   @Input() initialX: number = 100;
-  @Input() initialY: number = 90;
+  @Input() initialY: number = 50;
+  @Input() paramWidth: number = 10;
 
-  position = { x: this.initialX, y: this.initialY };
+  position = { x: 0, y: 0 }; 
   isDragging = false;
   private offsetX: number = 0;
   private offsetY: number = 0;
 
   constructor(private elRef: ElementRef) {}
 
+  ngOnInit(): void {
+    this.position = { x: this.initialX, y: this.initialY };
+  }
+
   onMouseDown(event: MouseEvent): void {
+    console.log('onMouseDown', event)
+
     this.isDragging = true;
     this.offsetX = event.clientX - this.position.x;
     this.offsetY = event.clientY - this.position.y;
@@ -38,6 +45,8 @@ export class MovableCardComponent {
 
   @HostListener('document:mouseup')
   onMouseUp(): void {
+    console.log('onMouseUp')
+
     this.isDragging = false;
     this.elRef.nativeElement.style.zIndex = '1000';
   }
