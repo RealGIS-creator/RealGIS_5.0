@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet.markercluster';
-import { ToolbarComponent } from '../../toolbar/toolbar.component';
 import { LocationService } from '../../../core/services/map/location.service';
-import { ToolbarMapVerticalComponent } from '../../toolbar-map-vertical/toolbar-map-vertical.component';
+import { ToolbarMapVerticalComponent } from '../../widget/toolbar-map-vertical/toolbar-map-vertical.component';
+import { ToolbarComponent } from '../../widget/toolbar/toolbar.component';
 
 @Component({
   selector: 'app-map-main',

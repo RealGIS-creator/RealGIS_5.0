@@ -1,9 +1,9 @@
 import { Component, Input, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SearcherSidebarService } from '../../core/services/searcher-sidebar.service';
-import { InfoUser } from '../../interfaces/info-user';
-import { DialogService } from '../../core/services/dialog.service';
+import { InfoUser } from '../../../interfaces/info-user';
 import { ContactCardComponent } from '../contact-card/contact-card.component';
+import { DialogService } from '../../../core/services/shared/dialog.service';
+import { SearcherSidebarService } from '../../../core/services/widget/searcher-sidebar.service';
 
 interface Detalle1Data {
   id: number;

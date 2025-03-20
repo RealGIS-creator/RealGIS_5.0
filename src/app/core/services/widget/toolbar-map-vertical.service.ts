@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ToolBarVertical } from '../../interfaces/toolbar-vertical';
+import { ToolBarVertical } from '../../../interfaces/toolbar-vertical';
 
 @Injectable({
   providedIn: 'root',

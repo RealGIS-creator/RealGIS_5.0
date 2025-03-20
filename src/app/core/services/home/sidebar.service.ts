@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { SideBar } from '../../interfaces/sidebar';
+import { SideBar } from '../../../interfaces/sidebar';
 
 @Injectable({
   providedIn: 'root'

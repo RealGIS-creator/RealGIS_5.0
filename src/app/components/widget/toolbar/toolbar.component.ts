@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { ToolBar } from '../../interfaces/toolbar';
-import { ToolbarService } from '../../core/services/toolbar.service';
+import { ToolBar } from '../../../interfaces/toolbar';
+import { ToolbarService } from '../../../core/services/widget/toolbar.service';
 
 @Component({
   selector: 'app-toolbar',

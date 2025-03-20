@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, ComponentRef, inject } from '@angular/core';
-import { SidebarService } from '../../../core/services/sidebar.service';
 import { SideBar } from '../../../interfaces/sidebar';
-import { DialogService } from '../../../core/services/dialog.service';
-import { SearcherSidebarComponent } from '../../searcher-sidebar/searcher-sidebar.component';
+import { SearcherSidebarComponent } from '../../widget/searcher-sidebar/searcher-sidebar.component';
 import { GenericDialogComponent } from '../../shared/generic-dialog/generic-dialog.component';
-import { SidebarShowDataService } from '../../../core/services/sidebar-show-data.service';
+import { DialogService } from '../../../core/services/shared/dialog.service';
+import { SidebarService } from '../../../core/services/home/sidebar.service';
+import { SidebarShowDataService } from '../../../core/services/widget/sidebar-show-data.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -27,9 +27,9 @@ export class SidebarComponent {
 
   ngOnInit() {
     this.getIcons();
-    this.sidebarShowDataService.data$.subscribe((data) => {
-      this.activeIndex = data.activeIndex; 
-    });
+    // this.sidebarShowDataService.data$.subscribe((data) => {
+    //   this.activeIndex = data.activeIndex; 
+    // });
   }
 
   getIcons(): void {

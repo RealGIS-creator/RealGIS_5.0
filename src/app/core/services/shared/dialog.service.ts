@@ -1,6 +1,7 @@
 import { Injectable, createComponent, ApplicationRef, ComponentRef } from '@angular/core';
-import { GenericDialogComponent } from '../../components/shared/generic-dialog/generic-dialog.component';
-import { DialogConfig } from '../../interfaces/dialog-config';
+import { GenericDialogComponent } from '../../../components/shared/generic-dialog/generic-dialog.component';
+import { DialogConfig } from '../../../interfaces/dialog-config';
+
 
 @Injectable({
   providedIn: 'root',

@@ -2,13 +2,12 @@ import {
   Component,
   EventEmitter,
   Input,
-  Output,
-  SimpleChanges,
+  Output
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ToolbarMapVerticalService } from '../../core/services/toolbar-map-vertical.service';
-import { ToolBarVertical } from '../../interfaces/toolbar-vertical';
+import { ToolBarVertical } from '../../../interfaces/toolbar-vertical';
+import { ToolbarMapVerticalService } from '../../../core/services/widget/toolbar-map-vertical.service';
 
 @Component({
   selector: 'app-toolbar-map-vertical',

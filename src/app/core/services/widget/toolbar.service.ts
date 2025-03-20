@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ToolBar } from '../../interfaces/toolbar';
+import { ToolBar } from '../../../interfaces/toolbar';
 
 @Injectable({
   providedIn: 'root',
