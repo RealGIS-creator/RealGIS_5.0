@@ -1,14 +1,9 @@
-import { Component, Input, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { InfoUser } from '../../../interfaces/info-user';
 import { ContactCardComponent } from '../contact-card/contact-card.component';
 import { DialogService } from '../../../core/services/shared/dialog.service';
 import { SearcherSidebarService } from '../../../core/services/widget/searcher-sidebar.service';
-
-interface Detalle1Data {
-  id: number;
-  type: string;
-}
+import { infoSeacher } from '../../../interfaces/info-searcher';
 
 @Component({
   selector: 'app-searcher-sidebar',
@@ -20,14 +15,14 @@ interface Detalle1Data {
 export class SearcherSidebarComponent {
   public optionSearch: string[] = [];
   public isVisible: boolean = false;
-  public infoUser: InfoUser[] = [];
   public selectedOption: string = 'Criterio de Búsqueda';
+  public infoSeacher: infoSeacher[] = [];
 
-  data: Detalle1Data | undefined; 
   private dialogService = inject(DialogService);
   
   constructor(
     private searcherSidebarService: SearcherSidebarService,
+    private cdr: ChangeDetectorRef 
   ) 
   {
     this.getSearchCriteria()
@@ -53,7 +48,14 @@ export class SearcherSidebarComponent {
 
   searchInformation(): void {
     if (this.selectedOption !== 'Criterio de Búsqueda') {
-      this.infoUser = this.searcherSidebarService.getInformationUser();
+      // this.infoUser = this.searcherSidebarService.getInformationUser();
+      this.searcherSidebarService.getInformationUser().subscribe(response => {
+        this.infoSeacher = response.SDT_Acreditados;
+
+        console.log(this.infoSeacher)
+        this.cdr.markForCheck();
+
+      });
     } else {
       console.log('Debe seleccionar una opcion');
       // generar alerta
@@ -61,7 +63,7 @@ export class SearcherSidebarComponent {
   }
 
   clearInformation(): void {
-    this.infoUser = [];
+    this.infoSeacher = [];
     this.selectedOption = 'Criterio de Búsqueda';
   }
 

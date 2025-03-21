@@ -1,23 +1,39 @@
-import { Component, ComponentRef, inject } from '@angular/core';
+import { Component, ComponentRef, ElementRef, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DialogService } from '../../../core/services/shared/dialog.service';
 import { SidebarShowDataService } from '../../../core/services/widget/sidebar-show-data.service';
 import { MovableCardComponent } from '../../shared/movable-card/movable-card.component';
 import { AssociatedFarmsContactCardComponent } from '../associated-farms-contact-card/associated-farms-contact-card.component';
-import { PrintService } from '../../../core/services/shared/print.service';
 import { ContactCard, Section, TextSection, BadgesSection, ActionSection } from '../../../interfaces/contact-card';
+import { PrintService } from '../../../core/services/shared/print.service';
+
+import  jsPDF from 'jspdf';
+import  html2canvas  from 'html2canvas';
+import * as htmlToImage from 'html-to-image';
+import 'html-to-image';
+
+declare module 'html-to-image' {
+  export interface Options {
+    crossOrigin?: string;
+    pixelRatio: number,
+    quality: number,
+    cacheBust: boolean,
+  }
+}
 
 @Component({
   selector: 'app-contact-card',
   imports: [MovableCardComponent, CommonModule],
   templateUrl: './contact-card.component.html',
   styleUrl: './contact-card.component.less',
-  providers: [PrintService]
+  providers: []
 })
 export class ContactCardComponent {
   public isVisibleInformacionPersonal = false;
   public isVisibleInformacionEmployment = false;
   public isVisibleFarmsContactCard = false;
+
+  @ViewChild('pdfContent', { static: false }) pdfContent!: ElementRef
 
   dialogRef!: ComponentRef<any>;
   appMovableCard: ContactCard[] = [
@@ -170,8 +186,26 @@ export class ContactCardComponent {
   }
 
   download(): void {
-    this.printService.generatePDF('contactCard');
+    this.isVisibleInformacionPersonal = true;
+    this.isVisibleInformacionEmployment = true;
+
+    // this.printService.generatePDF('pdfContent');
+
   }
+
+  // async download(): Promise<void> {
+  //   try {
+  //     await this.printService.generatePDF('pdfContent');
+  //   } catch (error) {
+  //     let mensajeError = 'Error al generar el PDF';
+  //     if (error instanceof Error) {
+  //       mensajeError = error.message;
+  //     } else {
+  //       mensajeError = String(error);
+  //     }
+  //     console.error(mensajeError);
+  //   }
+  // }
 
   handleAction(action: string | null) {
     if (!action) { return; }

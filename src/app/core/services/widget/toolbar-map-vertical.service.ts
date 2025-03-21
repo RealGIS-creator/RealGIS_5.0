@@ -5,7 +5,6 @@ import { ToolBarVertical } from '../../../interfaces/toolbar-vertical';
   providedIn: 'root',
 })
 export class ToolbarMapVerticalService {
-  constructor() {}
 
   getToolBarVertical(): ToolBarVertical[] {
     return [

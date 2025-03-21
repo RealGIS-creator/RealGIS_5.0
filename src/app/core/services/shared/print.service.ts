@@ -1,42 +1,55 @@
-import { Component } from '@angular/core';
+import { Injectable } from '@angular/core';
+import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { jsPDF } from 'jspdf';
 
-@Component({
-  selector: 'app-pdf-generator',
-  templateUrl: './pdf-generator.component.html',
-  styleUrls: ['./pdf-generator.component.css']
+@Injectable({
+  providedIn: 'root'
 })
 export class PrintService {
 
-  async generatePDF(elementId: string, filename: string = 'documento.pdf') {
+  constructor() { }
+
+  async generatePDF(elementId: string, fileName: string = 'documento.pdf'): Promise<void> {
     const element = document.getElementById(elementId);
-    
+
     if (!element) {
-      console.error(`Elemento con ID "${elementId}" no encontrado`);
+      console.error(`Elemento con ID '${elementId}' no encontrado.`);
       return;
     }
 
-    // Asegurar que todas las imágenes estén cargadas
-    await this.waitForImagesToLoad(element);
+    await this.convertSVGToImages(element); // Convertir SVG a imágenes antes de capturar
 
-    // Convertir el contenido a imagen
-    const canvas = await html2canvas(element, { scale: 2, useCORS: true });
-    const imgData = canvas.toDataURL('image/png');
+    html2canvas(element, { scale: 2 }).then(canvas => {
+      // const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgWidth = 210;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const imgWidth = pageWidth * 0.9; // 90% del ancho de la hoja
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-    const xOffset = (pageWidth - imgWidth) / 2;
-    const yOffset = 20; // Margen superior
-
-    pdf.addImage(imgData, 'PNG', xOffset, yOffset, imgWidth, imgHeight);
-    pdf.save(filename);
+      // pdf.addImage(imgData, 'PNG', 0, 10, imgWidth, imgHeight);
+      pdf.save(fileName);
+    }).catch(error => console.error('Error generando el PDF:', error));
   }
 
-  private async waitForImagesToLoad(element: HTMLElement) {
-    const images = Array.from(element.getElementsByTagName('img'));
-    await Promise.all(images.map(img => img.complete ? Promise.resolve() : new Promise(resolve => img.onload = resolve)));
+  private async convertSVGToImages(element: HTMLElement): Promise<void> {
+    const svgs = Array.from(element.querySelectorAll('svg')); // Convertir NodeList a Array
+    
+    for (const svg of svgs) {
+      const img = await this.svgToImage(svg);
+      svg.replaceWith(img);
+    }
+  }
+
+  private svgToImage(svg: SVGSVGElement): Promise<HTMLImageElement> {
+    return new Promise((resolve, reject) => {
+      const xml = new XMLSerializer().serializeToString(svg);
+      const svg64 = btoa(unescape(encodeURIComponent(xml))); 
+      const imgSrc = 'data:image/svg+xml;base64,' + svg64;
+      const img = new Image();
+      img.src = imgSrc;
+      img.width = svg.clientWidth;
+      img.height = svg.clientHeight;
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+    });
   }
 }

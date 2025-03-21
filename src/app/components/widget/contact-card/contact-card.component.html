@@ -1,103 +1,105 @@
-<app-movable-card [initialX]="100" [initialY]="100" [paramWidth]="30" *ngFor="let card of appMovableCard">
-    <div class="card-title">
+<div id="pdfContent">
+    <app-movable-card [initialX]="100" [initialY]="100" [paramWidth]="30" *ngFor="let card of appMovableCard">
+        <div class="card-title">
+            <div class="d-flex justify-content-between align-items-center">
+                <b>{{ card.title.text }}</b>
+                <div>
+                    <img *ngFor="let icon of card.title.icons" class="icon button-header" [src]="icon.src" [alt]="icon.alt"
+                        (click)="handleAction(icon.action)">
+                </div>
+            </div>
+        </div>
+    
+        <!-- Sección "text-top" (iterando sobre arreglo de objetos) -->
         <div class="d-flex justify-content-between align-items-center">
-            <b>{{ card.title.text }}</b>
             <div>
-                <img *ngFor="let icon of card.title.icons" class="icon button-header" [src]="icon.src" [alt]="icon.alt"
-                    (click)="handleAction(icon.action)">
-            </div>
-        </div>
-    </div>
-
-    <!-- Sección "text-top" (iterando sobre arreglo de objetos) -->
-    <div class="d-flex justify-content-between align-items-center">
-        <div>
-            <ng-container *ngFor="let section of card.sections">
-                <ng-container *ngIf="section.type === 'text-top'">
-                    <div *ngFor="let item of section.value">
-                        {{ item.text }}
-                    </div>
+                <ng-container *ngFor="let section of card.sections">
+                    <ng-container *ngIf="section.type === 'text-top'">
+                        <div *ngFor="let item of section.value">
+                            {{ item.text }}
+                        </div>
+                    </ng-container>
                 </ng-container>
-            </ng-container>
+            </div>
+            <img class="icon-user" src="assets/icon/contact_card_user.svg" alt="icono desplegar">
         </div>
-        <img class="icon-user" src="assets/icon/contact_card_user.svg" alt="icono desplegar">
-    </div>
-
-    <ng-container *ngFor="let section of card.sections">
-        <ng-container *ngIf="section.type === 'badges'">
-          <div class="col mt-2">
-            <div class="title">{{ section.title }}</div>
-            <span *ngFor="let badge of section.badges"
-                  class="badge"
-                  [ngClass]="badge.style">
-              {{ badge.text }}
-            </span>
-          </div>
-        </ng-container>
-      </ng-container>
-
-    <!-- Sección tipo "text" (Saldo de Producto) -->
-    <ng-container *ngFor="let section of card.sections">
-        <ng-container *ngIf="section.type === 'text' && section.title === 'Saldo de Producto'">
-            <div class="title mt-2">{{ section.title }}</div>
-            <div class="badge bg-product"><b>{{ section.value }}</b></div>
-        </ng-container>
-    </ng-container>
-
-    <!-- Sección "expandible-column": Detalles en filas con máximo 3 columnas -->
-    <ng-container *ngFor="let section of card.sections">
-        <ng-container *ngIf="section.type === 'expandible-column'">
-            <div class="bg-info mt-3 d-flex justify-content-between align-items-center"
-                (click)="toggleSection(section)">
+    
+        <ng-container *ngFor="let section of card.sections">
+            <ng-container *ngIf="section.type === 'badges'">
+              <div class="col mt-2">
                 <div class="title">{{ section.title }}</div>
-                <img class="icon button-header"
-                    [src]="'assets/icon/' + (section.visible ? 'display_gray_down.svg' : 'display_gray_up.svg')"
-                    alt="icono desplegar">
-            </div>
-            <div *ngIf="section.visible">
-                <div *ngFor="let row of chunkArray(section.details, 3)" class="row">
-                    <div class="col" *ngFor="let detail of row">
-                        <b>{{ detail.label }}:</b> {{ detail.value }}
+                <span *ngFor="let badge of section.badges"
+                      class="badge"
+                      [ngClass]="badge.style">
+                  {{ badge.text }}
+                </span>
+              </div>
+            </ng-container>
+          </ng-container>
+    
+        <!-- Sección tipo "text" (Saldo de Producto) -->
+        <ng-container *ngFor="let section of card.sections">
+            <ng-container *ngIf="section.type === 'text' && section.title === 'Saldo de Producto'">
+                <div class="title mt-2">{{ section.title }}</div>
+                <div class="badge bg-product"><b>{{ section.value }}</b></div>
+            </ng-container>
+        </ng-container>
+    
+        <!-- Sección "expandible-column": Detalles en filas con máximo 3 columnas -->
+        <ng-container *ngFor="let section of card.sections">
+            <ng-container *ngIf="section.type === 'expandible-column'">
+                <div class="bg-info mt-3 d-flex justify-content-between align-items-center"
+                    (click)="toggleSection(section)">
+                    <div class="title">{{ section.title }}</div>
+                    <img class="icon button-header"
+                        [src]="'assets/icon/' + (section.visible ? 'display_gray_down.svg' : 'display_gray_up.svg')"
+                        alt="icono desplegar">
+                </div>
+                <div *ngIf="section.visible">
+                    <div *ngFor="let row of chunkArray(section.details, 3)" class="row">
+                        <div class="col" *ngFor="let detail of row">
+                            <b>{{ detail.label }}:</b> {{ detail.value }}
+                        </div>
                     </div>
                 </div>
-            </div>
+            </ng-container>
         </ng-container>
-    </ng-container>
-
-    <!-- Sección "expandible-row": Cada detalle en una fila completa -->
-    <ng-container *ngFor="let section of card.sections">
-        <ng-container *ngIf="section.type === 'expandible-row'">
-            <div class="bg-info mt-3 d-flex justify-content-between align-items-center"
-                (click)="toggleSection(section)">
-                <div class="title">{{ section.title }}</div>
-                <img class="icon button-header"
-                    [src]="'assets/icon/' + (section.visible ? 'display_gray_down.svg' : 'display_gray_up.svg')"
-                    alt="icono desplegar">
-            </div>
-            <div *ngIf="section.visible">
-                <div class="row" *ngFor="let detail of section.details">
-                    <div class="col">
-                        <b>{{ detail.label }}:</b> {{ detail.value }}
+    
+        <!-- Sección "expandible-row": Cada detalle en una fila completa -->
+        <ng-container *ngFor="let section of card.sections">
+            <ng-container *ngIf="section.type === 'expandible-row'">
+                <div class="bg-info mt-3 d-flex justify-content-between align-items-center"
+                    (click)="toggleSection(section)">
+                    <div class="title">{{ section.title }}</div>
+                    <img class="icon button-header"
+                        [src]="'assets/icon/' + (section.visible ? 'display_gray_down.svg' : 'display_gray_up.svg')"
+                        alt="icono desplegar">
+                </div>
+                <div *ngIf="section.visible">
+                    <div class="row" *ngFor="let detail of section.details">
+                        <div class="col">
+                            <b>{{ detail.label }}:</b> {{ detail.value }}
+                        </div>
                     </div>
                 </div>
-            </div>
+            </ng-container>
         </ng-container>
-    </ng-container>
-
-    <!-- Sección "action" -->
-    <ng-container *ngFor="let section of card.sections">
-        <ng-container *ngIf="section.type === 'action'">
-            <div class="mt-2">
-                <div class="badge bg-product" (click)="handleAction(section.action)">
-                    {{ section.title }}
+    
+        <!-- Sección "action" -->
+        <ng-container *ngFor="let section of card.sections">
+            <ng-container *ngIf="section.type === 'action'">
+                <div class="mt-2">
+                    <div class="badge bg-product" (click)="handleAction(section.action)">
+                        {{ section.title }}
+                    </div>
                 </div>
-            </div>
+            </ng-container>
         </ng-container>
-    </ng-container>
-
-    <!-- Ubicación -->
-    <div class="bg-info location mt-3 d-flex justify-content-center align-items-center">
-        <img class="icon" [src]="card.location.icon" alt="">
-        {{ card.location.coords }}
-    </div>
-</app-movable-card>
+    
+        <!-- Ubicación -->
+        <div class="bg-info location mt-3 d-flex justify-content-center align-items-center">
+            <img class="icon" [src]="card.location.icon" alt="">
+            {{ card.location.coords }}
+        </div>
+    </app-movable-card>
+</div>
