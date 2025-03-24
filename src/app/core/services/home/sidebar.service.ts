@@ -9,7 +9,7 @@ export class SidebarService {
   constructor() { }
 
   getSideBar(): SideBar[] {
-    return [ 
+    return [
       { image: 'sidebar_layer', type: 'dark', id: 1, label: 'Capas' },
       { image: 'sidebar_search', type: 'dark', id: 2, label: 'Búsqueda' },
       { image: 'sidebar_add_layer', type: 'dark', id: 3, label: 'Importar Capa' },

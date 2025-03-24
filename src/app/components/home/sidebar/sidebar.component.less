@@ -3,7 +3,9 @@
 .sidebar {
   background-color: white;
   display: block;
-  min-height: calc(100vh - 88px);
+  // min-height: calc(100vh - 88px);
+  max-height: 80dvh;
+  overflow: auto;
   margin: 0;
 }
 
@@ -18,18 +20,18 @@ ul {
   padding: 0px;
 }
 
-.descarga-sidebar {
+.window-sidebar {
   position: absolute;
-  left: 64px;
+  left: 115%;
   top: 0;
   background-color: #fff;
   padding: 10px 15px;
   border-radius: 0px 25px 25px 0px;
   display: none;
-  min-width: 120px; 
-  min-height: 50px; 
-  width: auto; 
-  height: 50px; 
+  min-width: 120px;
+  min-height: 50px;
+  width: auto;
+  height: 50px;
 }
 
 .label-image {
@@ -38,7 +40,7 @@ ul {
   cursor: pointer;
 }
 
-.descarga-sidebar.show {
+.window-sidebar.show {
   display: block;
   white-space: nowrap;
 }

@@ -1,9 +1,9 @@
 <div class="sidebar d-flex flex-column align-items-center">
     <ul class="mt-4">
-        <li *ngFor="let img of imagesDefault" class="item-position"> 
+        <li *ngFor="let img of imagesDefault" class="item-position">
             <img class="icon-sidebar mb-2 img-fluid" [src]="'assets/icon/' + img.image + '_' + img.type + '.svg'" (click)="onChangeImage(img.id, img.type)" [alt]="img.image">
 
-            <div class="descarga-sidebar" [ngClass]="{'show': activeIndex === img.id}">
+            <div class="window-sidebar" [ngClass]="{'show': activeIndex === img.id}">
                 <p class="label-image" (click)="openDialog(img)"> {{ img.label }} </p>
             </div>
         </li>
