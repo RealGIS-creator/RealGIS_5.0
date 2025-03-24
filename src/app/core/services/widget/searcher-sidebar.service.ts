@@ -13,29 +13,23 @@ export class SearcherSidebarService {
 
   constructor(private http: HttpClient) { }
 
-  getSearchCriteria(): string[] {
+  getSearchCriteria(): any[] {
     return [
-      "ID de Crédito",
-      "No. de Acreditado",
-      "Identificación"
+      {name: 'Acreditado_Id', label: 'ID de Crédito'},
+      {name: 'AcreditadoNum', label: 'No. de Acreditado'},
+      {name: 'AcreditadoIdenti', label: 'Identificación'}
     ];
   }
 
-  // getInformationUser(): InfoUser[] {
-  //   return [
-  //     {id: '100045224'},
-  //     {id: '7800474274'}
-  //   ]
-  // }
-
-  getInformationUser(): Observable<infoSeachersResponse> {
+  getInformationUser(filter: string, info: string): Observable<infoSeachersResponse> {
     console.log('llega al servicio');
     const url = `${this.apiUrl}WS_Acreditados`;
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });
     const gn = {
-      "Gx_mode": "DSP"
+      "Gx_mode": "DSP",
+      filter: info
     }
     return this.http.post<infoSeachersResponse>(url, gn, { headers });
   }

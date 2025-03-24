@@ -4,10 +4,11 @@ import { ContactCardComponent } from '../contact-card/contact-card.component';
 import { DialogService } from '../../../core/services/shared/dialog.service';
 import { SearcherSidebarService } from '../../../core/services/widget/searcher-sidebar.service';
 import { infoSeacher } from '../../../interfaces/info-searcher';
+import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-searcher-sidebar',
-  imports: [CommonModule],
+  imports: [ CommonModule, ReactiveFormsModule ],
   templateUrl: './searcher-sidebar.component.html',
   styleUrl: './searcher-sidebar.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -17,15 +18,27 @@ export class SearcherSidebarComponent {
   public isVisible: boolean = false;
   public selectedOption: string = 'Criterio de Búsqueda';
   public infoSeacher: infoSeacher[] = [];
+  public placeholderText = '';
+  formSearch!: FormGroup;
 
   private dialogService = inject(DialogService);
-  
+
   constructor(
     private searcherSidebarService: SearcherSidebarService,
-    private cdr: ChangeDetectorRef 
-  ) 
+    private cdr: ChangeDetectorRef
+  )
   {
-    this.getSearchCriteria()
+    this.createForm();
+  }
+
+  ngOnInit(): void {
+    this.getSearchCriteria();
+  }
+
+  createForm(): void {
+    this.formSearch = new FormGroup({
+      inputSearch: new FormControl('', [Validators.required, Validators.maxLength(20)])
+    });
   }
 
   getSearchCriteria(): void {
@@ -39,7 +52,7 @@ export class SearcherSidebarComponent {
 
   selectOption(option: string) {
     this.selectedOption = option;
-    this.isVisible = false; 
+    this.isVisible = false;
   }
 
   get displayIcon() {
@@ -47,10 +60,15 @@ export class SearcherSidebarComponent {
   }
 
   searchInformation(): void {
-    if (this.selectedOption !== 'Criterio de Búsqueda') {
-      // this.infoUser = this.searcherSidebarService.getInformationUser();
-      this.searcherSidebarService.getInformationUser().subscribe(response => {
+    if (this.selectedOption !== 'Criterio de Búsqueda' && this.formSearch.valid) {
+      const info = this.formSearch.get('inputSearch')?.value;
+      const filter = this.searcherSidebarService.getSearchCriteria().find(item => item.label === this.selectedOption);
+
+      this.searcherSidebarService.getInformationUser(filter, info).subscribe(response => {
         this.infoSeacher = response.SDT_Acreditados;
+        if (this.infoSeacher.length === 0) {
+          this.placeholderText  = 'Datos no encontrados';
+        }
 
         console.log(this.infoSeacher)
         this.cdr.markForCheck();
@@ -64,6 +82,8 @@ export class SearcherSidebarComponent {
 
   clearInformation(): void {
     this.infoSeacher = [];
+    this.placeholderText = '';
+    this.formSearch.reset();
     this.selectedOption = 'Criterio de Búsqueda';
   }
 
