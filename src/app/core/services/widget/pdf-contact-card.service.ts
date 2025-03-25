@@ -210,16 +210,20 @@ export class PdfContactCardService {
     const emailText = `Email de contacto: ${contactoData.informacionPersonal.email.join(', ')}`;
     const emailLines = pdf.splitTextToSize(emailText, maxWidth);
     pdf.text(emailLines, marginX, posY);
-    posY += emailLines.length * 9; // 7 mm de alto por línea (ajustar si es necesario)
+    posY += emailLines.length * 9; //  mm de alto por línea 
 
     // --- Fincas Asociadas (simulando el botón badge) ---
-    posY += 1;
+    posY -= 2;
     pdf.setFont('Helvetica', 'bold');
     pdf.text("Fincas Asociadas", marginX, posY);
     posY += 7;
+    pdf.setFont('Helvetica', 'normal');
+    pdf.text(`Número de Finca / Folio N.: ${contactoData.fincas.numeroFinca}`, marginX, posY);
+    posY += 7;
+    pdf.text(`Dirección: ${contactoData.fincas.direccion}`, marginX, posY);
 
     // --- Ubicación: Alinear ícono y texto ---
-    posY += 5;
+    posY += 7;
     const locationIconSize = 7;
     pdf.addImage(locationPNG, 'PNG', marginX, posY, locationIconSize, locationIconSize);
     // Alineamos el texto verticalmente respecto al ícono; ajusta el offset vertical según convenga

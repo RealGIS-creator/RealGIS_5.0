@@ -102,6 +102,10 @@ export class ContactCardComponent {
           "industrial2@empresa.com"
         ]
       },
+      fincas: {
+        numeroFinca: '07878414',
+        direccion: 'Mz x Casa 41B'
+      },
       ubicacion: "8.11127 , -80.97002"
     };
 
