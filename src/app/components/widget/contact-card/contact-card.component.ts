@@ -1,183 +1,72 @@
 import { Component, ComponentRef, ElementRef, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
+
+import { AssociatedFarmsContactCardComponent } from '../associated-farms-contact-card/associated-farms-contact-card.component';
+import { MovableCardComponent } from '../../shared/movable-card/movable-card.component';
 import { DialogService } from '../../../core/services/shared/dialog.service';
 import { SidebarShowDataService } from '../../../core/services/widget/sidebar-show-data.service';
-import { MovableCardComponent } from '../../shared/movable-card/movable-card.component';
-import { AssociatedFarmsContactCardComponent } from '../associated-farms-contact-card/associated-farms-contact-card.component';
-import { ContactCard, Section, TextSection, BadgesSection, ActionSection } from '../../../interfaces/contact-card';
-import { PrintService } from '../../../core/services/shared/print.service';
 
-import  jsPDF from 'jspdf';
-import  html2canvas  from 'html2canvas';
-import * as htmlToImage from 'html-to-image';
-import 'html-to-image';
-
-declare module 'html-to-image' {
-  export interface Options {
-    crossOrigin?: string;
-    pixelRatio: number,
-    quality: number,
-    cacheBust: boolean,
-  }
-}
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 @Component({
   selector: 'app-contact-card',
   imports: [MovableCardComponent, CommonModule],
   templateUrl: './contact-card.component.html',
   styleUrl: './contact-card.component.less',
-  providers: []
 })
 export class ContactCardComponent {
   public isVisibleInformacionPersonal = false;
   public isVisibleInformacionEmployment = false;
   public isVisibleFarmsContactCard = false;
-
-  @ViewChild('pdfContent', { static: false }) pdfContent!: ElementRef
+  @ViewChild('pdfContent', { static: false }) pdfContent!: ElementRef;
 
   dialogRef!: ComponentRef<any>;
-  appMovableCard: ContactCard[] = [
-    {
-      "id": "contactCard",
-      "title": {
-        "text": "Tarjeta de Contacto",
-        "icons": [
-          { "src": "assets/icon/contact_card_download.svg", "alt": "", "action": "download" },
-          { "src": "assets/icon/contact_card_minimize.svg", "alt": "", "action": "minimize" },
-          { "src": "assets/icon/contact_card_close.svg", "alt": "", "action": "close" }
-        ]
-      },
-      "sections": [
-        {
-          "type": "text-top",
-          "title": "Contacto",
-          "value": [
-            { "text": "ID de Crédito: 0000000000000000" },
-            { "text": "Identificación: 1-711-2213" },
-            { "text": "Nombre: PEDRO PEREZ" },
-            { "text": "No. Acreditado: 52815670" },
-            { "text": "CIS: 000000000" }
-          ],
-          "icons": [
-            { "src": "assets/icon/banistmo_white.svg", "alt": "", "action": null }
-          ]
-        },
-        {
-          "type": "badges",
-          "title": "Estrategia",
-          "badges": [
-            { "text": "TDD", "style": "bg-strategy" },
-            { "text": "TDC", "style": "bg-strategy" },
-            { "text": "TOKENIZACIÓN", "style": "bg-strategy" },
-            { "text": "DESCUENTO DIRECTO", "style": "bg-strategy" }
-          ]
-        },
-        {
-          "type": "badges",
-          "title": "Tipo de Producto",
-          "badges": [
-            { "text": "Préstamo Hipotecario", "style": "bg-product" }
-          ]
-        },
-        {
-          "type": "badges",
-          "title": "Días de Mora / Gaveta",
-          "badges": [
-            { "text": "170", "style": "bg-days" }
-          ]
-        },
-        {
-          "type": "badges",
-          "title": "Tipo de Predio",
-          "badges": [
-            { "text": "Residencial", "style": "bg-property" },
-            { "text": "Comercial", "style": "bg-property" },
-            { "text": "Industrial", "style": "bg-property" }
-          ]
-        },
-        {
-          "type": "text",
-          "title": "Saldo de Producto",
-          "value": "$ 5000,32 USD"
-        },
-        {
-          "type": "expandible-column",
-          "title": "Información Laboral",
-          "visible": false,
-          "details": [
-            { "label": "Nombre", "value": "Realtix SAS" },
-            { "label": "Teléfono", "value": "0000000000" },
-            { "label": "Dirección Laboral", "value": "Mz x Casa 31 Barrio" }
-          ]
-        },
-        {
-          "type": "expandible-row",
-          "title": "Información Personal",
-          "visible": false,
-          "details": [
-            { "label": "Dirección Residencial", "value": "Mz x Casa 31 Barrio XXXX" },
-            { "label": "Móviles", "value": "3124545 - 451111 - 7888888" },
-            { "label": "Residenciales", "value": "(507) 5247198 - (507) 6324781 - (507) 2574186" },
-            { "label": "Otros", "value": "(507) 5247198 - (507) 6324781 - (507) 2574186" },
-            { "label": "Email de Contacto", "value": "correo1@ejemplo.com, correo2@ejemplo.com" }
-          ]
-        },
-        {
-          "type": "action",
-          "title": "FINCAS ASOCIADAS",
-          "action": "openAssociatedFarmsContactCard"
-        }
-      ],
-      "location": {
-        "coords": "8.11127 , -80.97002",
-        "icon": "assets/icon/contact_card_location.svg"
-      },
-      "actions": {
-        "download": "download()",
-        "minimize": "minimize()",
-        "close": "close()",
-        "openAssociatedFarmsContactCard": "openAssociatedFarmsContactCard()"
-      }
-    }
-  ]
 
   private dialogService = inject(DialogService);
   private sidebarShowDataService = inject(SidebarShowDataService);
-  private printService = inject(PrintService);
 
   showInformationPersonal(): void {
-    this.isVisibleInformacionPersonal = this.isVisibleInformacionPersonal ? false : true;
+    this.isVisibleInformacionPersonal = this.isVisibleInformacionPersonal
+      ? false
+      : true;
   }
 
   showInformationEmployment(): void {
-    this.isVisibleInformacionEmployment = this.isVisibleInformacionEmployment ? false : true;
+    this.isVisibleInformacionEmployment = this.isVisibleInformacionEmployment
+      ? false
+      : true;
   }
 
   get displayIconPersonal() {
-    return this.isVisibleInformacionPersonal ? 'display_gray_down.svg' : 'display_gray_up.svg';
+    return this.isVisibleInformacionPersonal
+      ? 'display_gray_down.svg'
+      : 'display_gray_up.svg';
   }
 
   get displayIconEmployment() {
-    return this.isVisibleInformacionEmployment ? 'display_gray_down.svg' : 'display_gray_up.svg';
+    return this.isVisibleInformacionEmployment
+      ? 'display_gray_down.svg'
+      : 'display_gray_up.svg';
   }
 
   openAssociatedFarmsContactCard(): void {
     this.isVisibleFarmsContactCard = !this.isVisibleFarmsContactCard;
 
     const config = {
-      component: AssociatedFarmsContactCardComponent
+      component: AssociatedFarmsContactCardComponent,
     };
 
-    if(this.isVisibleFarmsContactCard) {
-      this.dialogRef = this.dialogService.open(config)
+    if (this.isVisibleFarmsContactCard) {
+      this.dialogRef = this.dialogService.open(config);
     } else {
-      this.dialogService.close(this.dialogRef)
+      this.dialogService.close(this.dialogRef);
     }
   }
 
   close(): void {
     this.dialogService.closeAll();
-    this.sidebarShowDataService.setData({activeIndex: 0})
+    this.sidebarShowDataService.setData({ activeIndex: 0 });
   }
 
   minimize(): void {
@@ -185,48 +74,53 @@ export class ContactCardComponent {
     this.isVisibleInformacionEmployment = false;
   }
 
+
   download(): void {
-    this.isVisibleInformacionPersonal = true;
-    this.isVisibleInformacionEmployment = true;
-
-    // this.printService.generatePDF('pdfContent');
-
-  }
-
-  // async download(): Promise<void> {
-  //   try {
-  //     await this.printService.generatePDF('pdfContent');
-  //   } catch (error) {
-  //     let mensajeError = 'Error al generar el PDF';
-  //     if (error instanceof Error) {
-  //       mensajeError = error.message;
-  //     } else {
-  //       mensajeError = String(error);
-  //     }
-  //     console.error(mensajeError);
-  //   }
-  // }
-
-  handleAction(action: string | null) {
-    if (!action) { return; }
-    switch(action) {
-      case 'download': this.download(); break;
-      case 'minimize': this.minimize(); break;
-      case 'close': this.close(); break;
-      case 'openAssociatedFarmsContactCard': this.openAssociatedFarmsContactCard(); break;
-      default: break;
+    if (!this.pdfContent) {
+      console.error('pdfContent no está definido.');
+      return;
     }
+
+    // Convertir SVGs en imágenes antes de capturar el PDF
+    this.convertSVGsToImages();
+
+    setTimeout(() => {
+      const DATA = this.pdfContent!.nativeElement;
+
+      html2canvas(DATA, {
+        scale: 2, // Mayor resolución
+        useCORS: true,
+        backgroundColor: null,
+      }).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const imgWidth = 190;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+        pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
+        pdf.save('Tarjeta_Contacto.pdf');
+      }).catch(error => {
+        console.error('Error al generar el PDF:', error);
+      });
+    }, 500); // Se da un tiempo para que las imágenes se reemplacen antes de la captura
   }
 
-  chunkArray<T>(arr: T[], size: number): T[][] {
-    const result: T[][] = [];
-    for (let i = 0; i < arr.length; i += size) {
-      result.push(arr.slice(i, i + size));
-    }
-    return result;
-  }
+  private convertSVGsToImages(): void {
+    const svgElements = this.pdfContent!.nativeElement.querySelectorAll('svg');
 
-  toggleSection(section: any): void {
-    section.visible = !section.visible;
+    svgElements.forEach((svgElement: any) => {
+      const svgData = new XMLSerializer().serializeToString(svgElement);
+      const svgBlob = new Blob([svgData], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(svgBlob);
+      const img = new
+    Image();
+
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        svgElement.replaceWith(img); // Reemplaza el SVG con la imagen
+      };
+
+      img.src = url;
+    });
   }
 }

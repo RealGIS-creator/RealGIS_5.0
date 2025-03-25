@@ -14,7 +14,7 @@ import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angula
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SearcherSidebarComponent {
-  public optionSearch: string[] = [];
+  public optionSearch: any[] = [];
   public isVisible: boolean = false;
   public selectedOption: string = 'Criterio de Búsqueda';
   public infoSeacher: infoSeacher[] = [];

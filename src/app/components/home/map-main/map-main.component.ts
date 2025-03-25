@@ -4,10 +4,11 @@ import 'leaflet.markercluster';
 import { LocationService } from '../../../core/services/map/location.service';
 import { ToolbarMapVerticalComponent } from '../../widget/toolbar-map-vertical/toolbar-map-vertical.component';
 import { ToolbarComponent } from '../../widget/toolbar/toolbar.component';
+import { ContactCardComponent } from "../../widget/contact-card/contact-card.component";
 
 @Component({
   selector: 'app-map-main',
-  imports: [ToolbarComponent, ToolbarMapVerticalComponent],
+  imports: [ToolbarComponent, ToolbarMapVerticalComponent, ContactCardComponent],
   templateUrl: './map-main.component.html',
   styleUrl: './map-main.component.less'
 })
@@ -15,7 +16,7 @@ export class MapMainComponent {
   private map: any;
   private location!: Array<number>;
   private zoom!: number;
-  zoomLevel = 8; 
+  zoomLevel = 8;
 
 
   constructor(
@@ -25,7 +26,7 @@ export class MapMainComponent {
   }
 
   private initMap() {
-    const baseMapURl = "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"     
+    const baseMapURl = "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
     this.map = L.map('map', {
       zoomControl: false,
       maxZoom: 18,
