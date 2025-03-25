@@ -15,6 +15,7 @@
           type="search"
           aria-label="Search"
           formControlName="inputSearch"
+          [placeholder]="placeholderText"
         />
       </form>
     </div>
@@ -29,7 +30,7 @@
     </div>
     <div class="form-select-option" *ngIf="isVisible">
       <div class="search-container-option" *ngFor="let option of optionSearch" (click)="selectOption(option.label)">
-        <p class="option">
+        <p class="option option-hover">
           <img class="logo search-icon" src="assets/icon/circle_light.svg" alt="administrador">
           {{ option.label }}
         </p>

@@ -15,21 +15,21 @@ export class SearcherSidebarService {
 
   getSearchCriteria(): any[] {
     return [
-      {name: 'Acreditado_Id', label: 'ID de Crédito'},
-      {name: 'AcreditadoNum', label: 'No. de Acreditado'},
-      {name: 'AcreditadoIdenti', label: 'Identificación'}
+      {name: 'AcreditadoNumCuen', label: 'ID de Crédito', type: 'number'},
+      {name: 'AcreditadoNum', label: 'No. de Acreditado', type: 'number'},
+      {name: 'AcreditadoIdenti', label: 'Identificación', type: 'string'}
     ];
   }
 
   getInformationUser(filter: string, info: string): Observable<infoSeachersResponse> {
     console.log('llega al servicio');
-    const url = `${this.apiUrl}WS_Acreditados`;
+    const url = `${this.apiUrl}/WS_Acreditados`;
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });
     const gn = {
       "Gx_mode": "DSP",
-      filter: info
+      [filter]: info
     }
     return this.http.post<infoSeachersResponse>(url, gn, { headers });
   }

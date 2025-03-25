@@ -8,7 +8,7 @@ import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angula
 
 @Component({
   selector: 'app-searcher-sidebar',
-  imports: [ CommonModule, ReactiveFormsModule ],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './searcher-sidebar.component.html',
   styleUrl: './searcher-sidebar.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,8 +26,7 @@ export class SearcherSidebarComponent {
   constructor(
     private searcherSidebarService: SearcherSidebarService,
     private cdr: ChangeDetectorRef
-  )
-  {
+  ) {
     this.createForm();
   }
 
@@ -64,16 +63,23 @@ export class SearcherSidebarComponent {
       const info = this.formSearch.get('inputSearch')?.value;
       const filter = this.searcherSidebarService.getSearchCriteria().find(item => item.label === this.selectedOption);
 
-      this.searcherSidebarService.getInformationUser(filter, info).subscribe(response => {
-        this.infoSeacher = response.SDT_Acreditados;
-        if (this.infoSeacher.length === 0) {
-          this.placeholderText  = 'Datos no encontrados';
-        }
+      filter.type == 'number' ? this.formSearch.get('inputSearch')?.addValidators(Validators.pattern('^[0-9]+$')) : this.formSearch.get('inputSearch')?.addValidators(Validators.pattern('^[A-Za-z ]+$'));
+      this.formSearch.get('inputSearch')?.updateValueAndValidity();
 
-        console.log(this.infoSeacher)
-        this.cdr.markForCheck();
+      if (this.formSearch.valid) {
+        this.searcherSidebarService.getInformationUser(filter.name, info).subscribe(response => {
+          this.infoSeacher = response.SDT_Acreditados;
+          if (this.infoSeacher.length === 0) {
+            this.clearInformation();
+            this.placeholderText = 'Datos no encontrados';
+          }
 
-      });
+          console.log(this.infoSeacher)
+          this.cdr.markForCheck();
+        });
+
+      }
+
     } else {
       console.log('Debe seleccionar una opcion');
       // generar alerta

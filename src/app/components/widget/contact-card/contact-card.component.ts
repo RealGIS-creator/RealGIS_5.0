@@ -1,13 +1,10 @@
 import { Component, ComponentRef, ElementRef, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { AssociatedFarmsContactCardComponent } from '../associated-farms-contact-card/associated-farms-contact-card.component';
 import { MovableCardComponent } from '../../shared/movable-card/movable-card.component';
 import { DialogService } from '../../../core/services/shared/dialog.service';
 import { SidebarShowDataService } from '../../../core/services/widget/sidebar-show-data.service';
-
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+import { PdfContactCardService } from '../../../core/services/widget/pdf-contact-card.service';
 
 @Component({
   selector: 'app-contact-card',
@@ -25,6 +22,7 @@ export class ContactCardComponent {
 
   private dialogService = inject(DialogService);
   private sidebarShowDataService = inject(SidebarShowDataService);
+  private pdfContactCardService = inject(PdfContactCardService);
 
   showInformationPersonal(): void {
     this.isVisibleInformacionPersonal = this.isVisibleInformacionPersonal
@@ -74,53 +72,40 @@ export class ContactCardComponent {
     this.isVisibleInformacionEmployment = false;
   }
 
-
   download(): void {
-    if (!this.pdfContent) {
-      console.error('pdfContent no está definido.');
-      return;
-    }
+    const contactoData = {
+      title: "Tarjeta de Contacto",
+      credito: "0000000000000000",
+      identificacion: "1-711-2213",
+      nombre: "PEDRO PEREZ",
+      acreditado: "52815670",
+      cis: "000000000",
+      estrategia: ["TDD", "TDC", "TOKENIZACIÓN", "DESCUENTO DIRECTO"],
+      tipoProducto: "Préstamo Hipotecario",
+      diasMora: "170",
+      tipoPredio: ["Residencial", "Comercial", "Industrial"],
+      saldoProducto: "$ 5000,32 USD",
+      informacionLaboral: {
+        nombre: "Realtix SAS",
+        telefono: "0000000000",
+        direccion: "Mz x Casa 31 Barrio"
+      },
+      informacionPersonal: {
+        direccion: "Mz x Casa 31 Barrio XXXX",
+        telefonos: "3124545 - 451111 - 7888888",
+        residenciales: "(507) 5247198 - (507) 6324781 - (507) 2574186",
+        otros: "(507) 5247198 - (507) 6324781 - (507) 2574186",
+        email: [
+          "residencial@empresa.com",
+          "comercial@empresa.com",
+          "industrial@empresa.com",
+          "industrial2@empresa.com"
+        ]
+      },
+      ubicacion: "8.11127 , -80.97002"
+    };
 
-    // Convertir SVGs en imágenes antes de capturar el PDF
-    this.convertSVGsToImages();
-
-    setTimeout(() => {
-      const DATA = this.pdfContent!.nativeElement;
-
-      html2canvas(DATA, {
-        scale: 2, // Mayor resolución
-        useCORS: true,
-        backgroundColor: null,
-      }).then(canvas => {
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const imgWidth = 190;
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-        pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
-        pdf.save('Tarjeta_Contacto.pdf');
-      }).catch(error => {
-        console.error('Error al generar el PDF:', error);
-      });
-    }, 500); // Se da un tiempo para que las imágenes se reemplacen antes de la captura
+    this.pdfContactCardService.download(contactoData);
   }
 
-  private convertSVGsToImages(): void {
-    const svgElements = this.pdfContent!.nativeElement.querySelectorAll('svg');
-
-    svgElements.forEach((svgElement: any) => {
-      const svgData = new XMLSerializer().serializeToString(svgElement);
-      const svgBlob = new Blob([svgData], { type: 'image/svg+xml' });
-      const url = URL.createObjectURL(svgBlob);
-      const img = new
-    Image();
-
-      img.onload = () => {
-        URL.revokeObjectURL(url);
-        svgElement.replaceWith(img); // Reemplaza el SVG con la imagen
-      };
-
-      img.src = url;
-    });
-  }
 }
