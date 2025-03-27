@@ -83,7 +83,7 @@ export class PdfContactCardService {
 
     pdf.setFont('Helvetica', 'bold');
     pdf.setFontSize(18);
-    pdf.text(contactoData.title, 10, posY);
+    pdf.text('Tarjeta de Contacto', 10, posY);
 
 
     // --- Información Básica ---
@@ -91,15 +91,15 @@ export class PdfContactCardService {
     pdf.setFontSize(12);
     pdf.setFont('Helvetica', 'normal');
 
-    pdf.text(`ID DE CRÉDITO: ${contactoData.credito}`, marginX, posY);
+    pdf.text(`ID DE CRÉDITO: ${contactoData.AcreditadoNumCuen}`, marginX, posY);
     posY += 7;
-    pdf.text(`Identificación: ${contactoData.identificacion}`, marginX, posY);
+    pdf.text(`Identificación: ${contactoData.AcreditadoIdenti}`, marginX, posY);
     posY += 7;
-    pdf.text(`Nombre: ${contactoData.nombre}`, marginX, posY);
+    pdf.text(`Nombre: ${contactoData.AcreditadoNom}`, marginX, posY);
     posY += 7;
-    pdf.text(`No. Acreditado: ${contactoData.acreditado}`, marginX, posY);
+    pdf.text(`No. Acreditado: ${contactoData.AcreditadoNum}`, marginX, posY);
     posY += 7;
-    pdf.text(`CIS: ${contactoData.cis}`, marginX, posY);
+    pdf.text(`CIS: ${contactoData.CuentasCis}`, marginX, posY);
 
     // Imagen de usuario (lado derecho similar a <img class="icon-user">)
     pdf.addImage(userPNG, 'PNG', 140, 27, 36, 40);
@@ -116,18 +116,18 @@ export class PdfContactCardService {
     posY += 5;
     let posX = marginX;
 
-    contactoData.estrategia.forEach((badge: string) => {
+    // contactoData.estrategia.forEach((badge: string) => {
       // Medir el ancho del texto y sumar el padding
-      const textWidth = pdf.getTextWidth(badge);
-      const dynamicBadgeWidth = textWidth + badgePadding;
+      // const textWidth = pdf.getTextWidth(badge);
+      // const dynamicBadgeWidth = textWidth + badgePadding;
 
-      pdf.setFillColor(80, 80, 80); // color similar a @dark-gray
-      pdf.roundedRect(posX, posY, dynamicBadgeWidth, badgeHeight, 2, 2, 'F');
-      pdf.setTextColor(255, 255, 255);
-      pdf.text(badge, posX + badgePadding / 2, posY + badgeHeight - 2);
+      // pdf.setFillColor(80, 80, 80); // color similar a @dark-gray
+      // pdf.roundedRect(posX, posY, dynamicBadgeWidth, badgeHeight, 2, 2, 'F');
+      // pdf.setTextColor(255, 255, 255);
+      // pdf.text(badge, posX + badgePadding / 2, posY + badgeHeight - 2);
 
-      posX += dynamicBadgeWidth + badgeSpacing;
-    });
+      // posX += dynamicBadgeWidth + badgeSpacing;
+    // });
     pdf.setTextColor(0, 0, 0);
     pdf.setFont('Helvetica', 'normal');
 
@@ -142,7 +142,7 @@ export class PdfContactCardService {
     posY += 5;
     pdf.setFont('Helvetica', 'normal');
     // Badge verde para "Tipo de producto"
-    const textGreen = `${contactoData.tipoProducto}`;
+    const textGreen = `${contactoData.TipoProductoNom}`;
     const textGreenWidth = pdf.getTextWidth(textGreen);
     const badgeGreenWidth = textGreenWidth + 2 * badgePadding;
     pdf.setFillColor(21, 125, 53); // Verde
@@ -151,7 +151,7 @@ export class PdfContactCardService {
     pdf.text(textGreen, col1 + badgePadding, posY + badgeHeight - 3); // Ajusta verticalmente según sea necesario
 
     // Badge azul para "Días de mora / Gaveta"
-    const textBlue = `${contactoData.diasMora}`;
+    const textBlue = `${contactoData.CuentasDiasMoraGave}`;
     const textBlueWidth = pdf.getTextWidth(textBlue);
     const badgeBlueWidth = textBlueWidth + 2 * badgePadding;
     pdf.setFillColor(6, 114, 185); // Azul
@@ -169,15 +169,16 @@ export class PdfContactCardService {
     pdf.text('Tipo de Predio:', marginX, posY);
     posY += 5;
     pdf.setFont('Helvetica', 'normal');
-    pdf.text(`${contactoData.tipoPredio.join(', ')}`, marginX, posY);
+    pdf.text(`${contactoData.TipoPredioNom}`, marginX, posY);
+    // pdf.text(`${contactoData.TipoPredioNom.join(', ')}`, marginX, posY);
 
     // --- Saldo de Producto ---
-    posY += 10;
-    pdf.setFont('Helvetica', 'bold');
-    pdf.text(`Saldo de Producto:`, marginX, posY);
-    posY += 5;
-    pdf.setFont('Helvetica', 'normal');
-    pdf.text(`${contactoData.saldoProducto}`, marginX, posY);
+    // posY += 10;
+    // pdf.setFont('Helvetica', 'bold');
+    // pdf.text(`Saldo de Producto:`, marginX, posY);
+    // posY += 5;
+    // pdf.setFont('Helvetica', 'normal');
+    // pdf.text(`${contactoData.saldoProducto}`, marginX, posY);
 
     // --- Información Laboral ---
     posY += 10;
@@ -185,11 +186,26 @@ export class PdfContactCardService {
     pdf.text("Información Laboral", marginX, posY);
     posY += 7;
     pdf.setFont('Helvetica', 'normal');
-    pdf.text(`Nombre: ${contactoData.informacionLaboral.nombre}`, marginX, posY);
-    posY += 7;
-    pdf.text(`Teléfono: ${contactoData.informacionLaboral.telefono}`, marginX, posY);
-    posY += 7;
-    pdf.text(`Dirección Laboral: ${contactoData.informacionLaboral.direccion}`, marginX, posY);
+    contactoData.Direcciones.forEach((element: any) => {
+      if (element.TipoDireccionCod == '2' || element.TipoDireccionCod == '3') {
+        posY += 7;
+        pdf.text(`Nombre: ${element.DireccionesLugTra}`, marginX, posY);
+        posY += 7;
+        pdf.text(`Dirección Laboral: ${element.Direccion}`, marginX, posY); 
+      }
+    })
+    contactoData.Telefonos.forEach((element: any) => {
+      if (element.TipoTelefonoCod == '4') {
+        posY += 7;
+        pdf.text(`Teléfono: (${element.TelefonoPre}) ${element.TelefonoNum}`, marginX, posY);
+      }
+    })
+
+    // pdf.text(`Nombre: ${contactoData.informacionLaboral.nombre}`, marginX, posY);
+    // posY += 7;
+    // pdf.text(`Teléfono: ${contactoData.informacionLaboral.telefono}`, marginX, posY);
+    // posY += 7;
+    // pdf.text(`Dirección Laboral: ${contactoData.informacionLaboral.direccion}`, marginX, posY);
 
     // --- Información Personal ---
     posY += 10;
@@ -197,23 +213,52 @@ export class PdfContactCardService {
     pdf.text("Información Personal", marginX, posY);
     posY += 7;
     pdf.setFont('Helvetica', 'normal');
-    pdf.text(`Dirección Residencial: ${contactoData.informacionPersonal.direccion}`, marginX, posY);
+    contactoData.Direcciones.forEach((element: any) => {
+      if (element.TipoDireccionCod == '2' || element.TipoDireccionCod == '3') {
+        posY += 7;
+        pdf.text(`Dirección Residencial: ${element.TipoDireccionCod}`, marginX, posY);
+      }
+    })
     posY += 7;
-    pdf.text(`Teléfonos de Contacto: ${contactoData.informacionPersonal.telefonos}`, marginX, posY);
-    posY += 7;
-    pdf.text(`Residenciales: ${contactoData.informacionPersonal.residenciales}`, marginX, posY);
-    posY += 7;
-    pdf.text(`Otros: ${contactoData.informacionPersonal.otros}`, marginX, posY);
-    posY += 7;
+    pdf.text("Teléfonos de Contacto:", marginX, posY);
+    contactoData.Telefonos.forEach((element: any) => {
+      if (element.TipoTelefonoCod == '1') {
+        posY += 7;
+        pdf.text(`Móvil(es): (${element.TelefonoPre}) ${element.TelefonoNum}`, marginX, posY);
+      }
+      if (element.TipoTelefonoCod == '2' || element.TipoTelefonoCod == '3') {
+        posY += 7;
+        pdf.text(`Residencial(es): (${element.TelefonoPre}) ${element.TelefonoNum}`, marginX, posY);
+      }
+      if (element.TipoTelefonoCod == '5') {
+        posY += 7;
+        pdf.text(`Otros: (${element.TelefonoPre}) ${element.TelefonoNum}`, marginX, posY);
+      }
+    })
+
+    // pdf.text(`Dirección Residencial: ${contactoData.informacionPersonal.direccion}`, marginX, posY);
+    // posY += 7;
+    // pdf.text(`Teléfonos de Contacto: ${contactoData.informacionPersonal.telefonos}`, marginX, posY);
+    // posY += 7;
+    // pdf.text(`Residenciales: ${contactoData.informacionPersonal.residenciales}`, marginX, posY);
+    // posY += 7;
+    // pdf.text(`Otros: ${contactoData.informacionPersonal.otros}`, marginX, posY);
+    // posY += 7;
 
     // Para el email, usamos splitTextToSize:
-    const emailText = `Email de contacto: ${contactoData.informacionPersonal.email.join(', ')}`;
-    const emailLines = pdf.splitTextToSize(emailText, maxWidth);
-    pdf.text(emailLines, marginX, posY);
-    posY += emailLines.length * 9; //  mm de alto por línea 
+    posY += 7;
+    pdf.text("Email de contacto:", marginX, posY);
+    contactoData.Correos.forEach((element: any, index: number) => {
+      posY += 7;
+      pdf.text(`${index + 1}. ${element.CorreoElec}`, marginX, posY);
+    })
+    // const emailText = `Email de contacto: ${contactoData.informacionPersonal.email.join(', ')}`;
+    // const emailLines = pdf.splitTextToSize(emailText, maxWidth);
+    // pdf.text(emailLines, marginX, posY);
+    // posY += emailLines.length * 9; //  mm de alto por línea 
 
     // --- Fincas Asociadas (simulando el botón badge) ---
-    posY -= 2;
+    posY += 7;
     pdf.setFont('Helvetica', 'bold');
     pdf.text("Fincas Asociadas", marginX, posY);
     posY += 7;
@@ -231,6 +276,6 @@ export class PdfContactCardService {
 
 
     // Guardar y descargar el PDF
-    pdf.save(`idcredito-${contactoData.credito}`);
+    pdf.save(`idcredito-${contactoData.AcreditadoNumCuen}`);
   }
 }

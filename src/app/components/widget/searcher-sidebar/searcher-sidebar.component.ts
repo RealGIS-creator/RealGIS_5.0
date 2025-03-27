@@ -5,6 +5,7 @@ import { DialogService } from '../../../core/services/shared/dialog.service';
 import { SearcherSidebarService } from '../../../core/services/widget/searcher-sidebar.service';
 import { infoSeacher } from '../../../interfaces/info-searcher';
 import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { SearchCriteria } from '../../../interfaces/search-criteria';
 
 @Component({
   selector: 'app-searcher-sidebar',
@@ -19,6 +20,7 @@ export class SearcherSidebarComponent {
   public selectedOption: string = 'Criterio de Búsqueda';
   public infoSeacher: infoSeacher[] = [];
   public placeholderText = '';
+  public dataFilter?: SearchCriteria;
   formSearch!: FormGroup;
 
   private dialogService = inject(DialogService);
@@ -42,7 +44,6 @@ export class SearcherSidebarComponent {
 
   getSearchCriteria(): void {
     this.optionSearch = this.searcherSidebarService.getSearchCriteria()
-    console.log(this.optionSearch);
   }
 
   clickSearcher(): void {
@@ -61,25 +62,21 @@ export class SearcherSidebarComponent {
   searchInformation(): void {
     if (this.selectedOption !== 'Criterio de Búsqueda' && this.formSearch.valid) {
       const info = this.formSearch.get('inputSearch')?.value;
-      const filter = this.searcherSidebarService.getSearchCriteria().find(item => item.label === this.selectedOption);
+      this.dataFilter = this.searcherSidebarService.getSearchCriteria().find(item => item.label === this.selectedOption);
 
-      filter.type == 'number' ? this.formSearch.get('inputSearch')?.addValidators(Validators.pattern('^[0-9]+$')) : this.formSearch.get('inputSearch')?.addValidators(Validators.pattern('^[A-Za-z ]+$'));
+      this.dataFilter!.type == 'number' ? this.formSearch.get('inputSearch')?.addValidators(Validators.pattern('^[0-9]+$')) : this.formSearch.get('inputSearch')?.addValidators(Validators.pattern('^[A-Za-z ]+$'));
       this.formSearch.get('inputSearch')?.updateValueAndValidity();
 
       if (this.formSearch.valid) {
-        this.searcherSidebarService.getInformationUser(filter.name, info).subscribe(response => {
+        this.searcherSidebarService.getInformationUser(this.dataFilter!.name, info).subscribe(response => {
           this.infoSeacher = response.SDT_Acreditados;
           if (this.infoSeacher.length === 0) {
             this.clearInformation();
             this.placeholderText = 'Datos no encontrados';
           }
-
-          console.log(this.infoSeacher)
           this.cdr.markForCheck();
         });
-
       }
-
     } else {
       console.log('Debe seleccionar una opcion');
       // generar alerta
@@ -95,6 +92,8 @@ export class SearcherSidebarComponent {
 
   showCardUser(): void {
     this.dialogService.closeAll()
-    this.dialogService.open({ component: ContactCardComponent });
+    this.dialogService.open({ component: ContactCardComponent, data: this.dataFilter!.name});
+    // this.dialogService.open({ component: ContactCardComponent, data: { data: this.dataFilter!.name } });
+
   }
 }

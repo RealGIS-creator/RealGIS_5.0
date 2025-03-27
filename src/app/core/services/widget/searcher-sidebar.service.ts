@@ -3,6 +3,7 @@ import { environment } from '../../../../environment/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { infoSeachersResponse } from '../../../interfaces/info-searcher';
+import { SearchCriteria } from '../../../interfaces/search-criteria';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class SearcherSidebarService {
 
   constructor(private http: HttpClient) { }
 
-  getSearchCriteria(): any[] {
+  getSearchCriteria(): SearchCriteria[] {
     return [
       {name: 'AcreditadoNumCuen', label: 'ID de Crédito', type: 'number'},
       {name: 'AcreditadoNum', label: 'No. de Acreditado', type: 'number'},

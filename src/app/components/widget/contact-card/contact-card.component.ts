@@ -1,10 +1,12 @@
-import { Component, ComponentRef, ElementRef, inject, ViewChild } from '@angular/core';
+import { Component, ComponentRef, ElementRef, inject, Input, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AssociatedFarmsContactCardComponent } from '../associated-farms-contact-card/associated-farms-contact-card.component';
 import { MovableCardComponent } from '../../shared/movable-card/movable-card.component';
 import { DialogService } from '../../../core/services/shared/dialog.service';
 import { SidebarShowDataService } from '../../../core/services/widget/sidebar-show-data.service';
 import { PdfContactCardService } from '../../../core/services/widget/pdf-contact-card.service';
+import { InformationCard } from '../../../interfaces/information-card';
+import { InformationCardService } from '../../../core/services/widget/information-card.service';
 
 @Component({
   selector: 'app-contact-card',
@@ -16,6 +18,8 @@ export class ContactCardComponent {
   public isVisibleInformacionPersonal = false;
   public isVisibleInformacionEmployment = false;
   public isVisibleFarmsContactCard = false;
+  public infoUserCard!: InformationCard;
+  @Input() data!: string;
   @ViewChild('pdfContent', { static: false }) pdfContent!: ElementRef;
 
   dialogRef!: ComponentRef<any>;
@@ -23,6 +27,20 @@ export class ContactCardComponent {
   private dialogService = inject(DialogService);
   private sidebarShowDataService = inject(SidebarShowDataService);
   private pdfContactCardService = inject(PdfContactCardService);
+
+  constructor(private informationCardService: InformationCardService)
+  {
+  }
+
+  ngOnInit(): void {
+    this.getInformationCard();
+  }
+
+  private getInformationCard(): void {
+    this.informationCardService.getInformacionCard(this.data + 'F', '294850').subscribe((response) =>{
+      this.infoUserCard = response.SDT_TarjetaContacto[0];
+    });
+  }
 
   showInformationPersonal(): void {
     this.isVisibleInformacionPersonal = this.isVisibleInformacionPersonal
@@ -51,12 +69,14 @@ export class ContactCardComponent {
   openAssociatedFarmsContactCard(): void {
     this.isVisibleFarmsContactCard = !this.isVisibleFarmsContactCard;
 
-    const config = {
-      component: AssociatedFarmsContactCardComponent,
-    };
+    // const config = {
+    //   component: AssociatedFarmsContactCardComponent,
+    // };
 
     if (this.isVisibleFarmsContactCard) {
-      this.dialogRef = this.dialogService.open(config);
+      // this.dialogRef = this.dialogService.open(config);
+      this.dialogService.open({ component: AssociatedFarmsContactCardComponent, data: this.infoUserCard});
+
     } else {
       this.dialogService.close(this.dialogRef);
     }
@@ -109,7 +129,6 @@ export class ContactCardComponent {
       ubicacion: "8.11127 , -80.97002"
     };
 
-    this.pdfContactCardService.download(contactoData);
+    this.pdfContactCardService.download(this.infoUserCard);
   }
-
 }

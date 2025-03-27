@@ -16,7 +16,10 @@ export class GenericDialogComponent {
     this.contentContainer.clear();
     this.componentRef = this.contentContainer.createComponent(component);
     if (data) {
-      Object.assign(this.componentRef.instance, data);
+      const dataObj = typeof data === 'object' ? data : { data };
+      console.log(typeof data === 'object' ? 'es object' : 'no es object');
+      Object.assign(this.componentRef.instance, dataObj);
+      console.log('data dialogo: ', dataObj);
     }
     return this.componentRef;
   }
