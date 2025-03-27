@@ -16,7 +16,8 @@
                 <ng-container *ngFor="let section of card.sections">
                     <ng-container *ngIf="section.type === 'text-top'">
                         <div *ngFor="let item of section.value">
-                            {{ item.text }}
+                            {{ item.label }}
+                            {{ item.value }}
                         </div>
                     </ng-container>
                 </ng-container>

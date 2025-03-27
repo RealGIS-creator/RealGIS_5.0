@@ -33,7 +33,6 @@ export class DialogService {
   }
 
   close(dialogRef: ComponentRef<any>) {
-    console.log(dialogRef);
     const index = this.dialogComponentRefs.indexOf(dialogRef);
     if (index !== -1) {
       this.appRef.detachView(dialogRef.hostView);

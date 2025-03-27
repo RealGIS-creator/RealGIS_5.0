@@ -28,21 +28,22 @@ export interface SectionBase {
 }
 
 // Sección "text-top" con value como arreglo de objetos.
-export interface TextTopSection extends SectionBase {
-  type: 'text-top';
-  value: { text: string }[];
-  icons: Icon[];
-}
-
 export interface TextSection extends SectionBase {
   type: 'text';
   value: string;
+  // detail: BadgeItem[];
 }
 
 // Cada badge ahora es un objeto con texto y estilo
 export interface BadgeItem {
   text: string;
   style: string;
+}
+
+export interface TextTopSection extends SectionBase {
+  type: 'text-top';
+  value: DetailItem[];
+  icons: Icon[];
 }
 
 export interface BadgesSection extends SectionBase {

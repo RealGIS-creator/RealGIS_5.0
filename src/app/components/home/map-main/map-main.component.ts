@@ -4,10 +4,11 @@ import 'leaflet.markercluster';
 import { LocationService } from '../../../core/services/map/location.service';
 import { ToolbarMapVerticalComponent } from '../../widget/toolbar-map-vertical/toolbar-map-vertical.component';
 import { ToolbarComponent } from '../../widget/toolbar/toolbar.component';
+import { ContactCardComponent } from '../../widget/contact-card/contact-card.component';
 
 @Component({
   selector: 'app-map-main',
-  imports: [ToolbarComponent, ToolbarMapVerticalComponent],
+  imports: [ToolbarComponent, ToolbarMapVerticalComponent, ContactCardComponent],
   templateUrl: './map-main.component.html',
   styleUrl: './map-main.component.less'
 })
@@ -16,7 +17,6 @@ export class MapMainComponent {
   private location!: Array<number>;
   private zoom!: number;
   zoomLevel = 8; 
-
 
   constructor(
     private locationService: LocationService
@@ -47,8 +47,6 @@ export class MapMainComponent {
     const response = this.locationService.getLocationInitial();
     this.location = response.location;
     this.zoom = response.zoom;
-    console.log(this.location)
-    console.log(this.zoom)
   }
 
   onZoomChange(newZoom: number): void {

@@ -4,22 +4,8 @@ import { DialogService } from '../../../core/services/shared/dialog.service';
 import { SidebarShowDataService } from '../../../core/services/widget/sidebar-show-data.service';
 import { MovableCardComponent } from '../../shared/movable-card/movable-card.component';
 import { AssociatedFarmsContactCardComponent } from '../associated-farms-contact-card/associated-farms-contact-card.component';
-import { ContactCard, Section, TextSection, BadgesSection, ActionSection } from '../../../interfaces/contact-card';
+import { ContactCard } from '../../../interfaces/contact-card';
 import { PrintService } from '../../../core/services/shared/print.service';
-
-import  jsPDF from 'jspdf';
-import  html2canvas  from 'html2canvas';
-import * as htmlToImage from 'html-to-image';
-import 'html-to-image';
-
-declare module 'html-to-image' {
-  export interface Options {
-    crossOrigin?: string;
-    pixelRatio: number,
-    quality: number,
-    cacheBust: boolean,
-  }
-}
 
 @Component({
   selector: 'app-contact-card',
@@ -52,38 +38,38 @@ export class ContactCardComponent {
           "type": "text-top",
           "title": "Contacto",
           "value": [
-            { "text": "ID de Crédito: 0000000000000000" },
-            { "text": "Identificación: 1-711-2213" },
-            { "text": "Nombre: PEDRO PEREZ" },
-            { "text": "No. Acreditado: 52815670" },
-            { "text": "CIS: 000000000" }
+            { "label": "ID de Crédito", "value": "0000000000000000" },
+            { "label": "Identificación", "value": "1-711-2213" },
+            { "label": "Nombre", "value": "PEDRO PEREZ" },
+            { "label": "No. Acreditado", "value": "52815670" },
+            { "label": "CIS", "value": "000000000" }
           ],
           "icons": [
-            { "src": "assets/icon/banistmo_white.svg", "alt": "", "action": null }
+            { "src": "assets/icon/company_white.svg", "alt": "", "action": null }
           ]
         },
         {
           "type": "badges",
           "title": "Estrategia",
           "badges": [
-            { "text": "TDD", "style": "bg-strategy" },
-            { "text": "TDC", "style": "bg-strategy" },
-            { "text": "TOKENIZACIÓN", "style": "bg-strategy" },
-            { "text": "DESCUENTO DIRECTO", "style": "bg-strategy" }
+            { "text": "TDD", "style": "bg-gray" },
+            { "text": "TDC", "style": "bg-gray" },
+            { "text": "TOKENIZACIÓN", "style": "bg-gray" },
+            { "text": "DESCUENTO DIRECTO", "style": "bg-green" }
           ]
         },
         {
           "type": "badges",
           "title": "Tipo de Producto",
           "badges": [
-            { "text": "Préstamo Hipotecario", "style": "bg-product" }
+            { "text": "Préstamo Hipotecario", "style": "bg-green" }
           ]
         },
         {
           "type": "badges",
           "title": "Días de Mora / Gaveta",
           "badges": [
-            { "text": "170", "style": "bg-days" }
+            { "text": "170", "style": "bg-blue" }
           ]
         },
         {
@@ -98,7 +84,10 @@ export class ContactCardComponent {
         {
           "type": "text",
           "title": "Saldo de Producto",
-          "value": "$ 5000,32 USD"
+          "value": "$ 5000,32 USD",
+          // "badges": [
+          //   { "text": "$ 5000,32 USD", "style": "bg-green" }
+          // ]
         },
         {
           "type": "expandible-column",
@@ -189,23 +178,8 @@ export class ContactCardComponent {
     this.isVisibleInformacionPersonal = true;
     this.isVisibleInformacionEmployment = true;
 
-    // this.printService.generatePDF('pdfContent');
-
+    this.printService.download(this.appMovableCard);
   }
-
-  // async download(): Promise<void> {
-  //   try {
-  //     await this.printService.generatePDF('pdfContent');
-  //   } catch (error) {
-  //     let mensajeError = 'Error al generar el PDF';
-  //     if (error instanceof Error) {
-  //       mensajeError = error.message;
-  //     } else {
-  //       mensajeError = String(error);
-  //     }
-  //     console.error(mensajeError);
-  //   }
-  // }
 
   handleAction(action: string | null) {
     if (!action) { return; }
