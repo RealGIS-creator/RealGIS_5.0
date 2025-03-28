@@ -7,6 +7,7 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root',
 })
 export class DialogService {
+  public activeDialog$ = new BehaviorSubject<ComponentRef<GenericDialogComponent> | null>(null);
   private dialogComponentRefs: ComponentRef<GenericDialogComponent>[] = [];
 
   constructor(private appRef: ApplicationRef) { }
@@ -29,6 +30,7 @@ export class DialogService {
     } 
 
     this.dialogComponentRefs?.push(dialogComponentRef);
+    this.activeDialog$.next(dialogComponentRef);
     return dialogComponentRef;
   }
 
@@ -38,6 +40,12 @@ export class DialogService {
       this.appRef.detachView(dialogRef.hostView);
       dialogRef.destroy();
       this.dialogComponentRefs.splice(index, 1);
+
+      if (this.dialogComponentRefs.length === 0) {
+        this.activeDialog$.next(null);
+      } else {
+        this.activeDialog$.next(this.dialogComponentRefs[0]);
+      }
     }
   }
 
@@ -47,5 +55,6 @@ export class DialogService {
       dialogRef.destroy();
     });
     this.dialogComponentRefs = [];
+    this.activeDialog$.next(null);
   }
 }

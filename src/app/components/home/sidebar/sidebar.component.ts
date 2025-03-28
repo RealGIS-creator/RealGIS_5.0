@@ -5,6 +5,7 @@ import { SearcherSidebarComponent } from '../../widget/searcher-sidebar/searcher
 import { GenericDialogComponent } from '../../shared/generic-dialog/generic-dialog.component';
 import { DialogService } from '../../../core/services/shared/dialog.service';
 import { SidebarService } from '../../../core/services/home/sidebar.service';
+import { Subscription } from 'rxjs';
 // import { SidebarShowDataService } from '../../../core/services/widget/sidebar-show-data.service';
 
 @Component({
@@ -20,6 +21,8 @@ export class SidebarComponent {
   private dialogService = inject(DialogService);
   dialog: ComponentRef<GenericDialogComponent> | null | any = null;
 
+  private dialogSub!: Subscription;
+
   constructor(
     private sidebarService: SidebarService,
     // private sidebarShowDataService: SidebarShowDataService
@@ -27,6 +30,13 @@ export class SidebarComponent {
 
   ngOnInit() {
     this.getIcons();
+
+    this.dialogSub = this.dialogService.activeDialog$.subscribe(dialogRef => {
+      if (!dialogRef) {
+        console.log('No hay diálogo activo');
+        this.resetImagesToDark();
+      }
+    });
   }
 
   getIcons(): void {
@@ -63,5 +73,12 @@ export class SidebarComponent {
     }
 
     this.dialogService.open({ component: componentToLoad });
+  }
+
+  resetImagesToDark(): void {
+    // Vuelve a los estilos iniciales
+    this.imagesDefault.forEach((element) => {
+      element.type = 'dark';
+    });
   }
 }
