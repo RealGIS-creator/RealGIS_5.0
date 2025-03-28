@@ -9,6 +9,7 @@ export interface InformationCard {
     CuentaAcreditado_Id?: string;
     CuentasCis?: string;
     CuentasDiasMoraGave?: string;
+    CuentasSalPro?: string;
     CuentasEst?: string;
     Cuentas_id?: string;
     Correos?: [

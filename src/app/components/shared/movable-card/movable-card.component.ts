@@ -24,8 +24,6 @@ export class MovableCardComponent {
   }
 
   onMouseDown(event: MouseEvent): void {
-    console.log('onMouseDown', event)
-
     this.isDragging = true;
     this.offsetX = event.clientX - this.position.x;
     this.offsetY = event.clientY - this.position.y;
@@ -45,8 +43,6 @@ export class MovableCardComponent {
 
   @HostListener('document:mouseup')
   onMouseUp(): void {
-    console.log('onMouseUp')
-
     this.isDragging = false;
     this.elRef.nativeElement.style.zIndex = '1000';
   }

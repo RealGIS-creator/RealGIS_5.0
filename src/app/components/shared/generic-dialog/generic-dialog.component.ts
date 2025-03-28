@@ -1,4 +1,5 @@
 import { Component, Input, ViewChild, ViewContainerRef, ComponentRef, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-generic-dialog',
@@ -12,18 +13,35 @@ export class GenericDialogComponent {
   componentRef: ComponentRef<any> | null = null;
   closeCallback: (() => void) | null = null;
 
+  // loadContentComponent2(component: any, data?: any): ComponentRef<any> {
+  //   this.contentContainer.clear();
+  //   this.componentRef = this.contentContainer.createComponent(component);
+  //   if (data) {
+  //     const dataObj = typeof data === 'object' ? data : { data };
+  //     Object.assign(this.componentRef.instance, dataObj);
+  //     console.log('data dialogo: ', dataObj);
+  //   }
+  //   return this.componentRef;
+  // }
+
   loadContentComponent(component: any, data?: any): ComponentRef<any> {
     this.contentContainer.clear();
     this.componentRef = this.contentContainer.createComponent(component);
     if (data) {
-      const dataObj = typeof data === 'object' ? data : { data };
-      console.log(typeof data === 'object' ? 'es object' : 'no es object');
-      Object.assign(this.componentRef.instance, dataObj);
-      console.log('data dialogo: ', dataObj);
+      const newData = JSON.parse(JSON.stringify(data));
+      
+      if ('data$' in this.componentRef.instance) {
+        const dataSubject = new BehaviorSubject(newData);
+        this.componentRef.setInput('data$', dataSubject);
+      }
+      else if ('data' in this.componentRef.instance) {
+        this.componentRef.setInput('data', newData);
+      }
+      this.componentRef.changeDetectorRef.detectChanges();
     }
     return this.componentRef;
   }
-
+  
   setCloseCallback(callback: () => void) {
     this.closeCallback = callback;
   }

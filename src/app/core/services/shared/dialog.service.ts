@@ -1,7 +1,7 @@
 import { Injectable, createComponent, ApplicationRef, ComponentRef } from '@angular/core';
 import { GenericDialogComponent } from '../../../components/shared/generic-dialog/generic-dialog.component';
 import { DialogConfig } from '../../../interfaces/dialog-config';
-
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -24,11 +24,11 @@ export class DialogService {
     });
 
     if (config.component) {
-      dialogComponentRef.instance.loadContentComponent(config.component, config.data);
-    }
+      const dataSubject = new BehaviorSubject(config.data);
+      dialogComponentRef.instance.loadContentComponent(config.component, dataSubject);
+    } 
 
     this.dialogComponentRefs?.push(dialogComponentRef);
-
     return dialogComponentRef;
   }
 

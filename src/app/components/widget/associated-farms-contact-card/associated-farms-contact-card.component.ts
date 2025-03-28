@@ -1,29 +1,21 @@
 import { Component, Input, SimpleChanges } from '@angular/core';
 import { MovableCardComponent } from '../../shared/movable-card/movable-card.component';
-import { InformationCard } from '../../../interfaces/information-card';
+import { BehaviorSubject } from 'rxjs';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-associated-farms-contact-card',
-  imports: [MovableCardComponent],
+  imports: [MovableCardComponent, CommonModule],
   templateUrl: './associated-farms-contact-card.component.html',
   styleUrl: './associated-farms-contact-card.component.less'
 })
 export class AssociatedFarmsContactCardComponent {
 
-  @Input() data!: InformationCard;
-
-  constructor() {
-    console.log('Constructor, data:', this.data); 
-  }
+  @Input() data$: BehaviorSubject<any> = new BehaviorSubject(null);
+  data: any;
 
   ngOnInit(): void {
-    console.log('ngOnInit, data:', this.data); 
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['data']) {
-      console.log('ngOnChanges, data:', changes['data'].currentValue);
-    }
+    this.data = this.data$.value._value;
   }
 
 }

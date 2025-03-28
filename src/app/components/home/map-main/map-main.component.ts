@@ -48,8 +48,6 @@ export class MapMainComponent {
     const response = this.locationService.getLocationInitial();
     this.location = response.location;
     this.zoom = response.zoom;
-    console.log(this.location)
-    console.log(this.zoom)
   }
 
   onZoomChange(newZoom: number): void {

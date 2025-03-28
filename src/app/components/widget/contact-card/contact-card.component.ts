@@ -7,6 +7,7 @@ import { SidebarShowDataService } from '../../../core/services/widget/sidebar-sh
 import { PdfContactCardService } from '../../../core/services/widget/pdf-contact-card.service';
 import { InformationCard } from '../../../interfaces/information-card';
 import { InformationCardService } from '../../../core/services/widget/information-card.service';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-contact-card',
@@ -19,8 +20,9 @@ export class ContactCardComponent {
   public isVisibleInformacionEmployment = false;
   public isVisibleFarmsContactCard = false;
   public infoUserCard!: InformationCard;
-  @Input() data!: string;
   @ViewChild('pdfContent', { static: false }) pdfContent!: ElementRef;
+  @Input() data$: BehaviorSubject<any> = new BehaviorSubject(null);
+  data: any;
 
   dialogRef!: ComponentRef<any>;
 
@@ -33,6 +35,7 @@ export class ContactCardComponent {
   }
 
   ngOnInit(): void {
+    this.data = this.data$.value._value;
     this.getInformationCard();
   }
 
@@ -69,13 +72,13 @@ export class ContactCardComponent {
   openAssociatedFarmsContactCard(): void {
     this.isVisibleFarmsContactCard = !this.isVisibleFarmsContactCard;
 
-    // const config = {
-    //   component: AssociatedFarmsContactCardComponent,
-    // };
-
     if (this.isVisibleFarmsContactCard) {
-      // this.dialogRef = this.dialogService.open(config);
-      this.dialogService.open({ component: AssociatedFarmsContactCardComponent, data: this.infoUserCard});
+      const farms = {
+        FincaDireccion: this.infoUserCard.FincaDireccion,
+        FincaEst: this.infoUserCard.FincaEst,
+        FincaFolio: this.infoUserCard.FincaFolio
+      };
+      this.dialogRef = this.dialogService.open({ component: AssociatedFarmsContactCardComponent, data: JSON.parse(JSON.stringify(farms))});
 
     } else {
       this.dialogService.close(this.dialogRef);
@@ -93,42 +96,6 @@ export class ContactCardComponent {
   }
 
   download(): void {
-    const contactoData = {
-      title: "Tarjeta de Contacto",
-      credito: "0000000000000000",
-      identificacion: "1-711-2213",
-      nombre: "PEDRO PEREZ",
-      acreditado: "52815670",
-      cis: "000000000",
-      estrategia: ["TDD", "TDC", "TOKENIZACIÓN", "DESCUENTO DIRECTO"],
-      tipoProducto: "Préstamo Hipotecario",
-      diasMora: "170",
-      tipoPredio: ["Residencial", "Comercial", "Industrial"],
-      saldoProducto: "$ 5000,32 USD",
-      informacionLaboral: {
-        nombre: "Realtix SAS",
-        telefono: "0000000000",
-        direccion: "Mz x Casa 31 Barrio"
-      },
-      informacionPersonal: {
-        direccion: "Mz x Casa 31 Barrio XXXX",
-        telefonos: "3124545 - 451111 - 7888888",
-        residenciales: "(507) 5247198 - (507) 6324781 - (507) 2574186",
-        otros: "(507) 5247198 - (507) 6324781 - (507) 2574186",
-        email: [
-          "residencial@empresa.com",
-          "comercial@empresa.com",
-          "industrial@empresa.com",
-          "industrial2@empresa.com"
-        ]
-      },
-      fincas: {
-        numeroFinca: '07878414',
-        direccion: 'Mz x Casa 41B'
-      },
-      ubicacion: "8.11127 , -80.97002"
-    };
-
     this.pdfContactCardService.download(this.infoUserCard);
   }
 }

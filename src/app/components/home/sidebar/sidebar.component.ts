@@ -5,7 +5,7 @@ import { SearcherSidebarComponent } from '../../widget/searcher-sidebar/searcher
 import { GenericDialogComponent } from '../../shared/generic-dialog/generic-dialog.component';
 import { DialogService } from '../../../core/services/shared/dialog.service';
 import { SidebarService } from '../../../core/services/home/sidebar.service';
-import { SidebarShowDataService } from '../../../core/services/widget/sidebar-show-data.service';
+// import { SidebarShowDataService } from '../../../core/services/widget/sidebar-show-data.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -22,14 +22,11 @@ export class SidebarComponent {
 
   constructor(
     private sidebarService: SidebarService,
-    private sidebarShowDataService: SidebarShowDataService
+    // private sidebarShowDataService: SidebarShowDataService
   ) {}
 
   ngOnInit() {
     this.getIcons();
-    // this.sidebarShowDataService.data$.subscribe((data) => {
-    //   this.activeIndex = data.activeIndex; 
-    // });
   }
 
   getIcons(): void {
@@ -59,13 +56,12 @@ export class SidebarComponent {
       //   break;
       case 2:
         componentToLoad = SearcherSidebarComponent;
-        dialogData = { otroDato: `Información extra para el item ${img.id}` };
         break;
       // default:
       //   console.warn('Componente de diálogo no definido para el ID:', img.id);
       //   return;
     }
 
-    this.dialogService.open({ component: componentToLoad, data: dialogData });
+    this.dialogService.open({ component: componentToLoad });
   }
 }
