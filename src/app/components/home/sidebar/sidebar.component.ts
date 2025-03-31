@@ -6,6 +6,7 @@ import { GenericDialogComponent } from '../../shared/generic-dialog/generic-dial
 import { DialogService } from '../../../core/services/shared/dialog.service';
 import { SidebarService } from '../../../core/services/home/sidebar.service';
 import { Subscription } from 'rxjs';
+import { DownloadComponent } from '../../widget/download/download.component';
 // import { SidebarShowDataService } from '../../../core/services/widget/sidebar-show-data.service';
 
 @Component({
@@ -66,6 +67,9 @@ export class SidebarComponent {
       //   break;
       case 2:
         componentToLoad = SearcherSidebarComponent;
+        break;
+      case 5:
+        componentToLoad = DownloadComponent;
         break;
       // default:
       //   console.warn('Componente de diálogo no definido para el ID:', img.id);
