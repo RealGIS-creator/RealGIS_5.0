@@ -68,6 +68,9 @@ export class SidebarComponent {
       case 2:
         componentToLoad = SearcherSidebarComponent;
         break;
+      case 3:
+          componentToLoad = SearcherSidebarComponent;
+          break;
       case 5:
         componentToLoad = DownloadComponent;
         break;

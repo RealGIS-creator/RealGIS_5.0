@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet.markercluster';
 import { LocationService } from '../../../core/services/map/location.service';
@@ -12,7 +12,7 @@ import { ContactCardComponent } from "../../widget/contact-card/contact-card.com
   templateUrl: './map-main.component.html',
   styleUrl: './map-main.component.less'
 })
-export class MapMainComponent {
+export class MapMainComponent implements OnInit, AfterViewInit {
   private map: any;
   private location!: Array<number>;
   private zoom!: number;
@@ -23,6 +23,13 @@ export class MapMainComponent {
     private locationService: LocationService
   ) {
     this.getLocateMap()
+  }
+
+  ngAfterViewInit(): void {
+    this.initMap()
+  }
+  ngOnInit(): void {
+
   }
 
   private initMap() {
@@ -38,10 +45,6 @@ export class MapMainComponent {
     this.map.on('zoomend', () => {
       this.zoomLevel = this.map.getZoom();
     });
-  }
-
-  ngAfterViewInit(): void {
-    this.initMap();
   }
 
   getLocateMap(): void {
