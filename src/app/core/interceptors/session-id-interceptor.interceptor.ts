@@ -13,8 +13,10 @@ export const sessionIdInterceptorInterceptor: HttpInterceptorFn = (req, next) =>
     if (token) {
       console.log('token: ', token)
       const cloned = req.clone({
-        headers: req.headers.set('Authorization', `Bearer ${token}`)
-        // { withCredentials: true }
+        withCredentials: true,  // Esto indica que se envíen credenciales (cookies, etc.)
+        setHeaders: token ? { 
+          Authorization: `${token}` 
+        } : {}
       });
       return next(cloned);
     } else {
