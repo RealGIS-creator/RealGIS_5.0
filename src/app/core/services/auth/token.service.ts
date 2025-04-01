@@ -29,7 +29,7 @@ export class TokenService {
       console.log('token: ', this.token)
     } catch (error) {
       console.error('Error al obtener el token:', error);
-      throw error; // Propagar el error para manejarlo en el inicializador
+      throw error; 
     }
   }
 
