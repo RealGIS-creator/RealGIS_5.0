@@ -21,14 +21,15 @@ export class InformationCardService {
     ];
   }
 
-  getInformacionCard(filter: string, info: string): Observable<InformationCardObject> {
-    const url = `${this.apiUrl}/WS_TarjetaContacto`;
+  getInformacionCard(filter: string, info: string, adress: string): Observable<InformationCardObject> {
+    const url = `${this.apiUrl}/WS_TarjetaContacto1`;
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });
     const body = {
       "Gx_mode": "DSP",
-      [filter]: info
+      [filter]: info,
+      "Direccion_IdF": adress
     }
     return this.http.post<InformationCardObject>(url, body, { headers });
   }

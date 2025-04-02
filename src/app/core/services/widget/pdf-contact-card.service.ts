@@ -195,28 +195,37 @@ export class PdfContactCardService {
     pdf.text("Información Laboral", marginX, posY);
     posY += 1;
     pdf.setFont('Helvetica', 'normal');
-    const laboralDireccionFiltro = contactoData.Direcciones
-      .filter((element: any) => element.TipoDireccionCod === '2' || element.TipoDireccionCod === '3');
+    if (contactoData.TipoDireccionCod === '2' || contactoData.TipoDireccionCod === '2') {
+      posY += 7;
+      pdf.text(`Nombre: ${contactoData.Direccion}`, marginX, posY);
+    }
 
-    const laboralDireccion = laboralDireccionFiltro.map((element: any) => element.DireccionesLugTra).join(' - ');
-    const direcciones = laboralDireccionFiltro.map((element: any) => element.Direccion).join(' - ');
+    // const laboralDireccionFiltro = contactoData.Direcciones
+    //   .filter((element: any) => element.TipoDireccionCod === '2' || element.TipoDireccionCod === '3');
+
+    // const laboralDireccion = laboralDireccionFiltro.map((element: any) => element.DireccionesLugTra).join(' - ');
+    // const direcciones = laboralDireccionFiltro.map((element: any) => element.Direccion).join(' - ');
 
     const telefonos = contactoData.Telefonos
     .filter((element: any) => element.TipoTelefonoCod === '4')
     .map((element: any) => `(${element.TelefonoPre}) ${element.TelefonoNum}`)
     .join('- ');
 
-    if (laboralDireccion) {
-      posY += 7;
-      pdf.text(`Nombre: ${laboralDireccion}`, marginX, posY);
-    }
+    // if (laboralDireccion) {
+    //   posY += 7;
+    //   pdf.text(`Nombre: ${laboralDireccion}`, marginX, posY);
+    // }
     if (telefonos) {
       posY += 7;
       pdf.text(`Teléfono: ${telefonos}`, marginX, posY);
     }
-    if (direcciones) {
+    // if (direcciones) {
+    //   posY += 7;
+    //   pdf.text(`Dirección Laboral: ${direcciones}`, marginX, posY);
+    // }
+    if (contactoData.TipoDireccionCod === '2' || contactoData.TipoDireccionCod === '2') {
       posY += 7;
-      pdf.text(`Dirección Laboral: ${direcciones}`, marginX, posY);
+      pdf.text(`Dirección Laboral: ${contactoData.DireccionesLugTra}`, marginX, posY);
     }
 
     // --- Información Personal ---
@@ -226,13 +235,18 @@ export class PdfContactCardService {
     pdf.text("Información Personal", marginX, posY);
     posY += 1;
     pdf.setFont('Helvetica', 'normal');
-    const direccionesResidenciales = contactoData.Direcciones
-    .filter((element: any) => element.TipoDireccionCod === '1').map((element: any) => element.DireccionesLugTra).join(' - ');
+    // const direccionesResidenciales = contactoData.Direcciones
+    // .filter((element: any) => element.TipoDireccionCod === '1').map((element: any) => element.DireccionesLugTra).join(' - ');
 
-    if (direccionesResidenciales) {
+    // if (direccionesResidenciales) {
+    //   posY += 7;
+    //   pdf.text(`Dirección Residencial: ${direccionesResidenciales}`, marginX, posY);
+    // }
+    if (contactoData.TipoDireccionCod === '1') {
       posY += 7;
-      pdf.text(`Dirección Residencial: ${direccionesResidenciales}`, marginX, posY);
+      pdf.text(`Dirección Residencial: ${contactoData.Direccion}`, marginX, posY);
     }
+
     checkAddPage(9);
     const telefonoMovilFiltro = contactoData.Telefonos
     .filter((element: any) => element.TipoTelefonoCod === '1').map((element: any) => `(${element.TelefonoPre}) ${element.TelefonoNum}`).join(' - ');
@@ -283,10 +297,8 @@ export class PdfContactCardService {
     checkAddPage(9);
     const locationIconSize = 7;
     pdf.addImage(locationPNG, 'PNG', marginX, posY, locationIconSize, locationIconSize);
-    contactoData.Direcciones.forEach((element: any) => {
-      pdf.text(`${element.GeoDomicilioLati}, ${element.GeoDomicilioLongi}`, marginX + locationIconSize + 5, posY + locationIconSize - 1);
+    pdf.text(`${contactoData.GeoDomicilioLati}, ${contactoData.GeoDomicilioLongi}`, marginX + locationIconSize + 5, posY + locationIconSize - 1);
 
-    });
 
     // --- Agregar Header y Footer en cada página ---
     const totalPages = (pdf.internal as any).getNumberOfPages();

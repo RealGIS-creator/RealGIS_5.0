@@ -1,4 +1,4 @@
-import { Component, ComponentRef, ElementRef, inject, Input, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ComponentRef, ElementRef, inject, Input, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AssociatedFarmsContactCardComponent } from '../associated-farms-contact-card/associated-farms-contact-card.component';
 import { MovableCardComponent } from '../../shared/movable-card/movable-card.component';
@@ -30,7 +30,9 @@ export class ContactCardComponent {
   private sidebarShowDataService = inject(SidebarShowDataService);
   private pdfContactCardService = inject(PdfContactCardService);
 
-  constructor(private informationCardService: InformationCardService)
+  constructor(private informationCardService: InformationCardService, 
+    private cdRef: ChangeDetectorRef
+  )
   {
   }
 
@@ -40,8 +42,14 @@ export class ContactCardComponent {
   }
 
   private getInformationCard(): void {
-    this.informationCardService.getInformacionCard(this.data + 'F', '294850').subscribe((response) =>{
-      this.infoUserCard = response.SDT_TarjetaContacto[0];
+    console.log('direccion id: ', this.data.idAdress)
+    this.informationCardService.getInformacionCard(this.data.filterName + 'F', '294850', this.data.idAdress).subscribe((response) =>{
+      if (response && response.SDT_TarjetaContacto && response.SDT_TarjetaContacto.length) {
+        this.infoUserCard = response.SDT_TarjetaContacto[0];
+        this.cdRef.detectChanges();
+      } else {
+        console.error('No se encontraron datos en la respuesta');
+      }
     });
   }
 
@@ -74,9 +82,9 @@ export class ContactCardComponent {
 
     if (this.isVisibleFarmsContactCard) {
       const farms = {
-        FincaDireccion: this.infoUserCard.FincaDireccion,
-        FincaEst: this.infoUserCard.FincaEst,
-        FincaFolio: this.infoUserCard.FincaFolio
+        FincaDireccion: this.infoUserCard?.FincaDireccion,
+        FincaEst: this.infoUserCard?.FincaEst,
+        FincaFolio: this.infoUserCard?.FincaFolio
       };
       this.dialogRef = this.dialogService.open({ component: AssociatedFarmsContactCardComponent, data: JSON.parse(JSON.stringify(farms))});
 

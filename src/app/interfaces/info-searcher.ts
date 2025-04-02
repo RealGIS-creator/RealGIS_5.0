@@ -1,12 +1,4 @@
 export interface infoSeacher {
-    AcreFechCre: string;
-    AcreFechMod: string;
-    AcreIPCre: string;
-    AcreIPMod: string;
-    AcreObjCre: string;
-    AcreObjMod: string;
-    AcreUsuCre: string;
-    AcreUsuMod: string;
     AcreditadoIdenti: string;
     AcreditadoNom: string;
     AcreditadoNum: string;
@@ -14,6 +6,8 @@ export interface infoSeacher {
     Acreditado_Id: string;
     AcreditadosEst: string;
     TipoPersona_Id: string;
+    Direccion_Id: string;
+    TipoDireccionCod: string;
 }
 
 export interface infoSeachersResponse {

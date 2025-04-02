@@ -43,8 +43,10 @@
     <div class="option-info-user mb-4" [hidden]="infoSeacher.length == 0">
       <div class="search-container-option" *ngFor="let info of infoSeacher">
         <p class="option option-tc d-flex justify-content-between">
-          No. Cliente: {{ info.AcreditadoNum }}
-          <button class="btn btn-card-windows" (click)="showCardUser()">Ver TC</button>
+          No. Cliente: {{ info.AcreditadoNum }} -
+          <small *ngIf="info.TipoDireccionCod == '2'">DL</small>
+          <small *ngIf="info.TipoDireccionCod == '1'">DR</small>
+          <button class="btn btn-card-windows" (click)="showCardUser(info.Direccion_Id)">Ver TC</button>
         </p>
       </div>
     </div>

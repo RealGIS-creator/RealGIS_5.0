@@ -23,7 +23,7 @@ export class SearcherSidebarService {
   }
 
   getInformationUser(filter: string, info: string): Observable<infoSeachersResponse> {
-    const url = `${this.apiUrl}/WS_Acreditados`;
+    const url = `${this.apiUrl}/WS_Acreditados1`;
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });

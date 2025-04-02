@@ -90,9 +90,13 @@ export class SearcherSidebarComponent {
     this.selectedOption = 'Criterio de Búsqueda';
   }
 
-  showCardUser(): void {
+  showCardUser(idAdress: string): void {
     this.dialogService.closeAll()
-    this.dialogService.open({ component: ContactCardComponent, data: this.dataFilter!.name});
+    const data = {
+      filterName: this.dataFilter!.name, 
+      idAdress: idAdress
+    }
+    this.dialogService.open({ component: ContactCardComponent, data: data});
     // this.dialogService.open({ component: ContactCardComponent, data: { data: this.dataFilter!.name } });
 
   }
