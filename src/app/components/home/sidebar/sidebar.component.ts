@@ -52,13 +52,20 @@ export class SidebarComponent {
       element.type = element.type == 'ligth' ? 'dark' : 'dark';
     });
 
-    this.imagesDefault[id - 1].type = type == 'dark' ? 'ligth' : 'dark';
+    // this.imagesDefault[id - 1].type = type == 'dark' ? 'ligth' : 'dark';
+     
+    if (type == 'dark') {
+      this.imagesDefault[id - 1].type = 'ligth';
+    } else {
+      this.imagesDefault[id - 1].type = 'dark';
+      this.dialogService.closeAll();
+      this.activeIndex = null;
+    }
   }
 
   openDialog(img: any) {
     this.activeIndex = 0;
     let componentToLoad: any = null;
-    let dialogData: any = null;
 
     switch (img.id) {
       // case 1:
@@ -80,7 +87,6 @@ export class SidebarComponent {
   }
 
   resetImagesToDark(): void {
-    // Vuelve a los estilos iniciales
     this.imagesDefault.forEach((element) => {
       element.type = 'dark';
     });

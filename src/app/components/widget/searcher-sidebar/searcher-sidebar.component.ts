@@ -60,6 +60,7 @@ export class SearcherSidebarComponent {
   }
 
   searchInformation(): void {
+    console.log('validacion: ', this.formSearch.valid);
     if (this.selectedOption !== 'Criterio de Búsqueda' && this.formSearch.valid) {
       const info = this.formSearch.get('inputSearch')?.value;
       this.dataFilter = this.searcherSidebarService.getSearchCriteria().find(item => item.label === this.selectedOption);
@@ -77,6 +78,7 @@ export class SearcherSidebarComponent {
           this.cdr.markForCheck();
         });
       }
+ 
     } else {
       console.log('Debe seleccionar una opcion');
       // generar alerta
@@ -91,13 +93,12 @@ export class SearcherSidebarComponent {
   }
 
   showCardUser(idAdress: string): void {
-    this.dialogService.closeAll()
     const data = {
       filterName: this.dataFilter!.name, 
       idAdress: idAdress
     }
+    this.dialogService.closeAll()
     this.dialogService.open({ component: ContactCardComponent, data: data});
     // this.dialogService.open({ component: ContactCardComponent, data: { data: this.dataFilter!.name } });
-
   }
 }
