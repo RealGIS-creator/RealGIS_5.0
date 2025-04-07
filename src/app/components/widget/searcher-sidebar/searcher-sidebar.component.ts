@@ -20,6 +20,7 @@ export class SearcherSidebarComponent {
   public selectedOption: string = 'Criterio de Búsqueda';
   public infoSeacher: infoSeacher[] = [];
   public placeholderText = '';
+  public infoInput = '';
   public dataFilter?: SearchCriteria;
   formSearch!: FormGroup;
 
@@ -62,14 +63,14 @@ export class SearcherSidebarComponent {
   searchInformation(): void {
     console.log('validacion: ', this.formSearch.valid);
     if (this.selectedOption !== 'Criterio de Búsqueda' && this.formSearch.valid) {
-      const info = this.formSearch.get('inputSearch')?.value;
+      this.infoInput = this.formSearch.get('inputSearch')?.value;
       this.dataFilter = this.searcherSidebarService.getSearchCriteria().find(item => item.label === this.selectedOption);
 
-      this.dataFilter!.type == 'number' ? this.formSearch.get('inputSearch')?.addValidators(Validators.pattern('^[0-9]+$')) : this.formSearch.get('inputSearch')?.addValidators(Validators.pattern('^[A-Za-z ]+$'));
-      this.formSearch.get('inputSearch')?.updateValueAndValidity();
+      // this.dataFilter!.type == 'number' ? this.formSearch.get('inputSearch')?.addValidators(Validators.pattern('^[0-9]+$')) : this.formSearch.get('inputSearch')?.addValidators(Validators.pattern('^[A-Za-z ]+$'));
+      // this.formSearch.get('inputSearch')?.updateValueAndValidity();
 
       if (this.formSearch.valid) {
-        this.searcherSidebarService.getInformationUser(this.dataFilter!.name, info).subscribe(response => {
+        this.searcherSidebarService.getInformationUser(this.dataFilter!.name, this.infoInput).subscribe(response => {
           this.infoSeacher = response.SDT_Acreditados;
           if (this.infoSeacher.length === 0) {
             this.clearInformation();
@@ -95,9 +96,10 @@ export class SearcherSidebarComponent {
   showCardUser(idAdress: string): void {
     const data = {
       filterName: this.dataFilter!.name, 
+      filterValue: this.infoInput, 
       idAdress: idAdress
     }
-    this.dialogService.closeAll()
+    this.dialogService.closeAll();
     this.dialogService.open({ component: ContactCardComponent, data: data});
     // this.dialogService.open({ component: ContactCardComponent, data: { data: this.dataFilter!.name } });
   }

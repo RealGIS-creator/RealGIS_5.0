@@ -79,7 +79,7 @@
                         <!-- <li *ngFor="let laboral of infoUserCard.Direcciones"> -->
                         <ng-container
                             *ngIf="infoUserCard.TipoDireccionCod == '2' || infoUserCard.TipoDireccionCod == '3'">
-                            - {{ infoUserCard.DireccionesLugTra }}
+                            {{ infoUserCard.DireccionesLugTra }}
                         </ng-container>
                         <!-- </li> -->
                     </ul>
@@ -89,7 +89,7 @@
                     <ul class="list-unstyled">
                         <li *ngFor="let laboral of infoUserCard.Telefonos">
                             <ng-container *ngIf="laboral.TipoTelefonoCod == '4'">
-                                - ({{ laboral.TelefonoPre }}) {{ laboral.TelefonoNum }}
+                                + ({{ laboral.TelefonoPre }}) {{ laboral.TelefonoNum }}
                             </ng-container>
                         </li>
                     </ul>
@@ -100,7 +100,7 @@
                         <!-- <li *ngFor="let laboral of infoUserCard.Direcciones"> -->
                         <ng-container
                             *ngIf="infoUserCard.TipoDireccionCod == '2' || infoUserCard.TipoDireccionCod == '3'">
-                            - {{ infoUserCard.Direccion }}
+                            {{ infoUserCard.Direccion }}
                         </ng-container>
                         <!-- </li> -->
                     </ul>
@@ -161,7 +161,7 @@
 
         <div class="bg-info location mt-3 d-flex justify-content-center align-items-center">
             <img class="icon" src="assets/icon/contact_card_location.svg" alt="">
-            {{ infoUserCard.GeoDomicilioLati }} - {{ infoUserCard.GeoDomicilioLongi }}
+            {{ infoUserCard.GeoDomicilioLongi }} - {{ infoUserCard.GeoDomicilioLati }}
         </div>
 
     </app-movable-card>

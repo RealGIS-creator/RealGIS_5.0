@@ -38,12 +38,13 @@ export class ContactCardComponent {
 
   ngOnInit(): void {
     this.data = this.data$.value._value;
+    console.log('data tarjeta contacto: ', this.data)
     this.getInformationCard();
   }
 
   private getInformationCard(): void {
     console.log('direccion id: ', this.data.idAdress)
-    this.informationCardService.getInformacionCard(this.data.filterName + 'F', '294850', this.data.idAdress).subscribe((response) =>{
+    this.informationCardService.getInformacionCard(this.data.filterName + 'F', this.data.filterValue, this.data.idAdress).subscribe((response) =>{
       if (response && response.SDT_TarjetaContacto && response.SDT_TarjetaContacto.length) {
         this.infoUserCard = response.SDT_TarjetaContacto[0];
         this.cdRef.detectChanges();

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../../environment/environment';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { GeoJson } from '../../../../interfaces/geoJson';
 
@@ -14,15 +14,27 @@ export class GeometryService {
   constructor(private http: HttpClient) { }
 
 
-  getGeoJsonData(): Observable<any> {
+  getGeoJsonData(north: string, south: string, east:string, west:string): Observable<any> {
+    
     const url = `${this.apiUrl}/WS_GeoJson`;
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });
-    const gn = {
-      "Gx_mode": "DSP"
+    // const params = new HttpParams()
+    // .set('Gx_mode', 'DSP')
+    // .set('norte', north)
+    // .set('sur', south)
+    // .set('este', east)
+    // .set('oeste', west); 
+
+    const params = {
+      "Gx_mode": "DSP",
+      'norte': north,
+      'sur': south,
+      'este': east,
+      'oeste': west,
     }
-    return this.http.post<any>(url, gn, { headers });
+    return this.http.post<any>(url, params, { headers });
   }
 
   getDataLayer(): Observable<any> {
