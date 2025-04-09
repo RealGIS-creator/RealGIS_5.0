@@ -7,7 +7,17 @@ import { ToolbarComponent } from '../../widget/toolbar/toolbar.component';
 import { GeometryService } from '../../../core/services/home/map/geometry.service';
 import { ContactCardComponent } from '../../widget/contact-card/contact-card.component';
 import { DialogService } from '../../../core/services/shared/dialog.service';
+import { environment } from '../../../../environment/environment';
 import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
+
+const geojsonMarkerOptions = {
+  radius: 4,
+  fillColor: "#FFA500",
+  color: "#000",
+  weight: 1,
+  opacity: 1,
+  fillOpacity: 0.9
+};
 
 @Component({
   selector: 'app-map-main',
@@ -19,7 +29,9 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
   private map: any;
   private location!: Array<number>;
   private zoom!: number;
+  private layer: string = environment.layer;
   zoomLevel = 8;
+
 
   private markerClusterGroup!: L.MarkerClusterGroup;
   private boundsChange$ = new Subject<L.LatLngBounds>();
@@ -36,16 +48,17 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit(): void {
     this.initMap();
+    this.loadWFSLayer();
 
-    this.boundsChange$
-      .pipe(
-        debounceTime(500),
-        distinctUntilChanged((prev, curr) => prev.equals(curr)),
-        takeUntil(this.destroy$)
-      )
-      .subscribe((bounds) => {
-        this.loadPoints(bounds);
-      });
+    //  this.boundsChange$
+    //  .pipe(
+    //    debounceTime(100),
+    //    distinctUntilChanged((prev, curr) => prev.equals(curr)),
+    //    takeUntil(this.destroy$)
+    //  )
+    //  .subscribe((bounds) => {
+    //    this.loadPoints(bounds);
+    //  });
   }
 
   ngAfterViewInit(): void {
@@ -65,24 +78,62 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  private loadWFSLayer(){
+    let lastClickedMarker: L.CircleMarker | null = null;
+    const self = this;
+    this.geometryService.getLayer(this.layer)
+    .subscribe(data => {
+      var dataLayer = L.geoJSON(data, {
+        pointToLayer: function (feature, latlng) {
+          const marker = L.circleMarker(latlng, geojsonMarkerOptions);
+          marker.on("click", (e) => {
+            if (lastClickedMarker && lastClickedMarker !== marker) {
+              lastClickedMarker.setStyle(geojsonMarkerOptions);
+              lastClickedMarker.closePopup();
+            }
+            marker.setStyle({ fillColor: "#0000ff" });
+            e.originalEvent.stopPropagation();
+  
+            console.log(feature.properties)
+            //self.showCardUser(feature.properties.AcreditadoNumCuen, feature.properties.Direccion_Id);
+            lastClickedMarker = marker;
+          });
+          return marker;
+        }
+      })
+      .on({
+        click: (e) => {
+          const location = e.latlng;  
+          this.map.flyTo(location, 17, {
+              'animate': false
+          })
+        }
+      })
+      .addTo(this.map);
+      this.map.fitBounds(dataLayer.getBounds());
+    }); 
+  }
+
   private loadPoints(bounds: L.LatLngBounds): void {
     const boundsKey = this.getBoundsKey(bounds);
-    console.log('bounds key: ', boundsKey);
+    //console.log('bounds key: ', boundsKey);
 
     if (this.cache.has(boundsKey)) {
-      console.log('Cache hit for:', boundsKey);
+      //console.log('Cache hit for:', boundsKey);
       this.updateMarkers(this.cache.get(boundsKey));
     } else {
-      console.log('Cache miss for:', boundsKey);
+      //console.log('Cache miss for:', boundsKey);
       const north = bounds.getNorth();
       const south = bounds.getSouth();
       const east = bounds.getEast();
       const west = bounds.getWest();
 
+      console.log('Getting Data')
       this.geometryService.getGeoJsonData(north, south, east, west)
         .pipe(takeUntil(this.destroy$)) 
         .subscribe(
           (response) => {
+            console.log('Data Return')
             const json = response.SDT_GeoJson;
             this.cache.set(boundsKey, json);
             this.updateMarkers(json);
@@ -100,7 +151,7 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private updateMarkers(data: any): void {
-    console.log('renderizar info: ', data);
+    //console.log('renderizar info: ', data);
 
     const geojsonMarkerOptions = {
       radius: 8,
@@ -108,7 +159,7 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
       color: "#000",
       weight: 1,
       opacity: 1,
-      fillOpacity: 0.8
+      //fillOpacity: 0.8
     };
 
     let lastClickedMarker: L.CircleMarker | null = null;
@@ -126,6 +177,7 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
           marker.setStyle({ fillColor: "#0000ff" });
           e.originalEvent.stopPropagation();
 
+          console.log(feature.properties)
           self.showCardUser(feature.properties.AcreditadoNumCuen, feature.properties.Direccion_Id);
 
           lastClickedMarker = marker;

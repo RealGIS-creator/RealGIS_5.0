@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../../environment/environment';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { retry, catchError } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
 import { GeoJson } from '../../../../interfaces/geoJson';
 
 @Injectable({
@@ -10,6 +11,8 @@ import { GeoJson } from '../../../../interfaces/geoJson';
 export class GeometryService {
 
   private apiUrl = environment.backendGN;
+  private geoServerUrl = environment.geoserverURL;
+  private headers = new HttpHeaders();
 
   constructor(private http: HttpClient) { }
 
@@ -37,15 +40,30 @@ export class GeometryService {
     return this.http.post<any>(url, params, { headers });
   }
 
-  getDataLayer(): Observable<any> {
-    const baseurl_wfs = 'https://www.realidad5.com/geoserver/ows?service=wfs&version=1.1.0'
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-    });
-    return this.http.get<any>(baseurl_wfs + '&request=GetFeature&typeName=ubicacionpredio&outputFormat=application/json', {headers})
-    // .pipe(
-    //   retry(1),
-    //   catchError(this.handleError)
-    // );
+  getLayer(layer: string): Observable<any> {
+    //this.main();
+    const url = this.geoServerUrl + 'ows?service=wfs&request=GetFeature&typeName=' + layer + '&outputFormat=application/json';  
+    const header = this.headers.append('Content-Type', 'application/json');
+
+    const httpOptions = {
+      headers: header
+    };
+    return this.http.get<any>(url, httpOptions)
+    .pipe(
+      retry(1),
+      catchError(this.handleError)
+    );
   }
+
+  handleError(error: { error: { message: string; }; status: any; message: any; }) {
+    let errorMessage = '';
+    if (error.error instanceof ErrorEvent) {
+      errorMessage = error.error.message;
+    } else {
+      errorMessage = `Codigo Error (API Geoserver): ${error.status}\nMessage: ${error.message}`;
+    }
+    window.alert(errorMessage);
+    return throwError(errorMessage);
+  }
+  
 }
