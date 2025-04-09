@@ -127,7 +127,7 @@
                 <div class="col">
                     <small *ngFor="let personal of infoUserCard.Telefonos">
                         <p *ngIf="personal.TipoTelefonoCod == '1'">
-                            - ({{ personal.TelefonoPre }}) {{ personal.TelefonoNum }}
+                            + ({{ personal.TelefonoPre }}) {{ personal.TelefonoNum }}
                         </p>
                     </small>
                 </div>
@@ -135,7 +135,7 @@
                 <div class="col">
                     <small *ngFor="let personal of infoUserCard.Telefonos">
                         <p *ngIf="personal.TipoTelefonoCod == '2' || personal.TipoTelefonoCod == '3'">
-                            - ({{ personal.TelefonoPre }}) {{ personal.TelefonoNum }}
+                            + ({{ personal.TelefonoPre }}) {{ personal.TelefonoNum }}
                         </p>
                     </small>
                 </div>

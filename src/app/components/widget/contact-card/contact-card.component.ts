@@ -8,6 +8,7 @@ import { PdfContactCardService } from '../../../core/services/widget/pdf-contact
 import { InformationCard } from '../../../interfaces/information-card';
 import { InformationCardService } from '../../../core/services/widget/information-card.service';
 import { BehaviorSubject } from 'rxjs';
+import { LocationService } from '../../../core/services/map/location.service';
 
 @Component({
   selector: 'app-contact-card',
@@ -20,6 +21,7 @@ export class ContactCardComponent {
   public isVisibleInformacionEmployment = false;
   public isVisibleFarmsContactCard = false;
   public infoUserCard!: InformationCard;
+  
   @ViewChild('pdfContent', { static: false }) pdfContent!: ElementRef;
   @Input() data$: BehaviorSubject<any> = new BehaviorSubject(null);
   data: any;
@@ -30,24 +32,34 @@ export class ContactCardComponent {
   private sidebarShowDataService = inject(SidebarShowDataService);
   private pdfContactCardService = inject(PdfContactCardService);
 
-  constructor(private informationCardService: InformationCardService, 
-    private cdRef: ChangeDetectorRef
+  constructor(
+    private informationCardService: InformationCardService, 
+    private cdRef: ChangeDetectorRef,
+    private locationService: LocationService
   )
   {
   }
 
   ngOnInit(): void {
     this.data = this.data$.value._value;
-    console.log('data tarjeta contacto: ', this.data)
     this.getInformationCard();
   }
 
+  selectAddress() {
+    const selectedPoint = {
+      address: this.infoUserCard.Direccion_Id,
+      longitude: this.infoUserCard.GeoDomicilioLongi,
+      latitude: this.infoUserCard.GeoDomicilioLati
+    };
+    this.locationService.updatePointData(selectedPoint);
+  }
+
   private getInformationCard(): void {
-    console.log('direccion id: ', this.data.idAdress)
     this.informationCardService.getInformacionCard(this.data.filterName + 'F', this.data.filterValue, this.data.idAdress).subscribe((response) =>{
       if (response && response.SDT_TarjetaContacto && response.SDT_TarjetaContacto.length) {
         this.infoUserCard = response.SDT_TarjetaContacto[0];
         this.cdRef.detectChanges();
+        this.selectAddress()
       } else {
         console.error('No se encontraron datos en la respuesta');
       }
