@@ -8,7 +8,7 @@ import { PdfContactCardService } from '../../../core/services/widget/pdf-contact
 import { InformationCard } from '../../../interfaces/information-card';
 import { InformationCardService } from '../../../core/services/widget/information-card.service';
 import { BehaviorSubject } from 'rxjs';
-import { LocationService } from '../../../core/services/map/location.service';
+import { LocationService } from '../../../core/services/home/map/location.service';
 
 @Component({
   selector: 'app-contact-card',

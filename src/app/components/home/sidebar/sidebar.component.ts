@@ -46,6 +46,7 @@ export class SidebarComponent {
 
   onChangeImage(id: number, type: string): void {
     this.dialogService.closeAll();
+    console.log('id: ', id)
     this.activeIndex = this.activeIndex === id ? null : id;
 
     this.imagesDefault.forEach((element) => {
@@ -72,10 +73,10 @@ export class SidebarComponent {
       //   componentToLoad = SearcherSidebarComponent;
       //   // dialogData = { id: img.id, type: img.type };
       //   break;
-      case 2:
+      case 1:
         componentToLoad = SearcherSidebarComponent;
         break;
-      case 5:
+      case 2:
         componentToLoad = DownloadComponent;
         break;
       // default:

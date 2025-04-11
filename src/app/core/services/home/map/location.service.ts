@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { LocationMap } from '../../../interfaces/location-map';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { LocationMap } from '../../../../interfaces/location-map';
 
 @Injectable({
   providedIn: 'root'

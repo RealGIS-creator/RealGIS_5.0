@@ -1,7 +1,6 @@
 import { Component, inject, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet.markercluster';
-import { LocationService } from '../../../core/services/map/location.service';
 import { ToolbarMapVerticalComponent } from '../../widget/toolbar-map-vertical/toolbar-map-vertical.component';
 import { ToolbarComponent } from '../../widget/toolbar/toolbar.component';
 import { GeometryService } from '../../../core/services/home/map/geometry.service';
@@ -9,6 +8,7 @@ import { ContactCardComponent } from '../../widget/contact-card/contact-card.com
 import { DialogService } from '../../../core/services/shared/dialog.service';
 import { environment } from '../../../../environment/environment';
 import { debounceTime, distinctUntilChanged, filter, Subject, Subscription, takeUntil } from 'rxjs';
+import { LocationService } from '../../../core/services/home/map/location.service';
 
 const geojsonMarkerOptions = {
   radius: 4,
