@@ -9,6 +9,7 @@ import { DialogService } from '../../../core/services/shared/dialog.service';
 import { environment } from '../../../../environment/environment';
 import { debounceTime, distinctUntilChanged, filter, Subject, Subscription, takeUntil } from 'rxjs';
 import { LocationService } from '../../../core/services/home/map/location.service';
+import "../../../../../node_modules/leaflet.coordinates/dist/Leaflet.Coordinates-0.1.5.src.js";
 
 const geojsonMarkerOptions = {
   radius: 4,
@@ -229,6 +230,18 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
     this.map.on('zoomend', () => {
       this.zoomLevel = this.map.getZoom();
     });
+    L.control.scale({
+      imperial: false,
+      position: 'bottomleft',
+    }).addTo(this.map);    
+    L.control.coordinates({
+      position: 'topright',
+      useDMS: true,
+      labelTemplateLat: 'N {y}',
+      labelTemplateLng: 'E {x}',
+      useLatLngOrder: true, 
+      enableUserInput: false
+    }).addTo(this.map);          
   }
 
   private focusOnPoint(adressId: string, latitude?: number, longitude?: number): void {

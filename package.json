@@ -28,6 +28,7 @@
     "jspdf": "^3.0.1",
     "jszip": "^3.10.1",
     "leaflet": "^1.9.4",
+    "leaflet.coordinates": "^0.1.5",
     "leaflet.markercluster": "^1.5.3",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
