@@ -1,0 +1,29 @@
+import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import * as L from 'leaflet';
+import 'leaflet.markercluster';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class MapService {
+
+  private mapSubject = new BehaviorSubject<L.Map|null>(null);
+  map$ = this.mapSubject.asObservable();
+
+  private markerClusterGroupSubject = new BehaviorSubject<L.MarkerClusterGroup | null>(null);
+  markerClusterGroup$ = this.markerClusterGroupSubject.asObservable();
+
+  setMap(map: L.Map) {
+    this.mapSubject.next(map);
+  }
+
+  setMarkerClusterGroup(markerClusterGroup: L.MarkerClusterGroup) {
+    this.markerClusterGroupSubject.next(markerClusterGroup);
+  }
+
+  getAllMarkers(): L.Layer[] {
+    const clusterGroup = this.markerClusterGroupSubject.getValue();
+    return clusterGroup ? clusterGroup.getLayers() : [];
+  }  
+}

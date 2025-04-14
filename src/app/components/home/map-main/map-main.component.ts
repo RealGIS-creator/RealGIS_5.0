@@ -9,7 +9,10 @@ import { DialogService } from '../../../core/services/shared/dialog.service';
 import { environment } from '../../../../environment/environment';
 import { debounceTime, distinctUntilChanged, filter, Subject, Subscription, takeUntil } from 'rxjs';
 import { LocationService } from '../../../core/services/home/map/location.service';
-import "../../../../../node_modules/leaflet.coordinates/dist/Leaflet.Coordinates-0.1.5.src.js";
+// import "../../../../../node_modules/leaflet.coordinates/dist/Leaflet.Coordinates-0.1.5.src.js";
+import 'leaflet.coordinates/dist/Leaflet.Coordinates-0.1.5.src.js';
+import { MapService } from '../../../core/services/home/map/map.service';
+
 
 const geojsonMarkerOptions = {
   radius: 4,
@@ -43,13 +46,14 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private locationService: LocationService,
     private geometryService: GeometryService,
+    private mapService: MapService
   ) {
     this.getLocateMap();
   }
 
   ngOnInit(): void {
     this.initMap();
-    // this.loadWFSLayer();
+    //this.loadWFSLayer();
 
     this.boundsChange$
       .pipe(
@@ -128,11 +132,12 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
       });
   }
 
+  // private loadPoints(bounds: L.LatLngBounds): void {
   private loadPoints(bounds: L.LatLngBounds): void {
-    const key = this.getBoundsKey(bounds);
-    if (this.cache.has(key)) {
-      this.updateMarkers(this.cache.get(key));
-    } else {
+    // const key = this.getBoundsKey(bounds);
+    // if (this.cache.has(key)) {
+    //   this.updateMarkers(this.cache.get(key));
+    // } else {
       const [north, south, east, west] = [
         bounds.getNorth(), bounds.getSouth(), bounds.getEast(), bounds.getWest()
       ];
@@ -140,10 +145,10 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
         .pipe(takeUntil(this.destroy$))
         .subscribe(resp => {
           const json = resp.SDT_GeoJson;
-          this.cache.set(key, json);
+          // this.cache.set(key, json);
           this.updateMarkers(json);
         });
-    }
+    //}
   }
 
   private getBoundsKey(bounds: L.LatLngBounds): string {
@@ -152,8 +157,102 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
     return `${sw.lat.toFixed(p)},${sw.lng.toFixed(p)},${ne.lat.toFixed(p)},${ne.lng.toFixed(p)}`;
   }
 
+  // private updateMarkers(data: any): void {
+  //   const baseOpts: L.CircleMarkerOptions  = {
+  //     radius: 8,
+  //     fillColor: "#FFA500",
+  //     color: "#000000",
+  //     weight: 1,
+  //     opacity: 1,
+  //     fillOpacity: 1
+  //   };
+  //   const greenOpts = { ...baseOpts, fillColor: "#157d35" };
+  //   const orangeOpts = { ...baseOpts, fillColor: "#d75810" };
+
+  //   let lastClicked: L.CircleMarker | null = null;
+
+  //   const geoJsonLayer = L.geoJSON(data, {
+  //     pointToLayer: (feature, latlng) => {
+  //       // Marcador circular
+  //       const opts = feature.properties.TipoDireccionCod === 1 ? greenOpts : orangeOpts;
+  //       const marker = L.circleMarker(latlng, opts);
+  //       marker.on("click", e => {
+  //         if (lastClicked && lastClicked !== marker) {
+  //           lastClicked.setStyle(baseOpts);
+  //           lastClicked.closePopup();
+  //         }
+  //         // Zoom al máximo
+  //         const loc = (e.target as L.CircleMarker).getLatLng();
+  //         this.map.flyTo(loc, 17, {
+  //           'animate': false
+  //         })
+
+  //         marker.setStyle({ ...opts, fillColor: "#0000ff" });
+  //         e.originalEvent.stopPropagation();
+
+  //         this.showCardUser(feature.properties.AcreditadoNumCuen, feature.properties.Direccion_Id);
+  //         lastClicked = marker;
+  //       });
+  //       return marker;
+  //     }
+  //   });
+
+  //   // Inicializar o limpiar el cluster
+  //   if (!this.markerClusterGroup) {
+  //     this.markerClusterGroup = L.markerClusterGroup({
+  //       spiderfyOnMaxZoom: true,
+  //       iconCreateFunction: cluster => {
+  //         const count = cluster.getChildCount();
+  //         return L.divIcon({
+  //           html: `<div class="custom-cluster">${count}</div>`,
+  //           className: 'marker-cluster-custom',
+  //           iconSize: L.point(40, 40)
+  //         });
+  //       }
+  //     });
+  //   } else {
+  //     this.markerClusterGroup.clearLayers();
+  //   }
+
+  //   this.mapService.setMarkerClusterGroup(this.markerClusterGroup);
+  //   this.markerClusterGroup.addLayer(geoJsonLayer);
+
+  //   // Reemplazar capa en el mapa
+  //   if (this.map.hasLayer(this.markerClusterGroup)) {
+  //     this.map.removeLayer(this.markerClusterGroup);
+  //   }
+  //   this.map.addLayer(this.markerClusterGroup);
+  // }
+
+  private createCircleDivIcon(opts: L.CircleMarkerOptions): L.DivIcon {
+    const size = opts.radius! * 2;
+    const border = opts.weight ?? 0;
+    const color = opts.fillColor as string;
+    const stroke = opts.color as string;
+    const opacity = opts.opacity ?? 1;
+    const fillOpacity = opts.fillOpacity ?? 1;
+  
+    const html = `
+      <div style="
+        width: ${size}px;
+        height: ${size}px;
+        background-color: ${color};
+        border: ${border}px solid ${stroke};
+        border-radius: 50%;
+        opacity: ${fillOpacity};
+      "></div>
+    `;
+  
+    return L.divIcon({
+      className: '',      
+      html,
+      iconSize: [size, size],
+      iconAnchor: [size / 2, size / 2]
+    });
+  }
+
   private updateMarkers(data: any): void {
-    const baseOpts: L.CircleMarkerOptions  = {
+    const baseOpts: L.CircleMarkerOptions = {
       radius: 8,
       fillColor: "#FFA500",
       color: "#000000",
@@ -163,36 +262,8 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
     };
     const greenOpts = { ...baseOpts, fillColor: "#157d35" };
     const orangeOpts = { ...baseOpts, fillColor: "#d75810" };
-
-    let lastClicked: L.CircleMarker | null = null;
-
-    const geoJsonLayer = L.geoJSON(data, {
-      pointToLayer: (feature, latlng) => {
-        // Marcador circular
-        const opts = feature.properties.TipoDireccionCod === 1 ? greenOpts : orangeOpts;
-        const marker = L.circleMarker(latlng, opts);
-        marker.on("click", e => {
-          if (lastClicked && lastClicked !== marker) {
-            lastClicked.setStyle(baseOpts);
-            lastClicked.closePopup();
-          }
-          // Zoom al máximo
-          const loc = (e.target as L.CircleMarker).getLatLng();
-          this.map.flyTo(loc, 17, {
-            'animate': false
-          })
-
-          marker.setStyle({ ...opts, fillColor: "#0000ff" });
-          e.originalEvent.stopPropagation();
-
-          this.showCardUser(feature.properties.AcreditadoNumCuen, feature.properties.Direccion_Id);
-          lastClicked = marker;
-        });
-        return marker;
-      }
-    });
-
-    // Inicializar o limpiar el cluster
+  
+    // 1) Inicializa o limpia el cluster
     if (!this.markerClusterGroup) {
       this.markerClusterGroup = L.markerClusterGroup({
         spiderfyOnMaxZoom: true,
@@ -205,17 +276,36 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
           });
         }
       });
+      this.map.addLayer(this.markerClusterGroup);
     } else {
       this.markerClusterGroup.clearLayers();
     }
-
-    this.markerClusterGroup.addLayer(geoJsonLayer);
-
-    // Reemplazar capa en el mapa
-    if (this.map.hasLayer(this.markerClusterGroup)) {
-      this.map.removeLayer(this.markerClusterGroup);
-    }
-    this.map.addLayer(this.markerClusterGroup);
+  
+    // 2) Creamos una capa GeoJSON que devuelve L.Marker con DivIcon
+    const geoJsonLayer = L.geoJSON(data, {
+      pointToLayer: (feature, latlng) => {
+        const opts = feature.properties.TipoDireccionCod === 1 ? greenOpts : orangeOpts;
+        const icon = this.createCircleDivIcon(opts);
+        const marker = L.marker(latlng, { icon });
+        // guarda la feature para referencia futura
+        (marker as any).feature = feature;
+        // click handler (igual que antes)
+        marker.on("click", e => {
+          // tu lógica de click aquí...
+        });
+        return marker;
+      }
+    });
+  
+    // 3) Añadimos cada marcador al cluster
+    geoJsonLayer.eachLayer(layer => {
+      if (layer instanceof L.Marker) {
+        this.markerClusterGroup!.addLayer(layer);
+      }
+    });
+  
+    // 4) Emitimos el cluster YA poblado
+    this.mapService.setMarkerClusterGroup(this.markerClusterGroup);
   }
 
   private initMap() {
@@ -241,18 +331,18 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
       labelTemplateLng: 'E {x}',
       useLatLngOrder: true, 
       enableUserInput: false
-    }).addTo(this.map);          
+    }).addTo(this.map);   
+    
+    this.mapService.setMap(this.map);
   }
 
   private focusOnPoint(adressId: string, latitude?: number, longitude?: number): void {
-    // let target: L.CircleMarker | undefined;
 
     const all = this.markerClusterGroup.getLayers() as L.CircleMarker[];
     const target = all.find(
       m => m.feature?.properties?.Direccion_Id === adressId
     );
   
-
     if (target) {
       const parent = this.markerClusterGroup.getVisibleParent(
         target as any as L.Marker
@@ -265,7 +355,6 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
       this.map.setView(ll, this.map.getMaxZoom());
       target.openPopup();
       target.setStyle({ radius: 12, fillColor: '#ff0000' });
-
 
     } else if (latitude != null && longitude != null) {
       const delta = 0.01; // ~1km aprox.
