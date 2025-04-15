@@ -8,7 +8,7 @@ import * as L from 'leaflet';
 import 'leaflet.markercluster';
 import { MapService } from '../../../core/services/home/map/map.service';
 
-// IMPORTS de Geoman:
+// IMPORTS Geoman:
 import '@geoman-io/leaflet-geoman-free';
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
 
@@ -66,24 +66,25 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
   onChangeImage(id: number, type: string): void {
     this.activeIndex = this.activeIndex === id ? null : id;
-    if (id === 1) {
-      this.enableRectangleDraw();
-    }
-    if (id === 2) {
-      this.enablePolylineDraw();
-    }
-    if (id === 3) {
-      this.enablePolygonDraw();
-    }
-    if (id === 4) {
-      this.clearSelection();
+    switch (id) {
+      case 1:
+        this.enableRectangleDraw();
+        break;
+      case 2:
+        this.enablePolylineDraw();
+        break;
+      case 3:
+        this.enablePolygonDraw();
+        break;
+      case 4:
+        this.clearSelection();
+        break;
     }
   }
 
   private initGeoman() {
     if (!this.map) { return; }
 
-    // 1) Creamos un layerGroup donde se añadirá el polígono
     this.drawLayer = new L.LayerGroup().addTo(this.map);
 
     // 2) Añadimos los controles de Geoman
@@ -102,7 +103,6 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     //   drawPolygon: true    
     // });                       
 
-    // 3) Escuchamos el evento de creación
     this.map.on('pm:create', (e: any) => {
       if (e.shape === 'Polygon' || e.shape === 'Rectangle') {
         if (this.currentPolygon) {
@@ -115,21 +115,11 @@ export class ToolbarComponent implements OnInit, OnDestroy {
       } else if (e.shape === 'Line') {
         this.handlePolyline(e.layer as L.Polyline);
       }
-      // deshabilitamos el modo dibujo
+
       this.map?.pm.disableDraw();
       this.drawing = false;
     });
   }
-
-  // enablePolygonDraw() {
-  //   if (!this.map) { return; }
-  //   this.map.pm.enableDraw('Polygon', {
-  //     allowSelfIntersection: false,
-  //     finishOn: 'dblclick',      // cierra con doble‑clic
-  //     pathOptions: { color: '#bada55' }
-  //   });                          
-  //   this.drawing = true;
-  // }
 
   // polígonos
   enablePolygonDraw() {
@@ -153,68 +143,57 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     if (this.currentPolygon) {
       this.drawLayer.removeLayer(this.currentPolygon);
       this.currentPolygon = null;
+      this.mapService.setSelectedIds([]);
     }
   }
-
-  // private selectPointsInPolygon(polygon: L.Polygon) {
-  //   if (!this.map) { return; }
-
-  //   const polyGeo = polygon.toGeoJSON() as Feature<Polygon>;
-  //   const seleccionados: L.Marker[] = [];
-
-  //   this.markerClusterGroup.forEach(marker => {
-  //     const latlng = marker.getLatLng();
-  //     const pt = turf.point([latlng.lng, latlng.lat]);
-  //     if (turf.booleanPointInPolygon(pt, polyGeo)) {
-  //       seleccionados.push(marker);
-  //     }
-  //   });
-
-  //   console.log('Puntos dentro del polígono:', seleccionados);
-  // }
 
   private selectPointsInPolygon(polygon: L.Polygon) {
     if (!this.map || !this.markerClusterGroup) { return; }
 
     const polyGeo = polygon.toGeoJSON() as Feature<Polygon>;
-    const seleccionados: L.Marker[] = [];
 
-    // 1) Recorremos cada capa del cluster
-    this.markerClusterGroup.getLayers().forEach(layer => {
-      if (layer instanceof L.Marker) {
-        // marcador “suelo” en el cluster
-        seleccionados.push(layer);
-      } else {
-        // puede ser un sub‑cluster
+    // 1. Sacamos TODOS los marcadores del cluster
+    const allMarkers = this.markerClusterGroup.getAllChildMarkers
+      ? this.markerClusterGroup.getAllChildMarkers()
+      : this.markerClusterGroup.getLayers().flatMap(layer => {
         const sub = layer as any;
-        if (typeof sub.getAllChildMarkers === 'function') {
-          seleccionados.push(...sub.getAllChildMarkers());
-        }
-      }
-    });
+        return sub.getAllChildMarkers ? sub.getAllChildMarkers() : (layer instanceof L.Marker ? [layer] : []);
+      });
 
-    const dentro: L.Marker[] = [];
-    seleccionados.forEach(marker => {
+    // 2. Filtramos sólo los que están dentro del polígono
+    const insideMarkers = allMarkers.filter(marker => {
       const { lat, lng } = marker.getLatLng();
       const pt = turf.point([lng, lat]);
-      if (turf.booleanPointInPolygon(pt, polyGeo)) {
-        dentro.push(marker);
-      }
+      return turf.booleanPointInPolygon(pt, polyGeo);
     });
 
-    console.log('Puntos dentro del polígono:', dentro);
+    // 3. Extraemos únicamente la Direccion_Id de cada marker.feature.properties
+    const ids = insideMarkers
+      .map(m => (m as any).feature?.properties?.Direccion_Id)
+      .filter((id): id is string => typeof id === 'string');
+
+    console.log('IDs dentro del polígono:', ids);
+
+    // 4. Enviamos al servicio
+    this.mapService.setSelectedIds(ids);
+
+    // (Opcional) destacar en el mapa
+    insideMarkers.forEach(m => m.setIcon(L.icon({
+      iconUrl: 'assets/marker-selected.png',
+      iconSize: [25, 41],
+      iconAnchor: [12, 41]
+    })));
   }
 
-  private handlePolygonOrRectangle(layer: L.Polygon) {
-    // limpieza previa
-    if (this.currentPolygon) this.drawLayer.removeLayer(this.currentPolygon);
-    this.currentPolygon = layer;
-    this.drawLayer.addLayer(layer);
-    this.selectPointsInPolygon(layer);
-  }
+
+  // private handlePolygonOrRectangle(layer: L.Polygon) {
+  //   if (this.currentPolygon) this.drawLayer.removeLayer(this.currentPolygon);
+  //   this.currentPolygon = layer;
+  //   this.drawLayer.addLayer(layer);
+  //   this.selectPointsInPolygon(layer);
+  // }
 
   private handlePolyline(layer: L.Polyline) {
-    // añade al mapa para que se vea
     this.drawLayer.addLayer(layer);
     this.measurePolyline(layer);
   }
@@ -226,10 +205,6 @@ export class ToolbarComponent implements OnInit, OnDestroy {
       totalMeters += latlngs[i - 1].distanceTo(latlngs[i]);
     }
 
-    // Mostrar resultado en consola o en un popup
-    console.log(`Distancia total: ${totalMeters.toFixed(2)} m`);
-
-    // Opcional: mostrar en popup en el centro de la línea
     const midIndex = Math.floor(latlngs.length / 2);
     const midPoint = latlngs[midIndex];
     L.popup({ closeOnClick: false, autoClose: false })

@@ -5,6 +5,7 @@ import { DownloadSidebarService } from '../../../core/services/widget/download-s
 import { CommonModule } from '@angular/common';
 import { ExportableService } from '../../../core/services/shared/exportable.service';
 import { FeatureCollection } from 'geojson';
+import { MapService } from '../../../core/services/home/map/map.service';
 
 @Component({
   selector: 'app-download',
@@ -28,12 +29,17 @@ export class DownloadComponent {
 
   constructor(
     private downloadSidebarService: DownloadSidebarService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private mapService: MapService
   ) {
   }
 
   ngOnInit(): void {
     this.getSearchCriteria();
+
+    this.mapService.selectedIds$.subscribe(ids => {
+      console.log('Ahora en el servicio tengo estos Direccion_Id:', ids);
+    });
   }
 
   getSearchCriteria(): void {

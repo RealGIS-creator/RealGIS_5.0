@@ -14,6 +14,9 @@ export class MapService {
   private markerClusterGroupSubject = new BehaviorSubject<L.MarkerClusterGroup | null>(null);
   markerClusterGroup$ = this.markerClusterGroupSubject.asObservable();
 
+  private selectedIdsSubject = new BehaviorSubject<string[]>([]);
+  selectedIds$ = this.selectedIdsSubject.asObservable();
+
   setMap(map: L.Map) {
     this.mapSubject.next(map);
   }
@@ -26,4 +29,8 @@ export class MapService {
     const clusterGroup = this.markerClusterGroupSubject.getValue();
     return clusterGroup ? clusterGroup.getLayers() : [];
   }  
+
+  setSelectedIds(ids: string[]) {
+    this.selectedIdsSubject.next(ids);
+  }
 }

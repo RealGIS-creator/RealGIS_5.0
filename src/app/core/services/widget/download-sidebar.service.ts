@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { SearchCriteria } from '../../../interfaces/search-criteria';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../../environment/environment';
+import { MapService } from '../home/map/map.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,8 +10,16 @@ import { environment } from '../../../../environment/environment';
 export class DownloadSidebarService {
 
   private apiUrl = environment.backendGN;
+  private paramsId: string[] = [];
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private mapService: MapService
+  ) { 
+    this.mapService.selectedIds$.subscribe(ids => {
+      this.paramsId = ids;
+    });
+  }
 
   getSearchCriteria(): any[] {
     return [
@@ -27,7 +35,8 @@ export class DownloadSidebarService {
       'Content-Type': 'application/json',
     });
     const gn = {
-      "Gx_mode": "DSP"
+      "Gx_mode": "DSP",
+      "direccionesId": this.paramsId
     }
     return this.http.post<any>(url, gn, { headers });
   }
@@ -35,10 +44,11 @@ export class DownloadSidebarService {
   getInformationClientGeoJson(): Observable<any> {
     const url = `${this.apiUrl}/WS_BaseClienteGeoJson`;
     const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json'
     });
     const gn = {
-      "Gx_mode": "DSP"
+      "Gx_mode": "DSP",
+      "direccionesId": this.paramsId
     }
     return this.http.post<any>(url, gn, { headers });
   }
