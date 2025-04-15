@@ -7,21 +7,11 @@ import { GeometryService } from '../../../core/services/home/map/geometry.servic
 import { ContactCardComponent } from '../../widget/contact-card/contact-card.component';
 import { DialogService } from '../../../core/services/shared/dialog.service';
 import { environment } from '../../../../environment/environment';
-import { debounceTime, distinctUntilChanged, filter, Subject, Subscription, takeUntil } from 'rxjs';
+import { Subject, from } from 'rxjs';
+import { takeUntil, tap, map, concatMap, filter } from 'rxjs/operators';
 import { LocationService } from '../../../core/services/home/map/location.service';
-// import "../../../../../node_modules/leaflet.coordinates/dist/Leaflet.Coordinates-0.1.5.src.js";
 import 'leaflet.coordinates/dist/Leaflet.Coordinates-0.1.5.src.js';
 import { MapService } from '../../../core/services/home/map/map.service';
-
-
-const geojsonMarkerOptions = {
-  radius: 4,
-  fillColor: "#FFA500",
-  color: "#000",
-  weight: 1,
-  opacity: 1,
-  fillOpacity: 0.9
-};
 
 @Component({
   selector: 'app-map-main',
@@ -33,15 +23,16 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
   private map!: L.Map;
   private location!: [number, number];
   private zoom!: number;
-  private layer: string = environment.layer;
   zoomLevel = 8;
 
   private markerClusterGroup!: L.MarkerClusterGroup;
-  private boundsChange$ = new Subject<L.LatLngBounds>();
-  private cache = new Map<string, any>();
-  private dialogService = inject(DialogService);
+  private loadedTiles = new Set<string>();
+  private addedFeatureIds = new Set<string>();
   private destroy$ = new Subject<void>();
-  private subscription: Subscription = new Subscription();
+
+  // Tamaño de tesela fija en grados
+  private tileSizeLat = 0.5;
+  private tileSizeLon = 0.5;
 
   constructor(
     private locationService: LocationService,
@@ -53,204 +44,145 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit(): void {
     this.initMap();
-    //this.loadWFSLayer();
 
-    this.boundsChange$
+    this.locationService.pointData$
       .pipe(
-        debounceTime(100),
-        distinctUntilChanged((prev, curr) => prev.equals(curr)),
+        filter((pd): pd is any => pd != null),
         takeUntil(this.destroy$)
       )
-      .subscribe((bounds) => {
-        this.loadPoints(bounds);
-      });
-
-      this.locationService.pointData$
-      .pipe(
-        filter((pd): pd is any => pd !== null),
-        takeUntil(this.destroy$)
-      )
-      .subscribe(pd => {
-        // cada vez que updatePointData se llame, llegamos aquí
-        console.log('tarjeta: ', pd)
-        this.focusOnPoint(pd.address, pd.latitude, pd.longitude);
-      });
-
+      .subscribe(pd => this.focusOnPoint(pd.address, pd.latitude, pd.longitude));
   }
 
   ngAfterViewInit(): void {
     if (this.map) {
-      this.boundsChange$.next(this.map.getBounds());
-      this.map.on('moveend', () => {
-        this.boundsChange$.next(this.map.getBounds());
-      });
+      // Carga inicial de teselas
+      this.loadTiles();
+      // Al panear, cargar nuevas teselas
+      this.map.on('moveend', () => this.loadTiles());
+      // Al hacer zoom, solo actualizar zoomLevel (clusters se recalculan automáticamente)
+      this.map.on('zoomend', () => this.zoomLevel = this.map.getZoom());
     }
   }
 
   ngOnDestroy(): void {
-    this.subscription.unsubscribe();
     this.destroy$.next();
     this.destroy$.complete();
     if (this.map) {
       this.map.off('moveend');
+      this.map.off('zoomend');
     }
   }
 
-  private loadWFSLayer() {
-    let lastClickedMarker: L.CircleMarker | null = null;
-    const self = this;
-    this.geometryService.getLayer(this.layer)
-      .subscribe(data => {
-        var dataLayer = L.geoJSON(data, {
-          pointToLayer: function (feature, latlng) {
-            const marker = L.circleMarker(latlng, geojsonMarkerOptions);
-            marker.on("click", (e) => {
-              if (lastClickedMarker && lastClickedMarker !== marker) {
-                lastClickedMarker.setStyle(geojsonMarkerOptions);
-                lastClickedMarker.closePopup();
-              }
-              marker.setStyle({ fillColor: "#0000ff" });
-              e.originalEvent.stopPropagation();
+  /**
+   * Carga datos en teselas geográficas de tamaño fijo, sin recargar las ya solicitadas.
+   */
+  private loadTiles(): void {
+    const bounds = this.map.getBounds();
+    const west = bounds.getWest(), east = bounds.getEast();
+    const south = bounds.getSouth(), north = bounds.getNorth();
 
-              console.log(feature.properties)
-              //self.showCardUser(feature.properties.AcreditadoNumCuen, feature.properties.Direccion_Id);
-              lastClickedMarker = marker;
-            });
-            return marker;
-          }
-        })
-          .on({
-            click: (e) => {
-              const location = e.latlng;
-              this.map.flyTo(location, 17, {
-                'animate': false
-              })
-            }
-          })
-          .addTo(this.map);
-        this.map.fitBounds(dataLayer.getBounds());
+    const xMin = this.lon2grid(west);
+    const xMax = this.lon2grid(east);
+    const yMin = this.lat2grid(south);
+    const yMax = this.lat2grid(north);
+
+    const tiles: Array<{ x: number; y: number; key: string }> = [];
+    for (let x = xMin; x <= xMax; x++) {
+      for (let y = yMin; y <= yMax; y++) {
+        const key = `${x}-${y}`;
+        if (!this.loadedTiles.has(key)) {
+          tiles.push({ x, y, key });
+        }
+      }
+    }
+
+    from(tiles)
+      .pipe(
+        concatMap(tile => {
+          const westLng = tile.x * this.tileSizeLon;
+          const eastLng = (tile.x + 1) * this.tileSizeLon;
+          const southLat = tile.y * this.tileSizeLat;
+          const northLat = (tile.y + 1) * this.tileSizeLat;
+          return this.geometryService.getGeoJsonData(northLat, southLat, eastLng, westLng).pipe(
+            takeUntil(this.destroy$),
+            tap(resp => this.loadedTiles.add(tile.key)),
+            map(resp => resp.SDT_GeoJson)
+          );
+        }),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(json => {
+        if (json) this.addMarkers(json);
       });
   }
 
-  // private loadPoints(bounds: L.LatLngBounds): void {
-  private loadPoints(bounds: L.LatLngBounds): void {
-    // const key = this.getBoundsKey(bounds);
-    // if (this.cache.has(key)) {
-    //   this.updateMarkers(this.cache.get(key));
-    // } else {
-      const [north, south, east, west] = [
-        bounds.getNorth(), bounds.getSouth(), bounds.getEast(), bounds.getWest()
-      ];
-      this.geometryService.getGeoJsonData(north, south, east, west)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe(resp => {
-          const json = resp.SDT_GeoJson;
-          // this.cache.set(key, json);
-          this.updateMarkers(json);
-        });
-    //}
+  private initMap(): void {
+    const baseMapURl = 'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
+    this.map = L.map('map', { zoomControl: false, maxZoom: 18, minZoom: 3 });
+    L.tileLayer(baseMapURl).addTo(this.map);
+    this.resetMap();
+    L.control.scale({ imperial: false, position: 'bottomleft' }).addTo(this.map);
+    L.control.coordinates({ position: 'topright', useDMS: true, labelTemplateLat: 'N {y}', labelTemplateLng: 'E {x}', useLatLngOrder: true, enableUserInput: false }).addTo(this.map);
+    this.initCluster();
+    this.mapService.setMap(this.map);
   }
 
-  private getBoundsKey(bounds: L.LatLngBounds): string {
-    const p = 4;
-    const sw = bounds.getSouthWest(), ne = bounds.getNorthEast();
-    return `${sw.lat.toFixed(p)},${sw.lng.toFixed(p)},${ne.lat.toFixed(p)},${ne.lng.toFixed(p)}`;
-  }
-
-  // private updateMarkers(data: any): void {
-  //   const baseOpts: L.CircleMarkerOptions  = {
-  //     radius: 8,
-  //     fillColor: "#FFA500",
-  //     color: "#000000",
-  //     weight: 1,
-  //     opacity: 1,
-  //     fillOpacity: 1
-  //   };
-  //   const greenOpts = { ...baseOpts, fillColor: "#157d35" };
-  //   const orangeOpts = { ...baseOpts, fillColor: "#d75810" };
-
-  //   let lastClicked: L.CircleMarker | null = null;
-
-  //   const geoJsonLayer = L.geoJSON(data, {
-  //     pointToLayer: (feature, latlng) => {
-  //       // Marcador circular
-  //       const opts = feature.properties.TipoDireccionCod === 1 ? greenOpts : orangeOpts;
-  //       const marker = L.circleMarker(latlng, opts);
-  //       marker.on("click", e => {
-  //         if (lastClicked && lastClicked !== marker) {
-  //           lastClicked.setStyle(baseOpts);
-  //           lastClicked.closePopup();
-  //         }
-  //         // Zoom al máximo
-  //         const loc = (e.target as L.CircleMarker).getLatLng();
-  //         this.map.flyTo(loc, 17, {
-  //           'animate': false
-  //         })
-
-  //         marker.setStyle({ ...opts, fillColor: "#0000ff" });
-  //         e.originalEvent.stopPropagation();
-
-  //         this.showCardUser(feature.properties.AcreditadoNumCuen, feature.properties.Direccion_Id);
-  //         lastClicked = marker;
-  //       });
-  //       return marker;
-  //     }
-  //   });
-
-  //   // Inicializar o limpiar el cluster
-  //   if (!this.markerClusterGroup) {
-  //     this.markerClusterGroup = L.markerClusterGroup({
-  //       spiderfyOnMaxZoom: true,
-  //       iconCreateFunction: cluster => {
-  //         const count = cluster.getChildCount();
-  //         return L.divIcon({
-  //           html: `<div class="custom-cluster">${count}</div>`,
-  //           className: 'marker-cluster-custom',
-  //           iconSize: L.point(40, 40)
-  //         });
-  //       }
-  //     });
-  //   } else {
-  //     this.markerClusterGroup.clearLayers();
-  //   }
-
-  //   this.mapService.setMarkerClusterGroup(this.markerClusterGroup);
-  //   this.markerClusterGroup.addLayer(geoJsonLayer);
-
-  //   // Reemplazar capa en el mapa
-  //   if (this.map.hasLayer(this.markerClusterGroup)) {
-  //     this.map.removeLayer(this.markerClusterGroup);
-  //   }
-  //   this.map.addLayer(this.markerClusterGroup);
-  // }
-
-  private createCircleDivIcon(opts: L.CircleMarkerOptions): L.DivIcon {
-    const size = opts.radius! * 2;
-    const border = opts.weight ?? 0;
-    const color = opts.fillColor as string;
-    const stroke = opts.color as string;
-    const opacity = opts.opacity ?? 1;
-    const fillOpacity = opts.fillOpacity ?? 1;
-  
-    const html = `
-      <div style="
-        width: ${size}px;
-        height: ${size}px;
-        background-color: ${color};
-        border: ${border}px solid ${stroke};
-        border-radius: 50%;
-        opacity: ${fillOpacity};
-      "></div>
-    `;
-  
-    return L.divIcon({
-      className: '',      
-      html,
-      iconSize: [size, size],
-      iconAnchor: [size / 2, size / 2]
+  private initCluster(): void {
+    this.markerClusterGroup = L.markerClusterGroup({
+      spiderfyOnMaxZoom: true,
+      removeOutsideVisibleBounds: true,
+      chunkedLoading: true,
+      chunkInterval: 200,
+      chunkDelay: 50,
+      iconCreateFunction: cluster => {
+        const count = cluster.getChildCount();
+        return L.divIcon({ html: `<div class="custom-cluster">${count}</div>`, className: 'marker-cluster-custom', iconSize: L.point(40, 40) });
+      }
     });
+    this.map.addLayer(this.markerClusterGroup);
   }
 
+  private addMarkers(data: any): void {
+    const greenOpts: L.CircleMarkerOptions = { radius: 8, fillColor: '#157d35', color: '#000', weight: 1, opacity: 1, fillOpacity: 1 };
+    const orangeOpts: L.CircleMarkerOptions = { radius: 8, fillColor: '#d75810', color: '#000', weight: 1, opacity: 1, fillOpacity: 1 };
+
+    L.geoJSON(data, {
+      pointToLayer: (feature, latlng) => {
+        const opts = feature.properties.TipoDireccionCod === 1 ? greenOpts : orangeOpts;
+        const icon = this.createCircleDivIcon(opts);
+        const marker = L.marker(latlng, { icon });
+        (marker as any).feature = feature;
+        return marker;
+      }
+    }).eachLayer(layer => {
+      if (layer instanceof L.Marker) {
+        const feature = (layer as any).feature;
+        const id = feature.properties.Direccion_Id;
+        if (!this.addedFeatureIds.has(id)) {
+          this.addedFeatureIds.add(id);
+          layer.on('click', e => {
+            const loc = (e.target as L.Marker).getLatLng();
+            this.map.flyTo(loc, 17, { animate: false });
+            this.showCardUser(feature.properties.AcreditadoNumCuen, id);
+          });
+          this.markerClusterGroup.addLayer(layer);
+        }
+      }
+    });
+    this.mapService.setMarkerClusterGroup(this.markerClusterGroup);
+  }
+
+  private lon2grid(lon: number): number {
+    return Math.floor(lon / this.tileSizeLon);
+  }
+
+  private lat2grid(lat: number): number {
+    return Math.floor(lat / this.tileSizeLat);
+  }
+
+
+
+  // desde aca
   private updateMarkers(data: any): void {
     const baseOpts: L.CircleMarkerOptions = {
       radius: 8,
@@ -262,7 +194,7 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
     };
     const greenOpts = { ...baseOpts, fillColor: "#157d35" };
     const orangeOpts = { ...baseOpts, fillColor: "#d75810" };
-  
+
     // 1) Inicializa o limpia el cluster
     if (!this.markerClusterGroup) {
       this.markerClusterGroup = L.markerClusterGroup({
@@ -280,7 +212,7 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
     } else {
       this.markerClusterGroup.clearLayers();
     }
-  
+
     // 2) Creamos una capa GeoJSON que devuelve L.Marker con DivIcon
     const geoJsonLayer = L.geoJSON(data, {
       pointToLayer: (feature, latlng) => {
@@ -296,44 +228,16 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
         return marker;
       }
     });
-  
+
     // 3) Añadimos cada marcador al cluster
     geoJsonLayer.eachLayer(layer => {
       if (layer instanceof L.Marker) {
         this.markerClusterGroup!.addLayer(layer);
       }
     });
-  
+
     // 4) Emitimos el cluster YA poblado
     this.mapService.setMarkerClusterGroup(this.markerClusterGroup);
-  }
-
-  private initMap() {
-    const baseMapURl = "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
-    this.map = L.map('map', {
-      zoomControl: false,
-      maxZoom: 18,
-      minZoom: 3,
-    });
-    L.tileLayer(baseMapURl).addTo(this.map);
-    this.resetMap();
-    this.map.on('zoomend', () => {
-      this.zoomLevel = this.map.getZoom();
-    });
-    L.control.scale({
-      imperial: false,
-      position: 'bottomleft',
-    }).addTo(this.map);    
-    L.control.coordinates({
-      position: 'topright',
-      useDMS: true,
-      labelTemplateLat: 'N {y}',
-      labelTemplateLng: 'E {x}',
-      useLatLngOrder: true, 
-      enableUserInput: false
-    }).addTo(this.map);   
-    
-    this.mapService.setMap(this.map);
   }
 
   private focusOnPoint(adressId: string, latitude?: number, longitude?: number): void {
@@ -342,7 +246,7 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
     const target = all.find(
       m => m.feature?.properties?.Direccion_Id === adressId
     );
-  
+
     if (target) {
       const parent = this.markerClusterGroup.getVisibleParent(
         target as any as L.Marker
@@ -350,7 +254,7 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
       if (parent) {
         this.map.fitBounds((parent as any).getBounds());
       }
-  
+
       const ll = target.getLatLng();
       this.map.setView(ll, this.map.getMaxZoom());
       target.openPopup();
@@ -360,7 +264,7 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
       const delta = 0.01; // ~1km aprox.
       const north = latitude + delta, south = latitude - delta;
       const east = longitude + delta, west = longitude - delta;
-  
+
       this.geometryService.getGeoJsonData(north, south, east, west)
         .pipe(takeUntil(this.destroy$))
         .subscribe(resp => {
@@ -372,6 +276,16 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
     } else {
       console.warn(`Ni marcador ni lat/lng disponibles para Direccion_Id ${adressId}`);
     }
+  }
+
+  private createCircleDivIcon(opts: L.CircleMarkerOptions): L.DivIcon {
+    const size = opts.radius! * 2;
+    const border = opts.weight ?? 0;
+    const color = opts.fillColor as string;
+    const stroke = opts.color as string;
+    const fillOpacity = opts.fillOpacity ?? 1;
+    const html = `<div style="width:${size}px;height:${size}px;background-color:${color};border:${border}px solid ${stroke};border-radius:50%;opacity:${fillOpacity};"></div>`;
+    return L.divIcon({ className: '', html, iconSize: [size, size], iconAnchor: [size / 2, size / 2] });
   }
 
   getLocateMap(): void {
@@ -428,12 +342,9 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   showCardUser(infoInput: string, infoAdress: string): void {
-    const data = {
-      filterName: "AcreditadoNumCuen",
-      filterValue: infoInput,
-      idAdress: infoAdress
-    };
-    this.dialogService.closeAll();
-    this.dialogService.open({ component: ContactCardComponent, data: data });
+    const data = { filterName: 'AcreditadoNumCuen', filterValue: infoInput, idAdress: infoAdress };
+    const dialogService = inject(DialogService);
+    dialogService.closeAll();
+    dialogService.open({ component: ContactCardComponent, data });
   }
 }
