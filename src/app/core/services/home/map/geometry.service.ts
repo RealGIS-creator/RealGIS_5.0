@@ -19,7 +19,7 @@ export class GeometryService {
 
   getGeoJsonData(north: number, south: number, east:number, west:number): Observable<any> {
     
-    const url = `${this.apiUrl}/WS_GeoJson`;
+    const url = `${this.apiUrl}/WS_GeoJsonSP`;
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });

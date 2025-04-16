@@ -205,7 +205,6 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     this.measurePolyline(layer);
   }
   
-
   private measurePolyline(line: L.Polyline) {
     const latlngs = line.getLatLngs() as L.LatLng[];
     let totalMeters = 0;
