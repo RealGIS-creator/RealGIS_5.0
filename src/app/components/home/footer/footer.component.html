@@ -1,11 +1,11 @@
 <footer class="text-light text-center">
     <div class="d-flex justify-content-between align-items-center h-100">
-        <!-- <div class="container-scale">
-            <p class="dynamic-text">1000</p>
+        <div class="container-scale">
+            <p class="dynamic-text">{{ zoomLevel }} km</p>
         </div>
         <div>
-            <p class="range-scale">1250 - 54821112</p>
-        </div> -->
+            <p class="range-scale">{{ cursorCoords }}</p>
+        </div>
         <div>
             <img class="logo-company" [src]="'assets/logo/' + this.logoCompany + '.png'" alt="administrador">
         </div>

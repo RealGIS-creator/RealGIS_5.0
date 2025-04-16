@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import * as L from 'leaflet';
 import 'leaflet.markercluster';
 
@@ -17,6 +17,12 @@ export class MapService {
   private selectedIdsSubject = new BehaviorSubject<string[]>([]);
   selectedIds$ = this.selectedIdsSubject.asObservable();
 
+  private cursorCoordsSubject = new BehaviorSubject<[number, number] | null>(null);
+  cursorPosition$ = this.cursorCoordsSubject.asObservable();
+
+  private zoomLevelSubject = new BehaviorSubject<number | null>(null);
+  zoomLevel$ = this.zoomLevelSubject.asObservable();
+
   setMap(map: L.Map) {
     this.mapSubject.next(map);
   }
@@ -32,5 +38,13 @@ export class MapService {
 
   setSelectedIds(ids: string[]) {
     this.selectedIdsSubject.next(ids);
+  }
+
+  updateCursorCoords(coords: [number, number]) {
+    this.cursorCoordsSubject.next(coords);
+  }
+
+  updateZoomLevel(zoom: number) {
+    this.zoomLevelSubject.next(zoom);
   }
 }

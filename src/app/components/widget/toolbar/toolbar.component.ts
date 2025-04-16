@@ -177,12 +177,6 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     // 4. Enviamos al servicio
     this.mapService.setSelectedIds(ids);
 
-    // (Opcional) destacar en el mapa
-    insideMarkers.forEach(m => m.setIcon(L.icon({
-      iconUrl: 'assets/marker-selected.png',
-      iconSize: [25, 41],
-      iconAnchor: [12, 41]
-    })));
   }
 
 

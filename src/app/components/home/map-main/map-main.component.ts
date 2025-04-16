@@ -6,7 +6,6 @@ import { ToolbarComponent } from '../../widget/toolbar/toolbar.component';
 import { GeometryService } from '../../../core/services/home/map/geometry.service';
 import { ContactCardComponent } from '../../widget/contact-card/contact-card.component';
 import { DialogService } from '../../../core/services/shared/dialog.service';
-import { environment } from '../../../../environment/environment';
 import { Subject, from } from 'rxjs';
 import { takeUntil, tap, map, concatMap, filter } from 'rxjs/operators';
 import { LocationService } from '../../../core/services/home/map/location.service';
@@ -30,9 +29,7 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
   private addedFeatureIds = new Set<string>();
   private destroy$ = new Subject<void>();
 
-  // Tamaño de tesela fija en grados
-  private tileSizeLat = 0.5;
-  private tileSizeLon = 0.5;
+  private dialogService = inject(DialogService);
 
   constructor(
     private locationService: LocationService,
@@ -43,6 +40,7 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
+    
     this.initMap();
 
     this.locationService.pointData$
@@ -50,18 +48,39 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
         filter((pd): pd is any => pd != null),
         takeUntil(this.destroy$)
       )
-      .subscribe(pd => this.focusOnPoint(pd.address, pd.latitude, pd.longitude));
+
+    this.mapService.updateZoomLevel(this.updateScale());
   }
 
   ngAfterViewInit(): void {
     if (this.map) {
-      // Carga inicial de teselas
       this.loadTiles();
-      // Al panear, cargar nuevas teselas
+
       this.map.on('moveend', () => this.loadTiles());
-      // Al hacer zoom, solo actualizar zoomLevel (clusters se recalculan automáticamente)
-      this.map.on('zoomend', () => this.zoomLevel = this.map.getZoom());
+      this.map.on('mousemove', (e: L.LeafletMouseEvent) => {
+        const { lat, lng } = e.latlng;
+        this.mapService.updateCursorCoords([lat, lng]);
+      });
+
+      this.map.on('zoomend', () => {
+        this.mapService.updateZoomLevel(this.updateScale());
+        this.zoomLevel = this.map.getZoom();
+      });
     }
+  }
+
+  private updateScale(): number {
+    const mapSize = this.map.getSize();
+    const y = mapSize.y / 2;
+  
+    const pointA = this.map.containerPointToLatLng([0, y]);
+    const pointB = this.map.containerPointToLatLng([100, y]);
+  
+    const distanceMeters = pointA.distanceTo(pointB);
+    const distanceKm = distanceMeters / 1000;
+  
+    const roundedKm = Math.round(distanceKm);
+    return roundedKm;
   }
 
   ngOnDestroy(): void {
@@ -76,20 +95,29 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
   /**
    * Carga datos en teselas geográficas de tamaño fijo, sin recargar las ya solicitadas.
    */
-  private loadTiles(): void {
-    const bounds = this.map.getBounds();
-    const west = bounds.getWest(), east = bounds.getEast();
-    const south = bounds.getSouth(), north = bounds.getNorth();
 
-    const xMin = this.lon2grid(west);
-    const xMax = this.lon2grid(east);
-    const yMin = this.lat2grid(south);
-    const yMax = this.lat2grid(north);
+  private getTileSizeForZoom(zoom: number): number {
+    if (zoom <= 5) return 5.0;    // Continental view: 5° tiles
+    if (zoom <= 8) return 2.0;    // Regional view: 2° tiles
+    if (zoom <= 12) return 1.0;   // Sub-regional: 1° tiles
+    if (zoom <= 15) return 0.5;   // Local: 0.5° tiles
+    return 0.25;                  // Detailed: 0.25° tiles
+  }
+
+  private loadTiles(): void {
+    const zoom = this.map.getZoom();
+    const tileSize = this.getTileSizeForZoom(zoom);
+    const bounds = this.map.getBounds();
+
+    const xMin = Math.floor(bounds.getWest() / tileSize);
+    const xMax = Math.floor(bounds.getEast() / tileSize);
+    const yMin = Math.floor(bounds.getSouth() / tileSize);
+    const yMax = Math.floor(bounds.getNorth() / tileSize);
 
     const tiles: Array<{ x: number; y: number; key: string }> = [];
     for (let x = xMin; x <= xMax; x++) {
       for (let y = yMin; y <= yMax; y++) {
-        const key = `${x}-${y}`;
+        const key = `${zoom}-${x}-${y}`;
         if (!this.loadedTiles.has(key)) {
           tiles.push({ x, y, key });
         }
@@ -99,10 +127,10 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
     from(tiles)
       .pipe(
         concatMap(tile => {
-          const westLng = tile.x * this.tileSizeLon;
-          const eastLng = (tile.x + 1) * this.tileSizeLon;
-          const southLat = tile.y * this.tileSizeLat;
-          const northLat = (tile.y + 1) * this.tileSizeLat;
+          const westLng = tile.x * tileSize;
+          const eastLng = (tile.x + 1) * tileSize;
+          const southLat = tile.y * tileSize;
+          const northLat = (tile.y + 1) * tileSize;
           return this.geometryService.getGeoJsonData(northLat, southLat, eastLng, westLng).pipe(
             takeUntil(this.destroy$),
             tap(resp => this.loadedTiles.add(tile.key)),
@@ -118,11 +146,9 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private initMap(): void {
     const baseMapURl = 'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
-    this.map = L.map('map', { zoomControl: false, maxZoom: 18, minZoom: 3 });
+    this.map = L.map('map', { zoomControl: false, maxZoom: 18, minZoom: 3, attributionControl: false });
     L.tileLayer(baseMapURl).addTo(this.map);
     this.resetMap();
-    L.control.scale({ imperial: false, position: 'bottomleft' }).addTo(this.map);
-    L.control.coordinates({ position: 'topright', useDMS: true, labelTemplateLat: 'N {y}', labelTemplateLng: 'E {x}', useLatLngOrder: true, enableUserInput: false }).addTo(this.map);
     this.initCluster();
     this.mapService.setMap(this.map);
   }
@@ -158,12 +184,13 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
       if (layer instanceof L.Marker) {
         const feature = (layer as any).feature;
         const id = feature.properties.Direccion_Id;
+        const acct = feature.properties.AcreditadoNumCuen;
         if (!this.addedFeatureIds.has(id)) {
           this.addedFeatureIds.add(id);
           layer.on('click', e => {
             const loc = (e.target as L.Marker).getLatLng();
             this.map.flyTo(loc, 17, { animate: false });
-            this.showCardUser(feature.properties.AcreditadoNumCuen, id);
+            this.showCardUser(acct, id);
           });
           this.markerClusterGroup.addLayer(layer);
         }
@@ -172,17 +199,6 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
     this.mapService.setMarkerClusterGroup(this.markerClusterGroup);
   }
 
-  private lon2grid(lon: number): number {
-    return Math.floor(lon / this.tileSizeLon);
-  }
-
-  private lat2grid(lat: number): number {
-    return Math.floor(lat / this.tileSizeLat);
-  }
-
-
-
-  // desde aca
   private updateMarkers(data: any): void {
     const baseOpts: L.CircleMarkerOptions = {
       radius: 8,
@@ -271,7 +287,7 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
           const json = resp.SDT_GeoJson;
           // 4) actualizo markers y vuelvo a intentar enfoque
           this.updateMarkers(json);
-          this.focusOnPoint(adressId, latitude, longitude);
+          // this.focusOnPoint(adressId, latitude, longitude);
         });
     } else {
       console.warn(`Ni marcador ni lat/lng disponibles para Direccion_Id ${adressId}`);
@@ -288,7 +304,7 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
     return L.divIcon({ className: '', html, iconSize: [size, size], iconAnchor: [size / 2, size / 2] });
   }
 
-  getLocateMap(): void {
+  private getLocateMap(): void {
     const response = this.locationService.getLocationInitial();
     this.location = response.location as [number, number];
     this.zoom = response.zoom;
@@ -304,17 +320,11 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   zoomIn(): void {
-    if (this.zoomLevel < 18) {
-      this.zoomLevel++;
-      this.onZoomChange(this.zoomLevel);
-    }
+    if (this.zoomLevel < 18) this.map.setZoom(++this.zoomLevel);
   }
 
   zoomOut(): void {
-    if (this.zoomLevel > 3) {
-      this.zoomLevel--;
-      this.onZoomChange(this.zoomLevel);
-    }
+    if (this.zoomLevel > 3) this.map.setZoom(--this.zoomLevel);
   }
 
   onRangeChange(newZoom: number): void {
@@ -342,9 +352,11 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   showCardUser(infoInput: string, infoAdress: string): void {
+    console.log('infoInput', infoInput);
     const data = { filterName: 'AcreditadoNumCuen', filterValue: infoInput, idAdress: infoAdress };
-    const dialogService = inject(DialogService);
-    dialogService.closeAll();
-    dialogService.open({ component: ContactCardComponent, data });
+    this.dialogService.closeAll();
+    this.dialogService.open({ component: ContactCardComponent, data });
   }
 }
+
+
