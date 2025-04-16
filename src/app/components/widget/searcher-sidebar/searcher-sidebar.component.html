@@ -40,8 +40,9 @@
       <button class="btn btn-card btn-card-windows" type="submit" form="formSearchId">Buscar</button>
       <button class="btn btn-card btn-card-windows" (click)="clearInformation()">Limpiar</button>
     </div>
-    <div class="option-info-user mb-4" [hidden]="infoSeacher.length == 0">
-      <div class="search-container-option" *ngFor="let info of infoSeacher">
+    <div class="option-info-user mb-4" *ngIf="infoSeacher$ | async as infoSeacher">
+      <div class="search-container-option" 
+      *ngFor="let info of infoSeacher; trackBy: trackByAcreditado">
         <p class="option option-tc d-flex justify-content-between">
           No. Cliente: {{ info.AcreditadoNum }} -
           <small *ngIf="info.TipoDireccionCod == '1'">DR</small>

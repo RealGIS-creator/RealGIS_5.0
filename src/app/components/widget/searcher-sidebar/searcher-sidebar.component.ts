@@ -6,6 +6,8 @@ import { SearcherSidebarService } from '../../../core/services/widget/searcher-s
 import { infoSeacher } from '../../../interfaces/info-searcher';
 import { FormGroup, Validators, ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { SearchCriteria } from '../../../interfaces/search-criteria';
+import { Observable } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-searcher-sidebar',
@@ -17,13 +19,14 @@ import { SearchCriteria } from '../../../interfaces/search-criteria';
 export class SearcherSidebarComponent {
   readonly DEFAULT_LABEL = 'Criterio de Búsqueda';
 
-  public optionSearch: SearchCriteria[] = [];
-  public isVisible: boolean = false;
-  public selectedOption: string = this.DEFAULT_LABEL;
-  public infoSeacher: infoSeacher[] = [];
-  public placeholderText = '';
-  public infoInput = '';
-  public dataFilter?: SearchCriteria;
+  optionSearch: SearchCriteria[] = [];
+  isVisible: boolean = false;
+  selectedOption: string = this.DEFAULT_LABEL;
+  placeholderText = '';
+  infoInput = '';
+  dataFilter?: SearchCriteria;
+
+  infoSeacher$!: Observable<infoSeacher[]>;
 
   formSearch: FormGroup = this.fb.group({
     inputSearch: ['', [Validators.required, Validators.maxLength(20)]]
@@ -67,18 +70,22 @@ export class SearcherSidebarComponent {
     this.infoInput = this.formSearch.get('inputSearch')?.value;
     this.dataFilter = this.searcherSidebarService.getSearchCriteria().find(item => item.label === this.selectedOption);
 
-    this.searcherSidebarService.getInformationUser(this.dataFilter!.name, this.infoInput).subscribe(response => {
-      this.infoSeacher = response.SDT_Acreditados;
-      if (this.infoSeacher.length === 0) {
-        this.clearInformation();
-        this.placeholderText = 'Datos no encontrados';
-      }
-      this.cdr.detectChanges();
-    });
+    this.infoSeacher$ = this.searcherSidebarService
+      .getInformationUser(this.dataFilter!.name, this.infoInput)
+      .pipe(
+        map(resp => resp.SDT_Acreditados),
+        tap(list => {
+          if (list.length === 0) {
+            this.placeholderText = 'Datos no encontrados';
+          } else {
+            this.placeholderText = '';
+          }
+        })
+      );
   }
 
   clearInformation(): void {
-    this.infoSeacher = [];
+    this.infoSeacher$ = new Observable<infoSeacher[]>(obs => obs.next([]));
     this.placeholderText = '';
     this.formSearch.reset();
     this.selectedOption = this.DEFAULT_LABEL;
@@ -93,5 +100,9 @@ export class SearcherSidebarComponent {
     this.dialogService.closeAll();
     this.dialogService.open({ component: ContactCardComponent, data: data });
     // this.dialogService.open({ component: ContactCardComponent, data: { data: this.dataFilter!.name } });
+  }
+
+  trackByAcreditado(_: number, item: infoSeacher): string {
+    return item.AcreditadoNum;
   }
 }
