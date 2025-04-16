@@ -4,7 +4,7 @@ import { ContactCardComponent } from '../contact-card/contact-card.component';
 import { DialogService } from '../../../core/services/shared/dialog.service';
 import { SearcherSidebarService } from '../../../core/services/widget/searcher-sidebar.service';
 import { infoSeacher } from '../../../interfaces/info-searcher';
-import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, Validators, ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { SearchCriteria } from '../../../interfaces/search-criteria';
 
 @Component({
@@ -15,32 +15,30 @@ import { SearchCriteria } from '../../../interfaces/search-criteria';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SearcherSidebarComponent {
-  public optionSearch: any[] = [];
+  readonly DEFAULT_LABEL = 'Criterio de Búsqueda';
+
+  public optionSearch: SearchCriteria[] = [];
   public isVisible: boolean = false;
-  public selectedOption: string = 'Criterio de Búsqueda';
+  public selectedOption: string = this.DEFAULT_LABEL;
   public infoSeacher: infoSeacher[] = [];
   public placeholderText = '';
   public infoInput = '';
   public dataFilter?: SearchCriteria;
-  formSearch!: FormGroup;
 
-  private dialogService = inject(DialogService);
+  formSearch: FormGroup = this.fb.group({
+    inputSearch: ['', [Validators.required, Validators.maxLength(20)]]
+  });
 
   constructor(
     private searcherSidebarService: SearcherSidebarService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private fb: FormBuilder,
+    private dialogService: DialogService
   ) {
-    this.createForm();
   }
 
   ngOnInit(): void {
     this.getSearchCriteria();
-  }
-
-  createForm(): void {
-    this.formSearch = new FormGroup({
-      inputSearch: new FormControl('', [Validators.required, Validators.maxLength(20)])
-    });
   }
 
   getSearchCriteria(): void {
@@ -61,46 +59,39 @@ export class SearcherSidebarComponent {
   }
 
   searchInformation(): void {
-    console.log('validacion: ', this.formSearch.valid);
-    if (this.selectedOption !== 'Criterio de Búsqueda' && this.formSearch.valid) {
-      this.infoInput = this.formSearch.get('inputSearch')?.value;
-      this.dataFilter = this.searcherSidebarService.getSearchCriteria().find(item => item.label === this.selectedOption);
-
-      // this.dataFilter!.type == 'number' ? this.formSearch.get('inputSearch')?.addValidators(Validators.pattern('^[0-9]+$')) : this.formSearch.get('inputSearch')?.addValidators(Validators.pattern('^[A-Za-z ]+$'));
-      // this.formSearch.get('inputSearch')?.updateValueAndValidity();
-
-      if (this.formSearch.valid) {
-        this.searcherSidebarService.getInformationUser(this.dataFilter!.name, this.infoInput).subscribe(response => {
-          this.infoSeacher = response.SDT_Acreditados;
-          if (this.infoSeacher.length === 0) {
-            this.clearInformation();
-            this.placeholderText = 'Datos no encontrados';
-          }
-          this.cdr.markForCheck();
-        });
-      }
- 
-    } else {
-      console.log('Debe seleccionar una opcion');
-      // generar alerta
+    if (this.selectedOption === this.DEFAULT_LABEL || this.formSearch.invalid) {
+      console.warn('Debe seleccionar una opción válida y rellenar el campo de búsqueda');
+      return;
     }
+
+    this.infoInput = this.formSearch.get('inputSearch')?.value;
+    this.dataFilter = this.searcherSidebarService.getSearchCriteria().find(item => item.label === this.selectedOption);
+
+    this.searcherSidebarService.getInformationUser(this.dataFilter!.name, this.infoInput).subscribe(response => {
+      this.infoSeacher = response.SDT_Acreditados;
+      if (this.infoSeacher.length === 0) {
+        this.clearInformation();
+        this.placeholderText = 'Datos no encontrados';
+      }
+      this.cdr.detectChanges();
+    });
   }
 
   clearInformation(): void {
     this.infoSeacher = [];
     this.placeholderText = '';
     this.formSearch.reset();
-    this.selectedOption = 'Criterio de Búsqueda';
+    this.selectedOption = this.DEFAULT_LABEL;
   }
 
   showCardUser(idAdress: string): void {
     const data = {
-      filterName: this.dataFilter!.name, 
-      filterValue: this.infoInput, 
+      filterName: this.dataFilter!.name,
+      filterValue: this.infoInput,
       idAdress: idAdress
     }
     this.dialogService.closeAll();
-    this.dialogService.open({ component: ContactCardComponent, data: data});
+    this.dialogService.open({ component: ContactCardComponent, data: data });
     // this.dialogService.open({ component: ContactCardComponent, data: { data: this.dataFilter!.name } });
   }
 }

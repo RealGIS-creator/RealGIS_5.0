@@ -37,8 +37,8 @@
       </div>
     </div>
     <div class="d-flex justify-content-around mt-2 mb-4">
-      <button class="btn btn-card-windows" type="submit" form="formSearchId">Buscar</button>
-      <button class="btn btn-card-windows" (click)="clearInformation()">Limpiar</button>
+      <button class="btn btn-card btn-card-windows" type="submit" form="formSearchId">Buscar</button>
+      <button class="btn btn-card btn-card-windows" (click)="clearInformation()">Limpiar</button>
     </div>
     <div class="option-info-user mb-4" [hidden]="infoSeacher.length == 0">
       <div class="search-container-option" *ngFor="let info of infoSeacher">
@@ -47,7 +47,7 @@
           <small *ngIf="info.TipoDireccionCod == '1'">DR</small>
           <small *ngIf="info.TipoDireccionCod == '2'">DL</small>
           <small *ngIf="info.TipoDireccionCod == '3'">DL</small>
-          <button class="btn btn-card-windows" (click)="showCardUser(info.Direccion_Id)">Ver TC</button>
+          <button class="btn btn-card btn-card-tc" (click)="showCardUser(info.Direccion_Id)">Ver TC</button>
         </p>
       </div>
     </div>
