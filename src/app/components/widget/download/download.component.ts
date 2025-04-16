@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { ExportableService } from '../../../core/services/shared/exportable.service';
 import { FeatureCollection } from 'geojson';
 import { MapService } from '../../../core/services/home/map/map.service';
+import { GeoJsonData, GeoJsonDataBaseCliente } from '../../../interfaces/geoJson';
 
 @Component({
   selector: 'app-download',
@@ -14,23 +15,22 @@ import { MapService } from '../../../core/services/home/map/map.service';
   styleUrl: './download.component.less'
 })
 export class DownloadComponent {
-  public optionSearch: any[] = [];
-  public isVisible: boolean = false;
-  public selectedOption: string = 'Tipo de Descarga';
-  public selectedOptionID: number = 0;
-  public infoSeacher: any[] = [];
-  public infoClient: any[] = [];
-  public placeholderText = '';
-  public dataFilter?: SearchCriteria;
-  public isLoading: boolean = false;
-  public geojson!: FeatureCollection;
-
-  private exportableService = inject(ExportableService);
+  optionSearch: any[] = [];
+  isVisible: boolean = false;
+  selectedOption: string = 'Tipo de Descarga';
+  selectedOptionID: number = 0;
+  infoSeacher: any[] = [];
+  infoClient: any[] = [];
+  placeholderText = '';
+  dataFilter?: SearchCriteria;
+  isLoading: boolean = false;
+  geojson!: FeatureCollection;
 
   constructor(
     private downloadSidebarService: DownloadSidebarService,
     private cdr: ChangeDetectorRef,
-    private mapService: MapService
+    private mapService: MapService,
+    private exportableService: ExportableService
   ) {
   }
 
@@ -69,13 +69,6 @@ export class DownloadComponent {
   download(): void {
     switch (this.selectedOption) {
       case "Descargar CSV":
-        // if (this.infoClient.length == 0) {
-        //   this.getInfoClient() 
-        //   this.exportableService.exportToCSV(this.infoClient, 'BaseClienteCSV');
-        // } else {
-        //   this.exportableService.exportToCSV(this.infoClient, 'BaseClienteCSV');
-        // }
-
         if (this.isLoading) return; 
 
         this.isLoading = true;
@@ -95,13 +88,6 @@ export class DownloadComponent {
           });
         break;
       case "Descargar Excel":
-        // if (this.infoClient.length == 0) { 
-        //   this.getInfoClient()
-        //   this.exportableService.exportToExcel(this.infoClient, 'BaseClienteXLSX');
-        // } else {
-        //   this.exportableService.exportToExcel(this.infoClient, 'BaseClienteXLSX');
-        // }
-
         if (this.isLoading) return; 
 
         this.isLoading = true;
@@ -144,6 +130,34 @@ export class DownloadComponent {
         break
     }
   }
+
+  // private handleExport(
+  //   response: ClientResponse | GeoJsonDataBaseCliente,
+  //   type: number
+  // ): void {
+  //   switch (type) {
+  //     case 1: // CSV
+  //       this.exportableService.exportLargeDataToCsvZip(
+  //         (response as ClientResponse).SDT_BaseCliente,
+  //         'BaseClienteCSV'
+  //       );
+  //       break;
+  //     case 2: // Excel
+  //       this.exportableService.exportLargeDataToExcelZip(
+  //         (response as ClientResponse).SDT_BaseCliente,
+  //         'BaseClienteXLSX'
+  //       );
+  //       break;
+  //     case 3: // Shapefile
+  //       this.exportableService.exportToShapefile(
+  //         (response as GeoJsonDataBaseCliente).SDT_BaseClienteGeoJson,
+  //         'BaseClienteShapeFile'
+  //       );
+  //       break;
+  //     default:
+  //       console.warn('Tipo de descarga desconocido');
+  //   }
+  // }
 
   getInfoClient(): void {
     if (this.isLoading) return; 

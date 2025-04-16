@@ -30,3 +30,7 @@ export interface GeoJson {
 export interface GeoJsonData {
   SDT_GeoJson: GeoJson;
 }
+
+export interface GeoJsonDataBaseCliente {
+  SDT_BaseClienteGeoJson: GeoJson;
+}
