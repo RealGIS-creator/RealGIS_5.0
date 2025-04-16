@@ -23,10 +23,11 @@ import type { Feature, Polygon } from 'geojson';
 export class ToolbarComponent implements OnInit, OnDestroy {
   activeIndex: number | null = null;
   imagesDefault: ToolBar[] = [];
-  private map: L.Map | null = null;
+  private map!: L.Map;
   private drawLayer!: L.LayerGroup;
   private subs = new Subscription();
   currentPolygon: L.Polygon | null = null;
+  private currentPolyline: L.Polyline | null = null;
   drawing = false;
 
   private markerClusterGroup: L.MarkerClusterGroup | null = null;
@@ -64,6 +65,10 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     this.imagesDefault = this.toolbarService.getToolBar();
   }
 
+  resetMap(): void {
+    this.map.setView([ 9.0, -80.0 ], 8);
+  }
+
   onChangeImage(id: number, type: string): void {
     this.activeIndex = this.activeIndex === id ? null : id;
     switch (id) {
@@ -78,6 +83,9 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         break;
       case 4:
         this.clearSelection();
+        break;
+      case 5:
+        this.resetMap();
         break;
     }
   }
@@ -143,8 +151,17 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     if (this.currentPolygon) {
       this.drawLayer.removeLayer(this.currentPolygon);
       this.currentPolygon = null;
-      this.mapService.setSelectedIds([]);
     }
+  
+    if (this.currentPolyline) {
+      this.drawLayer.removeLayer(this.currentPolyline);
+      this.currentPolyline = null;
+    }
+  
+    this.mapService.setSelectedIds([]);
+    this.map.pm.disableDraw();
+    this.drawing = false;
+    this.map.closePopup();
   }
 
   private selectPointsInPolygon(polygon: L.Polygon) {
@@ -179,18 +196,15 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
   }
 
-
-  // private handlePolygonOrRectangle(layer: L.Polygon) {
-  //   if (this.currentPolygon) this.drawLayer.removeLayer(this.currentPolygon);
-  //   this.currentPolygon = layer;
-  //   this.drawLayer.addLayer(layer);
-  //   this.selectPointsInPolygon(layer);
-  // }
-
   private handlePolyline(layer: L.Polyline) {
+    if (this.currentPolyline) {
+      this.drawLayer.removeLayer(this.currentPolyline);
+    }
+    this.currentPolyline = layer;
     this.drawLayer.addLayer(layer);
     this.measurePolyline(layer);
   }
+  
 
   private measurePolyline(line: L.Polyline) {
     const latlngs = line.getLatLngs() as L.LatLng[];
@@ -206,5 +220,4 @@ export class ToolbarComponent implements OnInit, OnDestroy {
       .setContent(`<b>${(totalMeters / 1000).toFixed(3)} km</b>`)
       .openOn(this.map!);
   }
-
 }
