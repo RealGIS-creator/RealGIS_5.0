@@ -9,6 +9,7 @@ import { InformationCard } from '../../../interfaces/information-card';
 import { InformationCardService } from '../../../core/services/widget/information-card.service';
 import { BehaviorSubject } from 'rxjs';
 import { LocationService } from '../../../core/services/home/map/location.service';
+import { ContactCardAdminComponent } from '../contact-card-admin/contact-card-admin.component';
 
 @Component({
   selector: 'app-contact-card',
@@ -17,10 +18,10 @@ import { LocationService } from '../../../core/services/home/map/location.servic
   styleUrl: './contact-card.component.less',
 })
 export class ContactCardComponent {
-  public isVisibleInformacionPersonal = false;
-  public isVisibleInformacionEmployment = false;
-  public isVisibleFarmsContactCard = false;
-  public infoUserCard!: InformationCard;
+  isVisibleInformacionPersonal = false;
+  isVisibleInformacionEmployment = false;
+  isVisibleFarmsContactCard = false;
+  infoUserCard!: InformationCard;
   
   @ViewChild('pdfContent', { static: false }) pdfContent!: ElementRef;
   @Input() data$: BehaviorSubject<any> = new BehaviorSubject(null);
@@ -118,5 +119,11 @@ export class ContactCardComponent {
 
   download(): void {
     this.pdfContactCardService.download(this.infoUserCard);
+  }
+
+  updateContactCard(): void {
+    this.dialogService.closeAll();
+    // this.close();
+    this.dialogRef = this.dialogService.open({ component: ContactCardAdminComponent, data: JSON.parse(JSON.stringify(this.infoUserCard))});
   }
 }

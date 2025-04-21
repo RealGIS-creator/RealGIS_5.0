@@ -13,6 +13,7 @@ import 'leaflet.coordinates/dist/Leaflet.Coordinates-0.1.5.src.js';
 import { MapService } from '../../../core/services/home/map/map.service';
 
 @Component({
+  standalone: true,
   selector: 'app-map-main',
   imports: [ToolbarComponent, ToolbarMapVerticalComponent],
   templateUrl: './map-main.component.html',
@@ -53,6 +54,7 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    this.initCluster();
     if (this.map) {
       this.loadTiles();
 
@@ -149,7 +151,7 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
     this.map = L.map('map', { zoomControl: false, maxZoom: 18, minZoom: 3, attributionControl: false });
     L.tileLayer(baseMapURl).addTo(this.map);
     this.resetMap();
-    this.initCluster();
+    //this.initCluster();
     this.mapService.setMap(this.map);
   }
 

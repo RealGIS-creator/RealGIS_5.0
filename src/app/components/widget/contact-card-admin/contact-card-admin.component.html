@@ -1,0 +1,208 @@
+<!-- <ng-container *ngIf="data; else loading"> -->
+<app-movable-card [initialX]="10" [initialY]="10" [paramWidth]="30" [headerClass]="'card-header text-white'">
+    <div class="card-title">
+        <div class="d-flex justify-content-between align-items-center">
+            <b>Editar Tarjeta de Contacto</b>
+            <div>
+                <img class="icon button-header" src="assets/icon/company_white.svg" alt="">
+                <img class="icon-header button-header" src="assets/icon/contact_card_minimize.svg" alt=""
+                    (click)="minimize()">
+                <img class="icon-header button-header" src="assets/icon/contact_card_close.svg" alt=""
+                    (click)="close()">
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <div class="title id-credit">ID DE CRÉDITO : {{ data.AcreditadoNumCuen }}</div>
+            <div>Identificación : {{ data.AcreditadoIdenti }}</div>
+            <div>Nombre : {{ data.AcreditadoNom }}</div>
+            <div>No. Acreditado : {{ data.AcreditadoNum }}</div>
+            <div class="title">CIS : {{ data.CuentasCis }}</div>
+        </div>
+        <img class="icon-user" src="assets/icon/contact_card_user.svg" alt="icono desplegar">
+    </div>
+
+    <div class="col">
+        <div class="title">Estrategia</div>
+        <span class="badge bg-strategy" [ngClass]="{'bg-active': data.TipoEstrategia_Id == 3}">TDD</span>
+        <span class="badge bg-strategy" [ngClass]="{'bg-active': data.TipoEstrategia_Id == 2}">TDC</span>
+        <span class="badge bg-strategy" [ngClass]="{'bg-active': data.TipoEstrategia_Id == 4}">TOKENIZACIÓN</span>
+        <span class="badge bg-strategy" [ngClass]="{'bg-active': data.TipoEstrategia_Id == 1}">DESCUENTODIRECTO</span>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="title mt-2">Tipo de producto</div>
+            <div class="col">
+                <div class="content-select content-seacher">
+                    <div class="search-container-option">
+                        <div class="select-option" (click)="clickSearcher()">
+                            {{ selectedOption }} {{ data.TipoProductoNom }}
+                            <img class="search-icon" [src]="'assets/icon/' + displayIcon" alt="icono desplegar">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-select-option" *ngIf="isVisible">
+                    <div class="search-container-option" (click)="selectOption('label')">
+                        <p class="option option-hover">
+                            PRESTAMO HIPOTECARIO
+                        </p>
+                        <p class="option option-hover">
+                            PRESTAMO PERSONAL
+                        </p>
+                        <p class="option option-hover">
+                            TARJETA DE CREDITO
+                        </p>
+                        <p class="option option-hover">
+                            PRESTAMO AUTO
+                        </p>
+                        <p class="option option-hover">
+                            TARJETA DEBITO
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="title mt-2">Dias de mora / Gaveta</div>
+            <div class="col">
+                <span class="badge bg-days">{{ data.CuentasDiasMoraGave }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="title mt-2">Tipo de Predio</div>
+    <div>
+        <span class="badge bg-property">Residencial</span>
+        <span class="badge bg-property">Comercial</span>
+        <span class="badge bg-property" [ngClass]="{'bg-days': data.TipoPredioCod == '3'}">Industrial</span>
+    </div>
+
+    <div class="title mt-2">Saldo de Producto</div>
+    <div class="badge bg-product"><b>$ {{ data.CuentasSalPro }} USD</b></div>
+
+    <div>
+        <div class="bg-info mt-3 d-flex justify-content-between align-items-center"
+            (click)="showInformationEmployment()">
+            <div class="title">Información Laboral</div>
+            <img class="icon button-header" alt="icono desplegar" [src]="'assets/icon/' + displayIconEmployment">
+        </div>
+
+        <div class="row" *ngIf="isVisibleInformacionEmployment">
+            <div class="col">
+                <b>Nombre:</b>
+                <div class="list-unstyled">
+                    <ng-container *ngIf="data.TipoDireccionCod == '2' || data.TipoDireccionCod == '3'">
+                        <div class="badge bg-property"><b>{{ data.DireccionesLugTra }}</b></div>
+                    </ng-container>
+                </div>
+            </div>
+            <div class="col">
+                <b>Teléfono:</b>
+                <ul class="list-unstyled">
+                    <li *ngFor="let laboral of data.Telefonos">
+                        <ng-container *ngIf="laboral.TipoTelefonoCod == '4'">
+                            <div class="badge bg-property"><b>{{ laboral.TelefonoPre }}</b></div>
+                            <div class="badge bg-property"><b>{{ laboral.TelefonoNum }}</b></div>
+                        </ng-container>
+                    </li>
+                </ul>
+            </div>
+            <div class="col">
+                <b>Dirección Laboral:</b>
+                <ul class="list-unstyled">
+                    <li *ngIf="data.TipoDireccionCod == '2' || data.TipoDireccionCod == '3'">
+                        <div class="badge bg-property"><b>{{ data.Direccion }}</b></div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="bg-info mt-3 d-flex justify-content-between align-items-center" (click)="showInformationPersonal()">
+            <div class="title">Información Personal</div>
+            <img class="icon button-header" [src]="'assets/icon/' + displayIconPersonal" alt="icono desplegar">
+        </div>
+        <div *ngIf="isVisibleInformacionPersonal">
+            <div class="col"><b>Dirección Residencial:</b>
+                <ul class="list-unstyled">
+                    <li *ngIf="data.TipoDireccionCod == '1'">
+                        <div class="badge bg-property"><b>{{ infoUserCard.Direccion }}</b></div>
+                    </li>
+                </ul>
+            </div>
+            <div class="col"><b>Teléfonos de Contacto:</b></div>
+            <div class="col"><b>Móvil(es)</b>:</div>
+            <div class="col">
+                <div *ngFor="let personal of data.Telefonos">
+                    <div *ngIf="personal.TipoTelefonoCod == '1'">
+                        + <div class="badge bg-property"><b>{{ personal.TelefonoPre }}</b></div>
+                        <div class="badge bg-property"><b>{{ personal.TelefonoNum }}</b></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col"><b>Residencial(es)</b>:</div>
+            <div class="col">
+                <div *ngFor="let personal of data.Telefonos">
+                    <div *ngIf="personal.TipoTelefonoCod == '2' || personal.TipoTelefonoCod == '3'">
+                        + <div class="badge bg-property"><b>{{ personal.TelefonoPre }}</b></div>
+                        <div class="badge bg-property"><b>{{ personal.TelefonoNum }}</b></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col"><b>Otros</b>:</div>
+            <div class="col">
+                <div class="col">
+                    <div *ngFor="let personal of data.Telefonos">
+                        <div *ngIf="personal.TipoTelefonoCod == '5'">
+                            + <div class="badge bg-property"><b>{{ personal.TelefonoPre }}</b></div>
+                            <div class="badge bg-property"><b>{{ personal.TelefonoNum }}</b></div>
+                        </div>
+                    </div>
+                    <!-- <div class="badge bg-property"><b>1. emial.com</b></div>
+                            <div class="badge bg-property"><b>Añadir</b></div> -->
+                </div>
+            </div>
+
+            <div class="col"><b>Email de contacto</b>:
+                <div class="col" *ngFor="let personal of data.Correos; let i = index">
+                    {{ i + 1 }}. {{ personal.CorreoElec }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-2">
+        <div class="title mt-2">FINCAS ASOCIADAS</div>
+        <div class="row">
+            <div class="col"><b>Número de Finca/Folio</b></div>
+            <div class="col"><b>Dirección</b></div>
+            <div class="col"><b></b></div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="badge bg-property"><b>Añadir</b></div>
+            </div>
+            <div class="col">
+                <div class="badge bg-property"><b>Añadir</b></div>
+            </div>
+            <div class="col">
+                <div class="badge bg-property"><b>Añadir</b></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-info location mt-3 d-flex justify-content-center align-items-center">
+        <img class="icon" src="assets/icon/contact_card_location.svg" alt="">
+        -78451222 - 487851222
+    </div>
+
+</app-movable-card>
+
+<!-- </ng-container>
+<ng-template #loading>
+    <p>Cargando información...</p>
+</ng-template> -->

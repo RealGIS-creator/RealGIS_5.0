@@ -17,6 +17,9 @@ export class MovableCardComponent {
   private offsetX: number = 0;
   private offsetY: number = 0;
 
+  @Input() headerClass: string | string[] | Record<string, boolean> = 'card-header text-white';
+  @Input() showHeader = true;
+
   constructor(private elRef: ElementRef) {}
 
   ngOnInit(): void {
