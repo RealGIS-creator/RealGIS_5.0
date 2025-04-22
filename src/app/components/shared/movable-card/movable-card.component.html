@@ -8,4 +8,9 @@
     <div class="card-body">
         <ng-content></ng-content>
     </div>
+    <ng-container *ngIf="showFooter">
+        <div class="card-footer" style="cursor: pointer;">
+            <ng-content select=".card-footer"></ng-content>
+        </div>
+    </ng-container>
 </div>

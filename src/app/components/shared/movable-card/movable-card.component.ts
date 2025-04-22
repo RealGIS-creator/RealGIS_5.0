@@ -19,6 +19,7 @@ export class MovableCardComponent {
 
   @Input() headerClass: string | string[] | Record<string, boolean> = 'card-header text-white';
   @Input() showHeader = true;
+  @Input() showFooter = true;
 
   constructor(private elRef: ElementRef) {}
 
