@@ -1,7 +1,6 @@
+import L from 'leaflet';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
-import * as L from 'leaflet';
-import 'leaflet.markercluster';
 
 @Injectable({
   providedIn: 'root'

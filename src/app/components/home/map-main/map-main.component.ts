@@ -1,6 +1,6 @@
+import L from 'leaflet';
+
 import { Component, inject, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
-import * as L from 'leaflet';
-import 'leaflet.markercluster';
 import { ToolbarMapVerticalComponent } from '../../widget/toolbar-map-vertical/toolbar-map-vertical.component';
 import { ToolbarComponent } from '../../widget/toolbar/toolbar.component';
 import { GeometryService } from '../../../core/services/home/map/geometry.service';
@@ -54,8 +54,8 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.initCluster();
     if (this.map) {
+      this.initCluster();
       this.loadTiles();
 
       this.map.on('moveend', () => this.loadTiles());
@@ -354,7 +354,6 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   showCardUser(infoInput: string, infoAdress: string): void {
-    console.log('infoInput', infoInput);
     const data = { filterName: 'AcreditadoNumCuen', filterValue: infoInput, idAdress: infoAdress };
     this.dialogService.closeAll();
     this.dialogService.open({ component: ContactCardComponent, data });

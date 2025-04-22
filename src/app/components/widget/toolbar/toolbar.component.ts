@@ -1,11 +1,10 @@
+import L from 'leaflet';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ToolBar } from '../../../interfaces/toolbar';
 import { ToolbarService } from '../../../core/services/widget/toolbar.service';
 import { Subscription } from 'rxjs';
 import * as turf from '@turf/turf';
-import * as L from 'leaflet';
-import 'leaflet.markercluster';
 import { MapService } from '../../../core/services/home/map/map.service';
 
 // IMPORTS Geoman:
