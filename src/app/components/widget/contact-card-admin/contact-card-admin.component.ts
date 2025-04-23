@@ -6,6 +6,7 @@ import { InformationCard } from '../../../interfaces/information-card';
 import { BehaviorSubject } from 'rxjs';
 import { MovableCardComponent } from '../../shared/movable-card/movable-card.component';
 import { FormsModule } from '@angular/forms';
+import { ContactCardAdminService } from '../../../core/services/widget/contact-card-admin.service';
 
 @Component({
   selector: 'app-contact-card-admin',
@@ -24,11 +25,14 @@ export class ContactCardAdminComponent {
   isAddTelefonoResidencial = false;
   isAddTelefonoOtro = false;
   isAddEmail = false;
+  isAddFinca = false;
 
   infoUserCard!: InformationCard;
-  nuevoTelefonoPre: string = '';
-  nuevoTelefono: string = '';
+  nuevoTelefonoPre?: number;
+  nuevoTelefono?: number;
   nuevoEmail: string = '';
+  nuevaFinca: string = '';
+  nuevaFincaDireccion: string = '';
   typeTelefono: number = 0;
   typeEmail: number = 0;
 
@@ -42,7 +46,7 @@ export class ContactCardAdminComponent {
   data: any;
 
   optionsTipoProducto: string[] = ['PRESTAMO HIPOTECARIO', 'PRESTAMO PERSONAL', 'TARJETA DE CREDITO', 'PRESTAMO AUTO', 'TARJETA DEBITO'];
-
+  
   ngOnInit(): void {
     this.data = this.data$.value._value;
     this.selectedOption = this.data.TipoProductoNom
@@ -53,7 +57,8 @@ export class ContactCardAdminComponent {
   constructor(
     private dialogService: DialogService,
     private sidebarShowDataService: SidebarShowDataService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private contactCardAdminService: ContactCardAdminService
   )
   {}
 
@@ -80,18 +85,21 @@ export class ContactCardAdminComponent {
     return this.isVisible ? 'display_down.svg' : 'display_up.svg';
   }
 
-  onEstrategia(selectedOption: string): void {
-    this.data.TipoEstrategiaNom = selectedOption;
+  onEstrategia(nameEstrategia: string, idEstategia: number): void {
+    this.data.TipoEstrategiaNom = nameEstrategia;
+    this.data.TipoEstrategiaCod = idEstategia;
     console.log(this.data);
   }
 
-  onPredio(selectedOption: string): void {
-    this.data.TipoPredioNom = selectedOption;
+  onPredio(namePredio: string, idPredio: number): void {
+    this.data.TipoPredioNom = namePredio;
+    this.data.TipoPredioCod = idPredio;
     console.log(this.data);
   }
 
-  selectTipoProducto(option: string) {
-    this.data.TipoProductoNom = option;
+  selectTipoProducto(nameProducto: string, idProducto: number): void {
+    this.data.TipoProductoNom = nameProducto;
+    this.data.TipoProductoCod = idProducto;
     this.selectedOption = this.data.TipoProductoNom;
     this.clickSearcher();
     console.log(this.data);
@@ -136,8 +144,16 @@ export class ContactCardAdminComponent {
     this.isAddEmail = this.isAddEmail ? false : true;
   }
 
+  AddFinca(): void {
+    this.isAddFinca = this.isAddFinca ? false : true;
+  }
+
   // telefono
   newTelefono(): void {
+    if (this.nuevoTelefonoPre == 0 || this.nuevoTelefono == 0) {
+      return;
+    }
+
     this.data.Telefonos.push({
       TipoTelefonoCod: this.typeTelefono,
       TelefonoNum: this.nuevoTelefono,
@@ -148,6 +164,7 @@ export class ContactCardAdminComponent {
   }
 
   deleteTelefono(id: number): void {
+    
     this.data.Telefonos = this.data.Telefonos.map((t: any) =>
       t.Telefono_Id == id
         ? { ...t, TelefonoEst: 'I' }  
@@ -163,15 +180,23 @@ export class ContactCardAdminComponent {
     this.isAddTelefonoOtro = false;
   }
 
+  closeFinca(): void {
+    this.isVisibleFarmsContactCard = false;
+  }
+
   // correos
   onTipoEmail(selectedOption: number): void {
     this.typeEmail = selectedOption;  
   }
 
   newEmail(): void {
+    if (this.nuevoEmail.trim() == '') {
+      return;
+    }
+
     this.data.Correos.push({
       TipoEmailCod: this.data.TipoEmailCod,
-      CorreoElec: this.nuevoEmail,
+      CorreoElec: this.nuevoEmail.trim(),
       CorreoEst: 'A',
     });
     this.closeEmail();
@@ -193,8 +218,38 @@ export class ContactCardAdminComponent {
     this.cdr.markForCheck();
   }
 
+  //fincas
+  newFinca(): void {
+    // this.data.push({
+    //   FincaFolio: this.nuevaFinca,
+    //   FincaDireccion: this.nuevaFincaDireccion,
+    //   FincaEst: 'A',
+    // });
+    // this.closeFinca();
+    this.data.FincaFolio = this.nuevaFinca;
+    this.data.FincaDireccion = this.nuevaFincaDireccion;
+    this.data.FincaEst = 'A';
+    
+    this.closeFinca();
+  }
+
+  deleteFinca(id: number): void {
+    this.data.Fincas = this.data.map((f: any) =>
+      f.Finca_Id == id
+        ? { ...f, FincaEst: 'I' }  
+        : f       
+    );
+    this.cdr.markForCheck();
+    console.log(this.data);
+  }
+
   save(): void {
     console.log(this.data.CuentasDiasMoraGave);
     console.log(this.data);
+
+    this.contactCardAdminService.updateContactCard([this.data]).subscribe((res) => {
+      console.log(res);
+      console.log('Se guardo correctamente');
+    })
   }
 }

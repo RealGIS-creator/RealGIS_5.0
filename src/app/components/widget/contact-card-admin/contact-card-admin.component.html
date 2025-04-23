@@ -26,10 +26,10 @@
 
     <div class="col">
         <div class="title">Estrategia</div>
-        <span class="badge bg-strategy" [ngClass]="{'bg-active': data.TipoEstrategiaNom == 'TDD'}" (click)="onEstrategia('TDD')">TDD</span>
-        <span class="badge bg-strategy" [ngClass]="{'bg-active': data.TipoEstrategiaNom == 'TDC'}" (click)="onEstrategia('TDC')">TDC</span>
-        <span class="badge bg-strategy" [ngClass]="{'bg-active': data.TipoEstrategiaNom == 'TOKENIZACION'}" (click)="onEstrategia('TOKENIZACION')">TOKENIZACIÓN</span>
-        <span class="badge bg-strategy" [ngClass]="{'bg-active': data.TipoEstrategiaNom == 'DESCUENTO DIRECTO'}" (click)="onEstrategia('DESCUENTO DIRECTO')">DESCUENTO DIRECTO</span>
+        <span class="badge bg-strategy" [ngClass]="{'bg-active': data.TipoEstrategiaNom == 'TDD'}" (click)="onEstrategia('TDD', 3)">TDD</span>
+        <span class="badge bg-strategy" [ngClass]="{'bg-active': data.TipoEstrategiaNom == 'TDC'}" (click)="onEstrategia('TDC', 2)">TDC</span>
+        <span class="badge bg-strategy" [ngClass]="{'bg-active': data.TipoEstrategiaNom == 'TOKENIZACION'}" (click)="onEstrategia('TOKENIZACION', 4)">TOKENIZACIÓN</span>
+        <span class="badge bg-strategy" [ngClass]="{'bg-active': data.TipoEstrategiaNom == 'DESCUENTO DIRECTO'}" (click)="onEstrategia('DESCUENTO DIRECTO', 1)">DESCUENTO DIRECTO</span>
     </div>
 
     <div class="row">
@@ -51,19 +51,19 @@
                         <!-- <p class="option option-hover">
                             {{ option }}
                         </p> -->
-                        <p class="option option-hover" (click)="selectTipoProducto('PRESTAMO HIPOTECARIO')">
+                        <p class="option option-hover" (click)="selectTipoProducto('PRESTAMO HIPOTECARIO', 1)">
                             PRESTAMO HIPOTECARIO
                         </p>
-                        <p class="option option-hover" (click)="selectTipoProducto('PRESTAMO PERSONAL')">
+                        <p class="option option-hover" (click)="selectTipoProducto('PRESTAMO PERSONAL', 2)">
                             PRESTAMO PERSONAL
                         </p>
-                        <p class="option option-hover" (click)="selectTipoProducto('TARJETA DE CREDITO')">
+                        <p class="option option-hover" (click)="selectTipoProducto('TARJETA DE CREDITO', 3)">
                             TARJETA DE CREDITO
                         </p>
-                        <p class="option option-hover" (click)="selectTipoProducto('PRESTAMO AUTO')">
+                        <p class="option option-hover" (click)="selectTipoProducto('PRESTAMO AUTO', 4)">
                             PRESTAMO AUTO
                         </p>
-                        <p class="option option-hover" (click)="selectTipoProducto('TARJETA DEBITO')">
+                        <p class="option option-hover" (click)="selectTipoProducto('TARJETA DEBITO', 5)">
                             TARJETA DEBITO
                         </p>
                     </div>
@@ -94,9 +94,9 @@
 
     <div class="title mt-2">Tipo de Predio</div>
     <div>
-        <span class="badge bg-property" [ngClass]="{'bg-active': data.TipoPredioNom == 'Residencial'}" (click)="onPredio('Residencial')">Residencial</span>
-        <span class="badge bg-property" [ngClass]="{'bg-active': data.TipoPredioNom == 'Comercial'}" (click)="onPredio('Comercial')">Comercial</span>
-        <span class="badge bg-property" [ngClass]="{'bg-active': data.TipoPredioNom == 'Industrial'}" (click)="onPredio('Industrial')">Industrial</span>
+        <span class="badge bg-property" [ngClass]="{'bg-active': data.TipoPredioNom == 'Residencial'}" (click)="onPredio('Residencial', 1)">Residencial</span>
+        <span class="badge bg-property" [ngClass]="{'bg-active': data.TipoPredioNom == 'Comercial'}" (click)="onPredio('Comercial', 2)">Comercial</span>
+        <span class="badge bg-property" [ngClass]="{'bg-active': data.TipoPredioNom == 'Industrial'}" (click)="onPredio('Industrial', 3)">Industrial</span>
     </div>
 
     <div class="title mt-2">Saldo de Producto</div>
@@ -294,14 +294,17 @@
         </div>
         <div class="row">
             <div class="col-5">
-                <div class="badge bg-property"><b>31245789</b></div>
+                <div class="badge bg-property"><b>{{ data.FincaFolio }}</b></div>
             </div>
             <div class="col">
-                <div class="badge bg-property"><b>MZ 457 - 78</b></div>
+                <div class="badge bg-property"><b>{{ data.FincaDireccion }}</b></div>
             </div>
             <div class="col">
-                <img class="icon button-header" src="assets/icon/delete.svg" alt="icono desplegar">
-                <div class="badge bg-property"><b>Añadir</b></div>
+                <img class="icon button-header" src="assets/icon/delete.svg" alt="icono desplegar" (click)="deleteFinca(data.Finca_Id)">
+                <div class="badge bg-property" 
+                    [ngClass]="{'bg-active': isAddFinca == true}" 
+                    (click)="AddFinca()"><b>Añadir</b>
+                </div>
             </div>
         </div>
     </div>
@@ -401,6 +404,48 @@
             </div>
             <div class="col">
                 <button class="btn badge bg-active" (click)="newEmail()">Guardar</button>
+            </div>
+        </div>
+
+    </div>
+</app-movable-card>
+
+<app-movable-card *ngIf="isAddFinca" [initialX]="500" [initialY]="348" [paramWidth]="20" [showHeader]="true">
+    <div class="card-title">
+        <div class="d-flex justify-content-between align-items-center">
+            <b>
+                Añadir Número de finca/folio
+            </b>
+            <div>
+                <img class="icon-header button-header" src="assets/icon/contact_card_close.svg" alt=""
+                    (click)="closeFinca()">
+            </div>
+        </div>
+    </div>
+    <div class="d-flex align-items-center">
+        <div class="row">
+            <div class="col">
+                <input type="text" name="" id="" 
+                    class="form-control bg-property-input" 
+                    placeholder="Finca/Folio" 
+                    [(ngModel)]="nuevaFinca"
+                >
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <input type="text" name="" id="" 
+                    class="form-control bg-property-input" 
+                    placeholder="Dirección" 
+                    [(ngModel)]="nuevaFincaDireccion"
+                >
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <button class="btn badge bg-active" (click)="newFinca()">Guardar</button>
             </div>
         </div>
 
