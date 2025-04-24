@@ -76,6 +76,7 @@ export class SearcherSidebarComponent {
         map(resp => resp.SDT_Acreditados),
         tap(list => {
           if (list.length === 0) {
+            this.clearInformation();
             this.placeholderText = 'Datos no encontrados';
           } else {
             this.placeholderText = '';
