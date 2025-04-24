@@ -7,6 +7,7 @@ import { DialogService } from '../../../core/services/shared/dialog.service';
 import { SidebarService } from '../../../core/services/home/sidebar.service';
 import { Subscription } from 'rxjs';
 import { DownloadComponent } from '../../widget/download/download.component';
+import { ContactCardInsertComponent } from '../../widget/contact-card-insert/contact-card-insert.component';
 // import { SidebarShowDataService } from '../../../core/services/widget/sidebar-show-data.service';
 
 @Component({
@@ -79,6 +80,9 @@ export class SidebarComponent {
       case 2:
         componentToLoad = DownloadComponent;
         break;
+      case 3:
+          componentToLoad = ContactCardInsertComponent;
+          break;
       // default:
       //   console.warn('Componente de diálogo no definido para el ID:', img.id);
       //   return;

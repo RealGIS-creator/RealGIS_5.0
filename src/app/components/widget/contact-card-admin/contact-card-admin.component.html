@@ -92,12 +92,12 @@
         </div>
     </div>
 
-    <div class="title mt-2">Tipo de Predio</div>
+    <!-- <div class="title mt-2">Tipo de Predio</div>
     <div>
         <span class="badge bg-property" [ngClass]="{'bg-active': data.TipoPredioNom == 'Residencial'}" (click)="onPredio('Residencial', 1)">Residencial</span>
         <span class="badge bg-property" [ngClass]="{'bg-active': data.TipoPredioNom == 'Comercial'}" (click)="onPredio('Comercial', 2)">Comercial</span>
         <span class="badge bg-property" [ngClass]="{'bg-active': data.TipoPredioNom == 'Industrial'}" (click)="onPredio('Industrial', 3)">Industrial</span>
-    </div>
+    </div> -->
 
     <div class="title mt-2">Saldo de Producto</div>
     <div class="d-flex align-items-center">
@@ -442,6 +442,12 @@
                 >
             </div>
         </div>
+        
+        <div>
+            <span class="badge bg-property" [ngClass]="{'bg-active': data.TipoPredioNom == 'Residencial'}" (click)="onPredio('Residencial', 1)">Residencial</span>
+            <span class="badge bg-property" [ngClass]="{'bg-active': data.TipoPredioNom == 'Comercial'}" (click)="onPredio('Comercial', 2)">Comercial</span>
+            <span class="badge bg-property" [ngClass]="{'bg-active': data.TipoPredioNom == 'Industrial'}" (click)="onPredio('Industrial', 3)">Industrial</span>
+        </div> 
 
         <div class="row">
             <div class="col">

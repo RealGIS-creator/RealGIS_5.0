@@ -29,13 +29,13 @@
         <div class="col">
             <div class="title">Estrategia</div>
             <span class="badge bg-strategy"
-                [ngClass]="{'bg-product': infoUserCard.TipoEstrategiaNom === 'TDD'}">TDD</span>
+                [ngClass]="{'bg-product': infoUserCard.TipoEstrategia_Id == 3}">TDD</span>
             <span class="badge bg-strategy"
-                [ngClass]="{'bg-product': infoUserCard.TipoEstrategiaNom === 'TDC'}">TDC</span>
+                [ngClass]="{'bg-product': infoUserCard.TipoEstrategia_Id == 2}">TDC</span>
             <span class="badge bg-strategy"
-                [ngClass]="{'bg-product': infoUserCard.TipoEstrategiaNom === 'TOKENIZACION'}">TOKENIZACIÓN</span>
+                [ngClass]="{'bg-product': infoUserCard.TipoEstrategia_Id == 1}">TOKENIZACIÓN</span>
             <span class="badge bg-strategy"
-                [ngClass]="{'bg-product': infoUserCard.TipoEstrategiaNom === 'DESCUENTO DIRECTO'}">DESCUENTO
+                [ngClass]="{'bg-product': infoUserCard.TipoEstrategia_Id == 4}">DESCUENTO
                 DIRECTO</span>
         </div>
 
@@ -56,10 +56,9 @@
 
         <div class="title mt-2">Tipo de Predio</div>
         <div>
-            <span class="badge bg-property"
-                [ngClass]="{'bg-days': infoUserCard.TipoPredioNom == 'RESIDENCIAL'}">Residencial</span>
-            <span class="badge bg-property" [ngClass]="{'bg-days': infoUserCard.TipoPredioCod == '2'}">Comercial</span>
-            <span class="badge bg-property" [ngClass]="{'bg-days': infoUserCard.TipoPredioCod == '3'}">Industrial</span>
+            <span class="badge bg-property" [ngClass]="{'bg-days': infoUserCard.TipoDireccionCod == '1'}">Residencial</span>
+            <span class="badge bg-property" [ngClass]="{'bg-days': infoUserCard.TipoDireccionCod == '2' || infoUserCard.TipoDireccionCod == '3'}">Comercial</span>
+            <span class="badge bg-property" >Industrial</span>
         </div>
 
         <div class="title mt-2">Saldo de Producto</div>
