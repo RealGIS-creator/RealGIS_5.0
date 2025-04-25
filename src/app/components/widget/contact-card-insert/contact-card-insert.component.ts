@@ -19,8 +19,8 @@ export class ContactCardInsertComponent {
   isVisibleInformacionPersonal = false;
   isVisibleInformacionEmployment = false;
   isVisibleFarmsContactCard = false;
-  isVisibleDiasMora = false;
-  isVisibleSaldoProducto = false;
+  // isVisibleDiasMora = false;
+  // isVisibleSaldoProducto = false;
   isVisibleGeolocalizacion = false;
   isAddTelefonoMovil = false;
   isAddTelefonoResidencial = false;
@@ -43,6 +43,8 @@ export class ContactCardInsertComponent {
   nombre: number = 0;
   noAcreditado: number = 0;
   cis: number = 0;
+  telefonoPreLaboral: string = '';
+  telefonoNumLaboral: string = '';
 
   dialogRef!: ComponentRef<any>;
 
@@ -50,8 +52,7 @@ export class ContactCardInsertComponent {
   readonly DEFAULT_LABEL = 'Selecciona';
   selectedOption: string = this.DEFAULT_LABEL;
 
- // @Input() data$: BehaviorSubject<any> = new BehaviorSubject(null);
-  data!: InformationCard ;
+  data: InformationCard = {} as InformationCard;
 
   optionsTipoProducto: string[] = ['PRESTAMO HIPOTECARIO', 'PRESTAMO PERSONAL', 'TARJETA DE CREDITO', 'PRESTAMO AUTO', 'TARJETA DEBITO'];
 
@@ -83,7 +84,7 @@ export class ContactCardInsertComponent {
   }
 
   get displayIcon() {
-    return this.isVisible ? 'display_down.svg' : 'display_up.svg';
+    return this.isVisible ? 'display_white_down.svg' : 'display_white_up.svg';
   }
 
   onEstrategia(nameEstrategia: string, idEstategia: string): void {
@@ -106,13 +107,13 @@ export class ContactCardInsertComponent {
     console.log(this.data);
   }
 
-  editDiasMora(): void {
-    this.isVisibleDiasMora = this.isVisibleDiasMora ? false : true;
-  }
+  // editDiasMora(): void {
+  //   this.isVisibleDiasMora = this.isVisibleDiasMora ? false : true;
+  // }
 
-  editSaldoProducto(): void {
-    this.isVisibleSaldoProducto = this.isVisibleSaldoProducto ? false : true;
-  }
+  // editSaldoProducto(): void {
+  //   this.isVisibleSaldoProducto = this.isVisibleSaldoProducto ? false : true;
+  // }
 
   editInformacionLaboral(): void {
     this.isVisibleInformacionEmployment = this.isVisibleInformacionEmployment ? false : true;
@@ -164,7 +165,7 @@ export class ContactCardInsertComponent {
     this.closeTelefono();
   }
 
-  deleteTelefono(id: number): void {
+  deleteTelefono(id: any): void {
     
     // this.data.Telefonos = this.data.Telefonos.map((t: any) =>
     //   t.Telefono_Id == id

@@ -1,5 +1,6 @@
 <!-- <ng-container *ngIf="data; else loading"> -->
-<app-movable-card [initialX]="10" [initialY]="10" [paramWidth]="30" [headerClass]="'card-header text-white'" [showFooter]="true" >
+<app-movable-card [initialX]="10" [initialY]="10" [paramWidth]="30" [headerClass]="'card-header text-white'"
+    [showFooter]="true">
     <div class="card-title">
         <div class="d-flex justify-content-between align-items-center">
             <b>Editar Tarjeta de Contacto</b>
@@ -26,10 +27,14 @@
 
     <div class="col">
         <div class="title">Estrategia</div>
-        <span class="badge bg-strategy" [ngClass]="{'bg-active': data.TipoEstrategiaNom == 'TDD'}" (click)="onEstrategia('TDD', 3)">TDD</span>
-        <span class="badge bg-strategy" [ngClass]="{'bg-active': data.TipoEstrategiaNom == 'TDC'}" (click)="onEstrategia('TDC', 2)">TDC</span>
-        <span class="badge bg-strategy" [ngClass]="{'bg-active': data.TipoEstrategiaNom == 'TOKENIZACION'}" (click)="onEstrategia('TOKENIZACION', 4)">TOKENIZACIÓN</span>
-        <span class="badge bg-strategy" [ngClass]="{'bg-active': data.TipoEstrategiaNom == 'DESCUENTO DIRECTO'}" (click)="onEstrategia('DESCUENTO DIRECTO', 1)">DESCUENTO DIRECTO</span>
+        <span class="badge bg-strategy" [ngClass]="{'bg-active': data.TipoEstrategia_Id == '3'}"
+            (click)="onEstrategia('TDD', 3)">TDD</span>
+        <span class="badge bg-strategy" [ngClass]="{'bg-active': data.TipoEstrategia_Id == '2'}"
+            (click)="onEstrategia('TDC', 2)">TDC</span>
+        <span class="badge bg-strategy" [ngClass]="{'bg-active': data.TipoEstrategia_Id == '4'}"
+            (click)="onEstrategia('TOKENIZACION', 4)">TOKENIZACIÓN</span>
+        <span class="badge bg-strategy" [ngClass]="{'bg-active': data.TipoEstrategia_Id == '1'}"
+            (click)="onEstrategia('DESCUENTO DIRECTO', 1)">DESCUENTO DIRECTO</span>
     </div>
 
     <div class="row">
@@ -39,28 +44,29 @@
                 <div class="content-select content-seacher">
                     <div class="search-container-option">
                         <div class="select-option" (click)="clickSearcher()">
-                            {{ selectedOption }} 
+                            {{ selectedOption }}
                             <img class="search-icon" [src]="'assets/icon/' + displayIcon" alt="icono desplegar">
                         </div>
                     </div>
                 </div>
                 <div class="form-select-option" *ngIf="isVisible">
-                    <div class="search-container-option" 
-                    
-                    >
+                    <div class="search-container-option">
                         <!-- <p class="option option-hover">
                             {{ option }}
                         </p> -->
                         <p class="option option-hover" (click)="selectTipoProducto('PRESTAMO HIPOTECARIO', 1)">
+                            FINANCOMER
+                        </p>
+                        <p class="option option-hover" (click)="selectTipoProducto('PRESTAMO HIPOTECARIO', 2)">
                             PRESTAMO HIPOTECARIO
                         </p>
-                        <p class="option option-hover" (click)="selectTipoProducto('PRESTAMO PERSONAL', 2)">
+                        <p class="option option-hover" (click)="selectTipoProducto('PRESTAMO PERSONAL', 3)">
                             PRESTAMO PERSONAL
                         </p>
-                        <p class="option option-hover" (click)="selectTipoProducto('TARJETA DE CREDITO', 3)">
+                        <p class="option option-hover" (click)="selectTipoProducto('TARJETA DE CREDITO', 4)">
                             TARJETA DE CREDITO
                         </p>
-                        <p class="option option-hover" (click)="selectTipoProducto('PRESTAMO AUTO', 4)">
+                        <p class="option option-hover" (click)="selectTipoProducto('PRESTAMO AUTO', 5)">
                             PRESTAMO AUTO
                         </p>
                         <p class="option option-hover" (click)="selectTipoProducto('TARJETA DEBITO', 5)">
@@ -74,19 +80,13 @@
             <div class="title mt-2">Dias de mora / Gaveta</div>
             <div class="col">
                 <div class="d-flex align-items-center">
-                    <input type="text" name="" id="" 
-                        class="form-control bg-property-input" 
-                        [ngClass]="{'bg-active': isVisibleDiasMora == true}"
-                        placeholder="Dias Mora" 
-                        [disabled]="!isVisibleDiasMora"
-                        [(ngModel)]="data.CuentasDiasMoraGave"
-                        >
+                    <input type="text" name="" id="" class="form-control bg-property-input"
+                        [ngClass]="{'bg-active': isVisibleDiasMora == true}" placeholder="Dias Mora"
+                        [disabled]="!isVisibleDiasMora" [(ngModel)]="data.CuentasDiasMoraGave">
 
-                    <img class="icon button-header" 
-                        [src]="isVisibleDiasMora
+                    <img class="icon button-header" [src]="isVisibleDiasMora
                         ? 'assets/icon/editar_activo.svg'
-                        : 'assets/icon/editar_gris_oscuro.svg'" 
-                        (click)="editDiasMora()" alt="icono desplegar">
+                        : 'assets/icon/editar_gris_oscuro.svg'" (click)="editDiasMora()" alt="icono desplegar">
                 </div>
             </div>
         </div>
@@ -101,46 +101,32 @@
 
     <div class="title mt-2">Saldo de Producto</div>
     <div class="d-flex align-items-center">
-        <input type="text" name="" id="" 
-            class="form-control bg-property-input" 
-            [ngClass]="{'bg-active': isVisibleSaldoProducto == true}"
-            placeholder="Saldo Producto" 
-            [disabled]="!isVisibleSaldoProducto"
-            [(ngModel)]="data.CuentasSalPro"
-            >
+        <input type="text" name="" id="" class="form-control bg-property-input"
+            [ngClass]="{'bg-active': isVisibleSaldoProducto == true}" placeholder="Saldo Producto"
+            [disabled]="!isVisibleSaldoProducto" [(ngModel)]="data.CuentasSalPro">
 
-        <img class="icon button-header" 
-            [src]="isVisibleSaldoProducto
+        <img class="icon button-header" [src]="isVisibleSaldoProducto
             ? 'assets/icon/editar_activo.svg'
-            : 'assets/icon/editar_gris_oscuro.svg'"
-            (click)="editSaldoProducto()" 
-            alt="icono desplegar">
+            : 'assets/icon/editar_gris_oscuro.svg'" (click)="editSaldoProducto()" alt="icono desplegar">
     </div>
 
-    <!-- informacion laboral --> 
+    <!-- informacion laboral -->
     <div>
-        <div class="bg-info mt-3 d-flex justify-content-between align-items-center"
-            (click)="editInformacionLaboral()">
+        <div class="bg-info mt-3 d-flex justify-content-between align-items-center" (click)="editInformacionLaboral()">
             <div class="title">Información Laboral</div>
-            <img class="icon button-header" alt="icono desplegar" 
-                [src]="isVisibleInformacionEmployment
+            <img class="icon button-header" alt="icono desplegar" [src]="isVisibleInformacionEmployment
                     ? 'assets/icon/editar_activo.svg'
-                    : 'assets/icon/editar_gris_oscuro.svg'"
-            >
+                    : 'assets/icon/editar_gris_oscuro.svg'">
         </div>
 
         <div class="row" *ngIf="isVisibleInformacionEmployment">
             <div class="col">
                 <b>Nombre:</b>
                 <div class="list-unstyled">
-                    <ng-container *ngIf="data.TipoDireccionCod == '2' || data.TipoDireccionCod == '3'">
-                        <input type="text" name="" id="" 
-                        class="form-control bg-property-input" 
-                        [ngClass]="{'bg-active': isVisibleInformacionEmployment == true}"
-                        placeholder="Nombre" 
-                        [disabled]="!isVisibleInformacionEmployment"
-                        [(ngModel)]="data.DireccionesLugTra"
-                        >
+                    <ng-container *ngIf="data.TipoDireccion_Id == '2' || data.TipoDireccion_Id == '3'">
+                        <input type="text" name="" id="" class="form-control bg-property-input"
+                            [ngClass]="{'bg-active': isVisibleInformacionEmployment == true}" placeholder="Nombre"
+                            [disabled]="!isVisibleInformacionEmployment" [(ngModel)]="data.DireccionesLugTra">
                     </ng-container>
                 </div>
             </div>
@@ -148,20 +134,14 @@
                 <b>Teléfono:</b>
                 <ul class="list-unstyled">
                     <li *ngFor="let laboral of data.Telefonos">
-                        <ng-container *ngIf="laboral.TipoTelefonoCod == '4'">
-                            <input type="text" name="" id="" 
-                                class="form-control bg-property-input" 
+                        <ng-container *ngIf="laboral.TipoTelefono_Id == '4'">
+                            <input type="text" name="" id="" class="form-control bg-property-input"
                                 [ngClass]="{'bg-active': isVisibleInformacionEmployment == true}"
-                                [disabled]="!isVisibleInformacionEmployment"
-                                [(ngModel)]="laboral.TelefonoPre"
-                            >
+                                [disabled]="!isVisibleInformacionEmployment" [(ngModel)]="laboral.TelefonoPre">
 
-                            <input type="text" name="" id="" 
-                                class="form-control bg-property-input" 
+                            <input type="text" name="" id="" class="form-control bg-property-input"
                                 [ngClass]="{'bg-active': isVisibleInformacionEmployment == true}"
-                                [disabled]="!isVisibleInformacionEmployment"
-                                [(ngModel)]="laboral.TelefonoNum"
-                            >
+                                [disabled]="!isVisibleInformacionEmployment" [(ngModel)]="laboral.TelefonoNum">
                         </ng-container>
                     </li>
                 </ul>
@@ -169,13 +149,18 @@
             <div class="col">
                 <b>Dirección Laboral:</b>
                 <ul class="list-unstyled">
-                    <li *ngIf="data.TipoDireccionCod == '2' || data.TipoDireccionCod == '3'">
-                        <input type="text" name="" id="" 
-                            class="form-control bg-property-input" 
-                            [ngClass]="{'bg-active': isVisibleInformacionEmployment == true}"
-                            [disabled]="!isVisibleInformacionEmployment"
+                    <li *ngIf="data.TipoDireccion_Id == '2' || data.TipoDireccion_Id == '3'">
+                        <textarea #autoResize name="" id="" class="form-control bg-property-input"
+                            [ngClass]="{ 'bg-active': isVisibleInformacionEmployment }"
+                            [disabled]="!isVisibleInformacionEmployment" 
                             [(ngModel)]="data.Direccion"
-                        >
+                            placeholder="Dirección"
+                            (input)="adjustTextArea()"
+                            >
+                        </textarea>
+                        <!-- <input type="text" name="" id="" class="form-control bg-property-input"
+                            [ngClass]="{'bg-active': isVisibleInformacionEmployment == true}"
+                            [disabled]="!isVisibleInformacionEmployment" [(ngModel)]="data.Direccion"> -->
                     </li>
                 </ul>
             </div>
@@ -186,105 +171,94 @@
     <div>
         <div class="bg-info mt-3 d-flex justify-content-between align-items-center" (click)="editInformacionPersonal()">
             <div class="title">Información Personal</div>
-            <img class="icon button-header" 
-            [src]="isVisibleInformacionPersonal
+            <img class="icon button-header" [src]="isVisibleInformacionPersonal
                 ? 'assets/icon/editar_activo.svg'
-                : 'assets/icon/editar_gris_oscuro.svg'"
-            alt="icono desplegar">
+                : 'assets/icon/editar_gris_oscuro.svg'" alt="icono desplegar">
         </div>
         <div *ngIf="isVisibleInformacionPersonal">
             <div class="col"><b>Dirección Residencial:</b>
                 <ul class="list-unstyled">
-                    <li *ngIf="data.TipoDireccionCod == '1'">
-                        <input type="text" name="" id="" 
-                            class="form-control bg-property-input"
-                            [ngClass]="{'bg-active': isVisibleInformacionEmployment == true}" 
-                            [disabled]="!isVisibleInformacionEmployment"
-                            [(ngModel)]="data.Direccion"
-                        >
+                    <li *ngIf="data.TipoDireccion_Id == '1'">
+                        <input type="text" name="" id="" class="form-control bg-property-input"
+                            [ngClass]="{'bg-active': isVisibleInformacionEmployment == true}"
+                            [disabled]="isVisibleInformacionEmployment" [(ngModel)]="data.Direccion">
                     </li>
                 </ul>
             </div>
             <div class="col"><b>Teléfonos de Contacto:</b></div>
             <div class="d-flex align-items-center">
-                <div class=""><b>Móvil(es)</b>:</div> 
-                <div class="badge bg-property" 
-                    [ngClass]="{'bg-active': isAddTelefonoMovil == true}" 
+                <div class=""><b>Móvil(es)</b>:</div>
+                <div class="badge bg-property" [ngClass]="{'bg-active': isAddTelefonoMovil == true}"
                     (click)="AddTelefonoMovil(1)"><b>Añadir</b>
                 </div>
             </div>
-            <div class="row g-1">
+            <div class="row g-1 mt-1">
                 <div *ngFor="let personal of data.Telefonos" class="col-auto">
-                    <div  *ngIf="personal.TipoTelefonoCod == '1' && personal.TelefonoEst == 'A'" class="d-flex align-items-center">
+                    <div *ngIf="personal.TipoTelefono_Id == '1' && personal.TelefonoEst == 'A'"
+                        class="d-flex align-items-center">
                         <div class="badge bg-property"><b>{{ personal.TelefonoPre }}</b></div>
                         <div class="badge bg-property me-1"><b>{{ personal.TelefonoNum }}</b></div>
-                        <img class="icon button-header me-1" 
-                            src="assets/icon/delete.svg" alt="Eliminar"
-                            (click)="deleteTelefono(personal.Telefono_Id)"
-                        >
+                        <img class="icon button-header me-1" src="assets/icon/delete.svg" alt="Eliminar"
+                            (click)="deleteTelefono(personal.Telefono_Id)">
                     </div>
                 </div>
             </div>
 
             <div class="d-flex align-items-center mt-2">
                 <div><b>Residencial(es)</b>:</div>
-                <div class="badge bg-property"
-                    [ngClass]="{'bg-active': isAddTelefonoResidencial == true}" 
+                <div class="badge bg-property" [ngClass]="{'bg-active': isAddTelefonoResidencial == true}"
                     (click)="AddTelefonoResidencial(2)"><b>Añadir</b>
                 </div>
             </div>
-            <div class="row g-1">
+            <div class="row g-1 mt-1">
                 <div *ngFor="let personal of data.Telefonos" class="col-auto">
-                    <div *ngIf="(personal.TipoTelefonoCod == '2' || personal.TipoTelefonoCod == '3') && personal.TelefonoEst == 'A'" class="d-flex align-items-center">
-                    <div class="badge bg-property"><b>{{ personal.TelefonoPre }}</b></div>
-                    <div class="badge bg-property me-1"><b>{{ personal.TelefonoNum }}</b></div>
-                    <img class="icon button-header me-1" 
-                        src="assets/icon/delete.svg" alt="Eliminar"
-                        (click)="deleteTelefono(personal.Telefono_Id)"
-                    >
+                    <div *ngIf="(personal.TipoTelefono_Id == '2' || personal.TipoTelefonoCod == '3') && personal.TelefonoEst == 'A'"
+                        class="d-flex align-items-center">
+                        <div class="badge bg-property"><b>{{ personal.TelefonoPre }}</b></div>
+                        <div class="badge bg-property me-1"><b>{{ personal.TelefonoNum }}</b></div>
+                        <img class="icon button-header me-1" src="assets/icon/delete.svg" alt="Eliminar"
+                            (click)="deleteTelefono(personal.Telefono_Id)">
                     </div>
                 </div>
             </div>
 
             <div class="d-flex align-items-center mt-2">
-                <div><b>Otros</b>:</div> 
-                <div class="badge bg-property" 
-                    [ngClass]="{'bg-active': isAddTelefonoOtro == true}" 
+                <div><b>Otros</b>:</div>
+                <div class="badge bg-property" [ngClass]="{'bg-active': isAddTelefonoOtro == true}"
                     (click)="AddTelefonoOtro(5)"><b>Añadir</b>
                 </div>
             </div>
-            <div class="row g-1">
+            <div class="row g-1 mt-1">
                 <div *ngFor="let personal of data.Telefonos" class="col-auto">
-                    <div *ngIf="personal.TipoTelefonoCod == '5' && personal.TelefonoEst == 'A'" class="d-flex align-items-center">
-                    <div class="badge bg-property"><b>{{ personal.TelefonoPre }}</b></div>
-                    <div class="badge bg-property me-1"><b>{{ personal.TelefonoNum }}</b></div>
-                    <img class="icon button-header me-1" 
-                        src="assets/icon/delete.svg" alt="Eliminar"
-                        (click)="deleteTelefono(personal.Telefono_Id)">
+                    <div *ngIf="personal.TipoTelefono_Id == '5' && personal.TelefonoEst == 'A'"
+                        class="d-flex align-items-center">
+                        <div class="badge bg-property"><b>{{ personal.TelefonoPre }}</b></div>
+                        <div class="badge bg-property me-1"><b>{{ personal.TelefonoNum }}</b></div>
+                        <img class="icon button-header me-1" src="assets/icon/delete.svg" alt="Eliminar"
+                            (click)="deleteTelefono(personal.Telefono_Id)">
                     </div>
                 </div>
             </div>
 
             <div class="d-flex align-items-center mt-2">
-                <div><b>Email de contacto</b>:</div> 
-                <div class="badge bg-property" 
-                    [ngClass]="{'bg-active': isAddEmail == true}" 
-                    (click)="AddEmail()"><b>Añadir</b>
+                <div><b>Email de contacto</b>:</div>
+                <div class="badge bg-property" [ngClass]="{'bg-active': isAddEmail == true}" (click)="AddEmail()">
+                    <b>Añadir</b>
                 </div>
             </div>
-            <div class="row g-1">
-                <div class="col-auto" *ngFor="let personal of data.Correos; let i = index">
+            <div class="row g-1" *ngFor="let personal of data.Correos; let i = index">
+                <div class="col-auto mt-2">
                     <div class="d-flex align-items-center">
                         <div class="badge bg-property"><b>{{ i + 1 }}. {{ personal.CorreoElec }}</b></div>
-                        <img class="icon button-header" 
-                        src="assets/icon/delete.svg" alt="icono desplegar"
-                        (click)="deleteEmail(personal.CorreoElec_Id)">
+                        <img class="icon button-header" src="assets/icon/delete.svg" alt="icono desplegar"
+                            (click)="deleteEmail(personal.CorreoElec_Id)">
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Fincas -->
     <div class="mt-3">
         <div class="title mt-2">FINCAS ASOCIADAS</div>
         <div class="row">
@@ -292,53 +266,54 @@
             <div class="col"><b>Dirección</b></div>
             <div class="col"><b></b></div>
         </div>
-        <div class="row">
-            <div class="col-5">
-                <div class="badge bg-property"><b>{{ data.FincaFolio }}</b></div>
-            </div>
-            <div class="col">
-                <div class="badge bg-property"><b>{{ data.FincaDireccion }}</b></div>
-            </div>
-            <div class="col">
-                <img class="icon button-header" src="assets/icon/delete.svg" alt="icono desplegar" (click)="deleteFinca(data.Finca_Id)">
-                <div class="badge bg-property" 
-                    [ngClass]="{'bg-active': isAddFinca == true}" 
-                    (click)="AddFinca()"><b>Añadir</b>
+        <div class="row" *ngFor="let data of data.Fincas">
+            <ng-container *ngIf="data.FincaEst == 'A'">
+                <div class="col-5">
+                    <div class="badge bg-property">
+                        <b>
+                            <ng-container *ngIf="data.FincaFolio == ''">NN</ng-container>
+                            <ng-container *ngIf="data.FincaFolio != ''">{{ data.FincaFolio }}</ng-container>
+                        </b>
+                    </div>
                 </div>
-            </div>
+                <div class="col">
+                    <div class="badge bg-property">
+                        <b>
+                            <ng-container *ngIf="data.FincaDireccion == ''">NN</ng-container>
+                            <ng-container *ngIf="data.FincaDireccion != ''">{{ data.FincaDireccion }}</ng-container>
+                        </b>
+                    </div>
+                </div>
+                <div class="col">
+                    <img class="icon button-header" src="assets/icon/delete.svg" alt="icono desplegar"
+                        (click)="deleteFinca(data.Finca_Id)">
+                    <div class="badge bg-property" [ngClass]="{'bg-active': isAddFinca == true}" (click)="AddFinca()">
+                        <b>Añadir</b>
+                    </div>
+                </div>
+            </ng-container>
         </div>
     </div>
 
-    <div class="bg-info location mt-3 d-flex justify-content-center align-items-center">
-        <!-- <img class="icon" src="assets/icon/contact_card_location.svg" alt=""> -->
-        <input type="text" name="" id="" 
-            class="form-control bg-none-input" 
-            [ngClass]="{'bg-active': isVisibleGeolocalizacion == true}"
-            placeholder="Longitud" 
-            [disabled]="!isVisibleGeolocalizacion"
-            [(ngModel)]="data.GeoDomicilioLongi"
-        >
+    <!-- <div class="bg-info location mt-3 d-flex justify-content-center align-items-center">
+        <input type="text" name="" id="" class="form-control bg-none-input"
+            [ngClass]="{'bg-active': isVisibleGeolocalizacion == true}" placeholder="Longitud"
+            [disabled]="!isVisibleGeolocalizacion" [(ngModel)]="data.GeoDomicilioLongi">
         -
-        <input type="text" name="" id="" 
-            class="form-control bg-none-input" 
-            [ngClass]="{'bg-active': isVisibleGeolocalizacion == true}"
-            placeholder="Dias Mora" 
-            [disabled]="!isVisibleGeolocalizacion"
-            [(ngModel)]="data.GeoDomicilioLati"
-        >
-        <img class="icon button-header" 
-            src="assets/icon/editar_gris_oscuro.svg" 
-            alt="icono desplegar"
-            (click)="editGeolocalizacion()"
-        >
-    </div>
+        <input type="text" name="" id="" class="form-control bg-none-input"
+            [ngClass]="{'bg-active': isVisibleGeolocalizacion == true}" placeholder="Dias Mora"
+            [disabled]="!isVisibleGeolocalizacion" [(ngModel)]="data.GeoDomicilioLati">
+        <img class="icon button-header" src="assets/icon/editar_gris_oscuro.svg" alt="icono desplegar"
+            (click)="editGeolocalizacion()">
+    </div> -->
 
     <div class="card-footer d-flex justify-content-center align-items-center" (click)="save()">
         Guardar
     </div>
 </app-movable-card>
 
-<app-movable-card *ngIf="isAddTelefonoMovil || isAddTelefonoResidencial || isAddTelefonoOtro" [initialX]="500" [initialY]="150" [paramWidth]="20" [showHeader]="true">
+<app-movable-card *ngIf="isAddTelefonoMovil || isAddTelefonoResidencial || isAddTelefonoOtro" [initialX]="500"
+    [initialY]="150" [paramWidth]="20" [showHeader]="true">
     <div class="card-title">
         <div class="d-flex justify-content-between align-items-center">
             <b>
@@ -356,17 +331,13 @@
         </div>
     </div>
     <div class="d-flex align-items-center">
-        <input type="text" name="" id="" 
-            class="form-control bg-property-input" 
-            placeholder="Prefijo" 
-            [(ngModel)]="nuevoTelefonoPre"
-        >
+        <input type="text" name="" id="" pattern="^[0-9]+$" OnlyNumber
+        class="form-control bg-property-input" placeholder="Prefijo"
+            [(ngModel)]="nuevoTelefonoPre">
 
-        <input type="text" name="" id="" 
-            class="form-control bg-property-input" 
-            placeholder="Número" 
-            [(ngModel)]="nuevoTelefono"
-        >
+        <input type="text" name="" id="" pattern="^[0-9]+$" OnlyNumber
+        class="form-control bg-property-input" placeholder="Número"
+            [(ngModel)]="nuevoTelefono">
 
         <button class="btn badge bg-active" (click)="newTelefono()">Guardar</button>
     </div>
@@ -387,20 +358,19 @@
     <div class="d-flex align-items-center">
         <div class="row">
             <div class="col">
-                <input type="text" name="" id="" 
-                    class="form-control bg-property-input" 
-                    placeholder="Email" 
-                    [(ngModel)]="nuevoEmail"
-                >
+                <input type="text" name="" id="" class="form-control bg-property-input" placeholder="Email"
+                    [(ngModel)]="nuevoEmail">
             </div>
         </div>
 
         <div class="row">
             <div class="col">
-                <span class="badge bg-strategy" [ngClass]="{'bg-active': typeEmail == 1}" (click)="onTipoEmail(1)">Personal</span>
+                <span class="badge bg-strategy" [ngClass]="{'bg-active': typeEmail == 1}"
+                    (click)="onTipoEmail(1)">Personal</span>
             </div>
             <div class="col">
-                <span class="badge bg-strategy" [ngClass]="{'bg-active': typeEmail == 2}" (click)="onTipoEmail(2)">Laboral</span>
+                <span class="badge bg-strategy" [ngClass]="{'bg-active': typeEmail == 2}"
+                    (click)="onTipoEmail(2)">Laboral</span>
             </div>
             <div class="col">
                 <button class="btn badge bg-active" (click)="newEmail()">Guardar</button>
@@ -425,29 +395,26 @@
     <div class="d-flex align-items-center">
         <div class="row">
             <div class="col">
-                <input type="text" name="" id="" 
-                    class="form-control bg-property-input" 
-                    placeholder="Finca/Folio" 
-                    [(ngModel)]="nuevaFinca"
-                >
+                <input type="text" name="" id="" class="form-control bg-property-input" placeholder="Finca/Folio"
+                    [(ngModel)]="nuevaFinca">
             </div>
         </div>
 
         <div class="row">
             <div class="col">
-                <input type="text" name="" id="" 
-                    class="form-control bg-property-input" 
-                    placeholder="Dirección" 
-                    [(ngModel)]="nuevaFincaDireccion"
-                >
+                <input type="text" name="" id="" class="form-control bg-property-input" placeholder="Dirección"
+                    [(ngModel)]="nuevaFincaDireccion">
             </div>
         </div>
-        
+
         <div>
-            <span class="badge bg-property" [ngClass]="{'bg-active': data.TipoPredioNom == 'Residencial'}" (click)="onPredio('Residencial', 1)">Residencial</span>
-            <span class="badge bg-property" [ngClass]="{'bg-active': data.TipoPredioNom == 'Comercial'}" (click)="onPredio('Comercial', 2)">Comercial</span>
-            <span class="badge bg-property" [ngClass]="{'bg-active': data.TipoPredioNom == 'Industrial'}" (click)="onPredio('Industrial', 3)">Industrial</span>
-        </div> 
+            <span class="badge bg-property" [ngClass]="{'bg-active': data.TipoPredioNom == 'Residencial'}"
+                (click)="onPredio('Residencial', 1)">Residencial</span>
+            <span class="badge bg-property" [ngClass]="{'bg-active': data.TipoPredioNom == 'Comercial'}"
+                (click)="onPredio('Comercial', 2)">Comercial</span>
+            <span class="badge bg-property" [ngClass]="{'bg-active': data.TipoPredioNom == 'Industrial'}"
+                (click)="onPredio('Industrial', 3)">Industrial</span>
+        </div>
 
         <div class="row">
             <div class="col">

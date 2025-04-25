@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ComponentRef, Input } from '@angular/core';
+import { ChangeDetectorRef, Component, ComponentRef, ElementRef, Input, ViewChild } from '@angular/core';
 import { DialogService } from '../../../core/services/shared/dialog.service';
 import { SidebarShowDataService } from '../../../core/services/widget/sidebar-show-data.service';
 import { CommonModule } from '@angular/common';
@@ -7,10 +7,11 @@ import { BehaviorSubject } from 'rxjs';
 import { MovableCardComponent } from '../../shared/movable-card/movable-card.component';
 import { FormsModule } from '@angular/forms';
 import { ContactCardAdminService } from '../../../core/services/widget/contact-card-admin.service';
+import { OnlyNumberDirective } from '../../../core/directives/only-number.directive';
 
 @Component({
   selector: 'app-contact-card-admin',
-  imports: [MovableCardComponent, CommonModule, FormsModule],
+  imports: [MovableCardComponent, CommonModule, FormsModule, OnlyNumberDirective],
   templateUrl: './contact-card-admin.component.html',
   styleUrl: './contact-card-admin.component.less'
 })
@@ -42,6 +43,7 @@ export class ContactCardAdminComponent {
   readonly DEFAULT_LABEL = 'Selecciona';
   selectedOption: string = this.DEFAULT_LABEL;
 
+  @ViewChild('autoResize') textarea!: ElementRef<HTMLTextAreaElement>;
   @Input() data$: BehaviorSubject<any> = new BehaviorSubject(null);
   data: any;
 
@@ -61,6 +63,16 @@ export class ContactCardAdminComponent {
     private contactCardAdminService: ContactCardAdminService
   )
   {}
+
+  ngAfterViewInit() {
+    this.adjustTextArea();
+  }
+
+  adjustTextArea(): void {
+    const el = this.textarea.nativeElement;
+    el.style.height = 'auto';              
+    el.style.height = el.scrollHeight + 'px';
+  }
 
   close(): void {
     this.dialogService.closeAll();
@@ -82,12 +94,12 @@ export class ContactCardAdminComponent {
   }
 
   get displayIcon() {
-    return this.isVisible ? 'display_down.svg' : 'display_up.svg';
+    return this.isVisible ? 'display_white_down.svg' : 'display_white_up.svg';
   }
 
   onEstrategia(nameEstrategia: string, idEstategia: number): void {
     this.data.TipoEstrategiaNom = nameEstrategia;
-    this.data.TipoEstrategiaCod = idEstategia;
+    this.data.TipoEstrategia_Id = idEstategia;
     console.log(this.data);
   }
 
@@ -99,7 +111,7 @@ export class ContactCardAdminComponent {
 
   selectTipoProducto(nameProducto: string, idProducto: number): void {
     this.data.TipoProductoNom = nameProducto;
-    this.data.TipoProductoCod = idProducto;
+    this.data.TipoProducto_Id = idProducto;
     this.selectedOption = this.data.TipoProductoNom;
     this.clickSearcher();
     console.log(this.data);
@@ -125,6 +137,7 @@ export class ContactCardAdminComponent {
     this.isVisibleGeolocalizacion = this.isVisibleGeolocalizacion ? false : true;
   }
 
+  // ----- telefono
   AddTelefonoMovil(type: number = 0): void {
     this.isAddTelefonoMovil = this.isAddTelefonoMovil ? false : true;
     this.typeTelefono = type ? type : 0;
@@ -140,31 +153,29 @@ export class ContactCardAdminComponent {
     this.typeTelefono = type ? type : 0;
   }
 
-  AddEmail(): void {
-    this.isAddEmail = this.isAddEmail ? false : true;
+  clearTelefono(): void {
+    this.typeTelefono = 0;
+    this.nuevoTelefono;
+    this.nuevoTelefonoPre;
   }
 
-  AddFinca(): void {
-    this.isAddFinca = this.isAddFinca ? false : true;
-  }
-
-  // telefono
   newTelefono(): void {
     if (this.nuevoTelefonoPre == 0 || this.nuevoTelefono == 0) {
       return;
     }
 
     this.data.Telefonos.push({
-      TipoTelefonoCod: this.typeTelefono,
+      TipoTelefono_Id: this.typeTelefono,
       TelefonoNum: this.nuevoTelefono,
       TelefonoPre: this.nuevoTelefonoPre,
+      Telefono_Nuevo: '1',
       TelefonoEst: 'A',
     })
     this.closeTelefono();
+    this.clearTelefono();
   }
 
   deleteTelefono(id: number): void {
-    
     this.data.Telefonos = this.data.Telefonos.map((t: any) =>
       t.Telefono_Id == id
         ? { ...t, TelefonoEst: 'I' }  
@@ -181,10 +192,14 @@ export class ContactCardAdminComponent {
   }
 
   closeFinca(): void {
-    this.isVisibleFarmsContactCard = false;
+    this.isAddFinca = false;
   }
 
-  // correos
+  // ------- correos
+  AddEmail(): void {
+    this.isAddEmail = this.isAddEmail ? false : true;
+  }
+
   onTipoEmail(selectedOption: number): void {
     this.typeEmail = selectedOption;  
   }
@@ -195,12 +210,17 @@ export class ContactCardAdminComponent {
     }
 
     this.data.Correos.push({
-      TipoEmailCod: this.data.TipoEmailCod,
+      TipoCorreo_Id: this.typeEmail,
       CorreoElec: this.nuevoEmail.trim(),
       CorreoEst: 'A',
+      Correo_Nuevo: '1',
     });
+
+    this.nuevoEmail = '';
+    this.typeEmail = 0;
+
     this.closeEmail();
-    this.cdr.markForCheck();
+    //this.cdr.markForCheck();
   }
 
   closeEmail(): void {
@@ -215,32 +235,39 @@ export class ContactCardAdminComponent {
     );
     
     console.log(this.data);
-    this.cdr.markForCheck();
   }
 
-  //fincas
+  // ------ fincas
+  AddFinca(): void {
+    this.isAddFinca = this.isAddFinca ? false : true;
+  }
+
   newFinca(): void {
-    // this.data.push({
-    //   FincaFolio: this.nuevaFinca,
-    //   FincaDireccion: this.nuevaFincaDireccion,
-    //   FincaEst: 'A',
-    // });
+    if (this.nuevaFinca.trim() == '' && this.nuevaFincaDireccion.trim() == '') {
+      return;
+    }
+
+    this.data.Fincas.push({
+      FincaFolio: this.nuevaFinca,
+      FincaDireccion: this.nuevaFincaDireccion,
+      FincaEst: 'A',
+      Finca_Nuevo: '1',
+    });
     // this.closeFinca();
-    this.data.FincaFolio = this.nuevaFinca;
-    this.data.FincaDireccion = this.nuevaFincaDireccion;
-    this.data.FincaEst = 'A';
-    
+    // this.data.FincaFolio = this.nuevaFinca;
+    // this.data.FincaDireccion = this.nuevaFincaDireccion;
+    // this.data.FincaEst = 'A';
+    this.nuevaFinca = '';
+    this.nuevaFincaDireccion = '';
     this.closeFinca();
   }
 
   deleteFinca(id: number): void {
-    this.data.Fincas = this.data.map((f: any) =>
+    this.data.Fincas = this.data.Fincas.map((f: any) =>
       f.Finca_Id == id
         ? { ...f, FincaEst: 'I' }  
         : f       
     );
-    this.cdr.markForCheck();
-    console.log(this.data);
   }
 
   save(): void {

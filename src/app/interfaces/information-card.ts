@@ -52,6 +52,16 @@ export interface InformationCard {
             TipoTelefono_Id: string;
         }
     ],
+    Fincas: [
+        {
+            FincaDireccion: string;
+            FincaEst: string;
+            FincaFolio: string;
+            Finca_Id: string;
+            PropiedadEst: string;
+            Propiedad_Id: string;
+        }
+    ]
     TipoCorreoCod: string;
     TipoCorreoEst: string;
     TipoCorreo_Id: string;

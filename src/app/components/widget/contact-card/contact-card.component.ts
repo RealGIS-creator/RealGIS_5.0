@@ -95,12 +95,7 @@ export class ContactCardComponent {
     this.isVisibleFarmsContactCard = !this.isVisibleFarmsContactCard;
 
     if (this.isVisibleFarmsContactCard) {
-      const farms = {
-        FincaDireccion: this.infoUserCard?.FincaDireccion,
-        FincaEst: this.infoUserCard?.FincaEst,
-        FincaFolio: this.infoUserCard?.FincaFolio
-      };
-      this.dialogRef = this.dialogService.open({ component: AssociatedFarmsContactCardComponent, data: JSON.parse(JSON.stringify(farms))});
+      this.dialogRef = this.dialogService.open({ component: AssociatedFarmsContactCardComponent, data: this.infoUserCard.Fincas});
 
     } else {
       this.dialogService.close(this.dialogRef);
