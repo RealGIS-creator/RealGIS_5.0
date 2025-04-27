@@ -54,7 +54,7 @@
                         <!-- <p class="option option-hover">
                             {{ option }}
                         </p> -->
-                        <p class="option option-hover" (click)="selectTipoProducto('PRESTAMO HIPOTECARIO', 1)">
+                        <p class="option option-hover" (click)="selectTipoProducto('FINANCOMER', 1)">
                             FINANCOMER
                         </p>
                         <p class="option option-hover" (click)="selectTipoProducto('PRESTAMO HIPOTECARIO', 2)">
@@ -80,9 +80,9 @@
             <div class="title mt-2">Dias de mora / Gaveta</div>
             <div class="col">
                 <div class="d-flex align-items-center">
-                    <input type="text" name="" id="" class="form-control bg-property-input"
-                        [ngClass]="{'bg-active': isVisibleDiasMora == true}" placeholder="Dias Mora"
-                        [disabled]="!isVisibleDiasMora" [(ngModel)]="data.CuentasDiasMoraGave">
+                    <input type="text" name="diasMora" id="diasMora" pattern="^[0-9]+$" OnlyNumber
+                        class="form-control bg-property-input" [ngClass]="{'bg-active': isVisibleDiasMora == true}"
+                        placeholder="Dias Mora" [disabled]="!isVisibleDiasMora" [(ngModel)]="data.CuentasDiasMoraGave">
 
                     <img class="icon button-header" [src]="isVisibleDiasMora
                         ? 'assets/icon/editar_activo.svg'
@@ -101,9 +101,9 @@
 
     <div class="title mt-2">Saldo de Producto</div>
     <div class="d-flex align-items-center">
-        <input type="text" name="" id="" class="form-control bg-property-input"
-            [ngClass]="{'bg-active': isVisibleSaldoProducto == true}" placeholder="Saldo Producto"
-            [disabled]="!isVisibleSaldoProducto" [(ngModel)]="data.CuentasSalPro">
+        <input type="text" name="saldoProducto" id="saldoProducto" pattern="^[0-9]+$" OnlyNumber
+            class="form-control bg-property-input" [ngClass]="{'bg-active': isVisibleSaldoProducto == true}"
+            placeholder="Saldo Producto" [disabled]="!isVisibleSaldoProducto" [(ngModel)]="data.CuentasSalPro">
 
         <img class="icon button-header" [src]="isVisibleSaldoProducto
             ? 'assets/icon/editar_activo.svg'
@@ -130,33 +130,85 @@
                     </ng-container>
                 </div>
             </div>
-            <div class="col">
+            <!-- <div class="col">
                 <b>Teléfono:</b>
                 <ul class="list-unstyled">
                     <li *ngFor="let laboral of data.Telefonos">
-                        <ng-container *ngIf="laboral.TipoTelefono_Id == '4'">
-                            <input type="text" name="" id="" class="form-control bg-property-input"
+                        <ng-container *ngIf="laboral.TipoTelefono_Id == '4'; else telefonoLaboral">
+                            <input type="text" name="telLaboralPre" id="telLaboralPre" pattern="^[0-9]+$" OnlyNumber
+                                class="form-control bg-property-input"
                                 [ngClass]="{'bg-active': isVisibleInformacionEmployment == true}"
                                 [disabled]="!isVisibleInformacionEmployment" [(ngModel)]="laboral.TelefonoPre">
 
-                            <input type="text" name="" id="" class="form-control bg-property-input"
+                            <input type="text" name="telLaboral" id="telLaboral" pattern="^[0-9]+$" OnlyNumber
+                                class="form-control bg-property-input"
                                 [ngClass]="{'bg-active': isVisibleInformacionEmployment == true}"
                                 [disabled]="!isVisibleInformacionEmployment" [(ngModel)]="laboral.TelefonoNum">
                         </ng-container>
+                        <ng-template #telefonoLaboral>
+                            <div *ngIf="data.TipoDireccion_Id == '2' || data.TipoDireccion_Id == '3' ">
+                                <input type="text" name="telLaboralPre" id="telLaboralPre" pattern="^[0-9]+$" OnlyNumber
+                                    class="form-control bg-property-input"
+                                    [ngClass]="{'bg-active': isVisibleInformacionEmployment == true}"
+                                    [disabled]="!isVisibleInformacionEmployment" [(ngModel)]="telefonoPreLaboral">
+
+                                <input type="text" name="telLaboral" id="telLaboral" pattern="^[0-9]+$" OnlyNumber
+                                    class="form-control bg-property-input"
+                                    [ngClass]="{'bg-active': isVisibleInformacionEmployment == true}"
+                                    [disabled]="!isVisibleInformacionEmployment" [(ngModel)]="telefonoLaboral">
+                            </div>
+                        </ng-template>
                     </li>
                 </ul>
+            </div> -->
+            <div class="col">
+                <b>Teléfono:</b>
+                <ul class="list-unstyled">
+                    <ng-container *ngIf="hasLaboralTipo4; else telefonoLaboral">
+                        <li *ngFor="let laboral of data.Telefonos" class="d-flex mb-2">
+                            <ng-container *ngIf="laboral.TipoTelefono_Id == '4'">
+                                <!-- Prefijo -->
+                                <input type="text" name="telLaboralPre" pattern="^[0-9]+$" onlyNumber
+                                    class="form-control bg-property-input me-1"
+                                    [ngClass]="{ 'bg-active': isVisibleInformacionEmployment }"
+                                    [disabled]="!isVisibleInformacionEmployment" [(ngModel)]="laboral.TelefonoPre" />
+                                <!-- Número -->
+                                <input type="text" name="telLaboral" pattern="^[0-9]+$" onlyNumber
+                                    class="form-control bg-property-input"
+                                    [ngClass]="{ 'bg-active': isVisibleInformacionEmployment }"
+                                    [disabled]="!isVisibleInformacionEmployment" [(ngModel)]="laboral.TelefonoNum" />
+                            </ng-container>
+                        </li>
+                    </ng-container>
+
+                    <ng-template #telefonoLaboral>
+                        <li *ngIf="
+                        data.TipoDireccion_Id == '2' ||
+                        data.TipoDireccion_Id == '3'
+                      " class="d-flex mb-2">
+                            <!-- Prefijo alternativo -->
+                            <input type="text" name="telLaboralPreAlt" pattern="^[0-9]+$" onlyNumber
+                                class="form-control bg-property-input me-1"
+                                [ngClass]="{ 'bg-active': isVisibleInformacionEmployment }"
+                                [disabled]="!isVisibleInformacionEmployment" [(ngModel)]="telefonoPreLaboral" />
+                            <!-- Número alternativo -->
+                            <input type="text" name="telLaboralAlt" pattern="^[0-9]+$" onlyNumber
+                                class="form-control bg-property-input"
+                                [ngClass]="{ 'bg-active': isVisibleInformacionEmployment }"
+                                [disabled]="!isVisibleInformacionEmployment" [(ngModel)]="telefonoLaboral" />
+                        </li>
+                    </ng-template>
+                </ul>
             </div>
+
             <div class="col">
                 <b>Dirección Laboral:</b>
                 <ul class="list-unstyled">
                     <li *ngIf="data.TipoDireccion_Id == '2' || data.TipoDireccion_Id == '3'">
                         <textarea #autoResize name="" id="" class="form-control bg-property-input"
                             [ngClass]="{ 'bg-active': isVisibleInformacionEmployment }"
-                            [disabled]="!isVisibleInformacionEmployment" 
-                            [(ngModel)]="data.Direccion"
-                            placeholder="Dirección"
-                            (input)="adjustTextArea()"
-                            >
+                            [disabled]="!isVisibleInformacionEmployment" [(ngModel)]="data.Direccion" rows="5"
+                            placeholder="Dirección">
                         </textarea>
                         <!-- <input type="text" name="" id="" class="form-control bg-property-input"
                             [ngClass]="{'bg-active': isVisibleInformacionEmployment == true}"
@@ -331,13 +383,11 @@
         </div>
     </div>
     <div class="d-flex align-items-center">
-        <input type="text" name="" id="" pattern="^[0-9]+$" OnlyNumber
-        class="form-control bg-property-input" placeholder="Prefijo"
-            [(ngModel)]="nuevoTelefonoPre">
+        <input type="text" name="" id="" pattern="^[0-9]+$" OnlyNumber class="form-control bg-property-input"
+            placeholder="Prefijo" [(ngModel)]="nuevoTelefonoPre">
 
-        <input type="text" name="" id="" pattern="^[0-9]+$" OnlyNumber
-        class="form-control bg-property-input" placeholder="Número"
-            [(ngModel)]="nuevoTelefono">
+        <input type="text" name="" id="" pattern="^[0-9]+$" OnlyNumber class="form-control bg-property-input"
+            placeholder="Número" [(ngModel)]="nuevoTelefono">
 
         <button class="btn badge bg-active" (click)="newTelefono()">Guardar</button>
     </div>
@@ -355,20 +405,20 @@
             </div>
         </div>
     </div>
-    <div class="d-flex align-items-center">
+    <div class="align-items-center">
         <div class="row">
-            <div class="col">
+            <div class="col-8">
                 <input type="text" name="" id="" class="form-control bg-property-input" placeholder="Email"
                     [(ngModel)]="nuevoEmail">
             </div>
         </div>
 
-        <div class="row">
-            <div class="col">
+        <div class="row mt-2">
+            <div class="col-4">
                 <span class="badge bg-strategy" [ngClass]="{'bg-active': typeEmail == 1}"
                     (click)="onTipoEmail(1)">Personal</span>
             </div>
-            <div class="col">
+            <div class="col-4">
                 <span class="badge bg-strategy" [ngClass]="{'bg-active': typeEmail == 2}"
                     (click)="onTipoEmail(2)">Laboral</span>
             </div>
@@ -380,7 +430,7 @@
     </div>
 </app-movable-card>
 
-<app-movable-card *ngIf="isAddFinca" [initialX]="500" [initialY]="348" [paramWidth]="20" [showHeader]="true">
+<app-movable-card *ngIf="isAddFinca" [initialX]="500" [initialY]="380" [paramWidth]="20" [showHeader]="true">
     <div class="card-title">
         <div class="d-flex justify-content-between align-items-center">
             <b>
@@ -392,7 +442,7 @@
             </div>
         </div>
     </div>
-    <div class="d-flex align-items-center">
+    <div class="align-items-center">
         <div class="row">
             <div class="col">
                 <input type="text" name="" id="" class="form-control bg-property-input" placeholder="Finca/Folio"
@@ -400,23 +450,26 @@
             </div>
         </div>
 
-        <div class="row">
+        <div class="row mt-1">
             <div class="col">
-                <input type="text" name="" id="" class="form-control bg-property-input" placeholder="Dirección"
-                    [(ngModel)]="nuevaFincaDireccion">
+                <textarea name="" id="" class="form-control bg-property-input" [(ngModel)]="nuevaFincaDireccion"
+                    rows="2" placeholder="Dirección">
+                </textarea>
             </div>
         </div>
 
-        <div>
-            <span class="badge bg-property" [ngClass]="{'bg-active': data.TipoPredioNom == 'Residencial'}"
-                (click)="onPredio('Residencial', 1)">Residencial</span>
-            <span class="badge bg-property" [ngClass]="{'bg-active': data.TipoPredioNom == 'Comercial'}"
-                (click)="onPredio('Comercial', 2)">Comercial</span>
-            <span class="badge bg-property" [ngClass]="{'bg-active': data.TipoPredioNom == 'Industrial'}"
-                (click)="onPredio('Industrial', 3)">Industrial</span>
+        <div class="row mt-1">
+            <div class="col">
+                <span class="badge bg-property" [ngClass]="{'bg-active': data.TipoPredioNom == 'Residencial'}"
+                    (click)="onPredio('Residencial', 1)">Residencial</span>
+                <span class="badge bg-property" [ngClass]="{'bg-active': data.TipoPredioNom == 'Comercial'}"
+                    (click)="onPredio('Comercial', 2)">Comercial</span>
+                <span class="badge bg-property" [ngClass]="{'bg-active': data.TipoPredioNom == 'Industrial'}"
+                    (click)="onPredio('Industrial', 3)">Industrial</span>
+            </div>
         </div>
 
-        <div class="row">
+        <div class="row mt-1">
             <div class="col">
                 <button class="btn badge bg-active" (click)="newFinca()">Guardar</button>
             </div>
@@ -424,6 +477,34 @@
 
     </div>
 </app-movable-card>
+
+<app-movable-card *ngIf="isSave" [initialX]="500" [initialY]="380" [paramWidth]="20" [showHeader]="true">
+    <div class="card-title">
+        <div class="d-flex justify-content-between align-items-center">
+            <img class="icon button-header" src="assets/icon/company_white.svg" alt="">
+            <img class="icon-header button-header" src="assets/icon/contact_card_close.svg" alt=""
+                (click)="close()">
+        </div>
+    </div>
+    <div>
+        Se Actualizó Correctamente
+
+        <button class="btn badge bg-active" (click)="goTC()">Ir a la TC</button>
+    </div>
+</app-movable-card>
+
+<app-movable-card *ngIf="isMensajeAlerta" [initialX]="500" [initialY]="380" [paramWidth]="20" [showHeader]="true">
+    <div class="card-title">
+        <div class="d-flex justify-content-between align-items-center">
+            <img class="icon button-header" src="assets/icon/company_white.svg" alt="">
+            <img class="icon-header button-header" src="assets/icon/contact_card_close.svg" alt=""
+                (click)="close()">
+        </div>
+    </div>
+    <div>
+        <p class="alerta">{{ mensajeAlerta }}</p>
+    </div>
+</app-movable-card> 
 
 <!-- </ng-container>
 <ng-template #loading>

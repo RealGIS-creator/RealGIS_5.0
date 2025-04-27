@@ -30,6 +30,7 @@ export interface InformationCard {
             CorreoElec: string;
             CorreoEst: string;
             Correo_Id: string;
+            Correo_Nuevo: string;
             TipoCorreoCod: string;
             TipoCorreoEst: string;
             TipoCorreo_Id: string;
@@ -50,6 +51,7 @@ export interface InformationCard {
             TipoTelefonoCod: string;
             TipoTelefonoEst: string;
             TipoTelefono_Id: string;
+            Telefono_Nuevo: string;
         }
     ],
     Fincas: [
@@ -58,6 +60,7 @@ export interface InformationCard {
             FincaEst: string;
             FincaFolio: string;
             Finca_Id: string;
+            Finca_Nuevo: string;
             PropiedadEst: string;
             Propiedad_Id: string;
         }

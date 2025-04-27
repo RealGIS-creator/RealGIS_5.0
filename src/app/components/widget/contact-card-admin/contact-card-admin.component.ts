@@ -8,10 +8,11 @@ import { MovableCardComponent } from '../../shared/movable-card/movable-card.com
 import { FormsModule } from '@angular/forms';
 import { ContactCardAdminService } from '../../../core/services/widget/contact-card-admin.service';
 import { OnlyNumberDirective } from '../../../core/directives/only-number.directive';
+import { ContactCardComponent } from '../contact-card/contact-card.component';
 
 @Component({
   selector: 'app-contact-card-admin',
-  imports: [MovableCardComponent, CommonModule, FormsModule, OnlyNumberDirective],
+  imports: [MovableCardComponent, CommonModule, FormsModule, OnlyNumberDirective ],
   templateUrl: './contact-card-admin.component.html',
   styleUrl: './contact-card-admin.component.less'
 })
@@ -27,15 +28,21 @@ export class ContactCardAdminComponent {
   isAddTelefonoOtro = false;
   isAddEmail = false;
   isAddFinca = false;
+  isSave = false;
+  isTC = false;
+  isMensajeAlerta = false;
 
   infoUserCard!: InformationCard;
-  nuevoTelefonoPre?: number;
-  nuevoTelefono?: number;
+  nuevoTelefonoPre?: number | null;
+  nuevoTelefono?: number | null;
   nuevoEmail: string = '';
   nuevaFinca: string = '';
   nuevaFincaDireccion: string = '';
   typeTelefono: number = 0;
   typeEmail: number = 0;
+  telefonoPreLaboral: number | null = null;
+  telefonoLaboral: number | null = null;
+  mensajeAlerta: string = '';
 
   dialogRef!: ComponentRef<any>;
 
@@ -43,7 +50,6 @@ export class ContactCardAdminComponent {
   readonly DEFAULT_LABEL = 'Selecciona';
   selectedOption: string = this.DEFAULT_LABEL;
 
-  @ViewChild('autoResize') textarea!: ElementRef<HTMLTextAreaElement>;
   @Input() data$: BehaviorSubject<any> = new BehaviorSubject(null);
   data: any;
 
@@ -64,16 +70,6 @@ export class ContactCardAdminComponent {
   )
   {}
 
-  ngAfterViewInit() {
-    this.adjustTextArea();
-  }
-
-  adjustTextArea(): void {
-    const el = this.textarea.nativeElement;
-    el.style.height = 'auto';              
-    el.style.height = el.scrollHeight + 'px';
-  }
-
   close(): void {
     this.dialogService.closeAll();
     this.sidebarShowDataService.setData({ activeIndex: 0 });
@@ -91,6 +87,10 @@ export class ContactCardAdminComponent {
   
   clickSearcher(): void {
     this.isVisible = this.isVisible ? false : true;
+  }
+
+  get hasLaboralTipo4(): boolean {
+    return this.data.Telefonos.some((t: any) => t.TipoTelefono_Id === '4');
   }
 
   get displayIcon() {
@@ -155,12 +155,12 @@ export class ContactCardAdminComponent {
 
   clearTelefono(): void {
     this.typeTelefono = 0;
-    this.nuevoTelefono;
-    this.nuevoTelefonoPre;
+    this.nuevoTelefono = null;
+    this.nuevoTelefonoPre = null;
   }
 
   newTelefono(): void {
-    if (this.nuevoTelefonoPre == 0 || this.nuevoTelefono == 0) {
+    if (this.nuevoTelefonoPre == 0 || this.nuevoTelefono == 0 || this.typeTelefono == 0) {
       return;
     }
 
@@ -171,6 +171,7 @@ export class ContactCardAdminComponent {
       Telefono_Nuevo: '1',
       TelefonoEst: 'A',
     })
+
     this.closeTelefono();
     this.clearTelefono();
   }
@@ -205,7 +206,7 @@ export class ContactCardAdminComponent {
   }
 
   newEmail(): void {
-    if (this.nuevoEmail.trim() == '') {
+    if (this.nuevoEmail.trim() == '' || this.typeEmail == null || this.typeEmail == 0) {
       return;
     }
 
@@ -271,12 +272,54 @@ export class ContactCardAdminComponent {
   }
 
   save(): void {
-    console.log(this.data.CuentasDiasMoraGave);
-    console.log(this.data);
+    if (this.telefonoLaboral != 0 || this.telefonoPreLaboral != 0
+      || this.telefonoLaboral != null || this.telefonoPreLaboral != null
+
+    ) {
+      this.data.Telefonos.push({
+        TipoTelefono_Id: 4,
+        TelefonoNum: this.telefonoLaboral,
+        TelefonoPre: this.telefonoPreLaboral,
+        Telefono_Nuevo: '1',
+        TelefonoEst: 'A',
+      })
+    }
+
+    if (this.data.Direccion == '' && this.data.DireccionesLugTra == '' && this.data.TipoDireccion_Id == '') {
+      console.log('Direccion no puede estar vacio');
+      this.isMensajeAlerta = true;
+      this.mensajeAlerta = 'Direccion no puede estar vacio';
+      this.resetMensajeAlerta();
+      return;
+    }
+
+    if (this.data.GeoDomicilioLati == '' && this.data.GeoDomicilioLongi == '') {
+      console.log('Latitud y Longitud no puede estar vacio');
+      this.isMensajeAlerta = true;
+      this.mensajeAlerta = 'Latitud y Longitud no pueden estar vacios';
+      this.resetMensajeAlerta();
+      return;
+    }
 
     this.contactCardAdminService.updateContactCard([this.data]).subscribe((res) => {
-      console.log(res);
-      console.log('Se guardo correctamente');
+      this.isSave = true;
     })
+  }
+
+  resetMensajeAlerta(): void {
+    setTimeout(() => {
+      this.isMensajeAlerta = false;
+      this.mensajeAlerta = '';
+    }, 2000);
+  }
+
+  goTC(): void {
+    const data = {
+      filterName: 'AcreditadoNumCuen',
+      filterValue: this.data.AcreditadoNumCuen,
+      idAdress: this.data.Direccion_Id
+    }
+    this.close();
+    this.dialogService.open({ component: ContactCardComponent, data: data });
   }
 }
