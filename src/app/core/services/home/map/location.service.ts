@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { LocationMap } from '../../../../interfaces/location-map';
 
 @Injectable({
@@ -10,6 +10,9 @@ export class LocationService {
   // private pointDataSubject = new BehaviorSubject<any>(null);
   private pointDataSubject = new BehaviorSubject<null>(null);
   pointData$: Observable<null> = this.pointDataSubject.asObservable();
+
+  private pointDataParamSubject = new Subject<[number, number]>();
+  public readonly pointDataParam$: Observable<[number, number]> = this.pointDataParamSubject.asObservable();
   
   constructor() { }
 
@@ -19,5 +22,14 @@ export class LocationService {
 
   updatePointData(data: any) {
     this.pointDataSubject.next(data);
+  }
+
+  /**
+   * Método que otros componentes llaman para enviar nuevas coordenadas.
+   * @param lat Latitud nueva
+   * @param lng Longitud nueva
+   */
+  emitPoint(lat: number, lng: number): void {
+    this.pointDataParamSubject.next([lat, lng]);
   }
 }

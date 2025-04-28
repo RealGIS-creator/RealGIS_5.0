@@ -50,6 +50,53 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
         takeUntil(this.destroy$)
       )
 
+    // punto enfocar
+    this.locationService.pointDataParam$
+    .pipe(
+      filter(
+        (pd): pd is [number, number] =>
+          pd != null && Array.isArray(pd) && pd.length === 2
+      ),
+      takeUntil(this.destroy$),
+      tap(([lat, lng]) => {
+        if (this.map && this.markerClusterGroup) {
+          const allMarkers = this.markerClusterGroup.getLayers() as L.Marker[];  
+          const target = allMarkers.find(m => {
+            const ll = m.getLatLng();
+            return ll.lat === lat && ll.lng === lng;                       
+          });
+  
+          if (target) {
+            this.markerClusterGroup.zoomToShowLayer(target, () => {          
+              const highlightOpts: L.CircleMarkerOptions = {
+                radius: (target as any)._icon?.offsetWidth / 2 || 8,
+                fillColor: '#ff0000',     // rojo para resaltar
+                color: '#000',
+                weight: 1,
+                opacity: 1,
+                fillOpacity: 1
+              };
+              const highlightIcon = this.createCircleDivIcon(highlightOpts);
+  
+              target.setIcon(highlightIcon);                 
+  
+              const { lat: tLat, lng: tLng } = target.getLatLng();
+              target
+                .bindPopup(
+                  `Lat: ${tLat.toFixed(6)}, Lng: ${tLng.toFixed(6)}`,
+                  { closeButton: true, autoClose: true }
+                )
+                .openPopup();
+            });
+          } else {
+            this.map.flyTo([lat, lng], 18, { animate: true });                
+          }
+        }
+      })
+    )
+    .subscribe();
+    // final punto enfocar
+
     this.mapService.updateZoomLevel(this.updateScale());
   }
 

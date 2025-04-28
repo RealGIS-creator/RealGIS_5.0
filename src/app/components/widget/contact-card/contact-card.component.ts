@@ -36,10 +36,9 @@ export class ContactCardComponent {
   constructor(
     private informationCardService: InformationCardService, 
     private cdRef: ChangeDetectorRef,
-    private locationService: LocationService
+    private locationService: LocationService,
   )
-  {
-  }
+  {}
 
   ngOnInit(): void {
     this.data = this.data$.value._value;
@@ -61,10 +60,17 @@ export class ContactCardComponent {
         this.infoUserCard = response.SDT_TarjetaContacto[0];
         this.cdRef.detectChanges();
         this.selectAddress()
+        this.showPointOnMap();
       } else {
         console.error('No se encontraron datos en la respuesta');
       }
     });
+  }
+
+  showPointOnMap(): void {
+    const latitude = parseFloat(this.infoUserCard.GeoDomicilioLati);
+    const longitude = parseFloat(this.infoUserCard.GeoDomicilioLongi);
+    this.locationService.emitPoint(latitude, longitude);
   }
 
   showInformationPersonal(): void {

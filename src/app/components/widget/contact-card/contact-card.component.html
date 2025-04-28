@@ -158,7 +158,7 @@
                 (click)="openAssociatedFarmsContactCard()">FINCAS ASOCIADAS</div>
         </div>
 
-        <div class="bg-info location mt-3 d-flex justify-content-center align-items-center">
+        <div class="bg-info location mt-3 d-flex justify-content-center align-items-center" (click)="showPointOnMap()">
             <img class="icon" src="assets/icon/contact_card_location.svg" alt="">
             {{ infoUserCard.GeoDomicilioLongi }} - {{ infoUserCard.GeoDomicilioLati }}
         </div>
