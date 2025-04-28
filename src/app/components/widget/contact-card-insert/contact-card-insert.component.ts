@@ -6,12 +6,12 @@ import { InformationCard } from '../../../interfaces/information-card';
 import { MovableCardComponent } from '../../shared/movable-card/movable-card.component';
 import { FormsModule } from '@angular/forms';
 import { ContactCardAdminService } from '../../../core/services/widget/contact-card-admin.service';
-import { OnlyTextDirective } from '../../../core/directives/only-text.directive';
+//import { OnlyTextDirective } from '../../../core/directives/only-text.directive';
 import { OnlyNumberDirective } from '../../../core/directives/only-number.directive';
 
 @Component({
   selector: 'app-contact-card-insert',
-  imports: [MovableCardComponent, CommonModule, FormsModule, OnlyTextDirective, OnlyNumberDirective],
+  imports: [MovableCardComponent, CommonModule, FormsModule, OnlyNumberDirective],
   templateUrl: './contact-card-insert.component.html',
   styleUrl: './contact-card-insert.component.less'
 })

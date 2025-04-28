@@ -40,8 +40,8 @@ export class ContactCardAdminComponent {
   nuevaFincaDireccion: string = '';
   typeTelefono: number = 0;
   typeEmail: number = 0;
-  telefonoPreLaboral: number | null = null;
-  telefonoLaboral: number | null = null;
+  telefonoPreLaboral: string = '';
+  telefonoLaboral: string = '';
   mensajeAlerta: string = '';
 
   dialogRef!: ComponentRef<any>;
@@ -272,7 +272,7 @@ export class ContactCardAdminComponent {
   }
 
   save(): void {
-    if (this.telefonoLaboral != 0 || this.telefonoPreLaboral != 0
+    if (this.telefonoLaboral != '' || this.telefonoPreLaboral != ''
       || this.telefonoLaboral != null || this.telefonoPreLaboral != null
 
     ) {

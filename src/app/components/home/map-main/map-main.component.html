@@ -1,11 +1,46 @@
-<div id="map"></div>
+<!-- <div id="map"></div>
 <app-toolbar></app-toolbar>
 <app-toolbar-map-vertical
-    (resetMapEvent)="resetMap()"
-    (zoomInEvent)="zoomIn()"
-    (zoomOutEvent)="zoomOut()"
-    [zoomLevel]="zoomLevel"
-    (rangeChangeEvent)="onRangeChange($event)"
-    (locateUserEvent)="locateUser()"
-    >
+(resetMapEvent)="resetMap()"
+(zoomInEvent)="zoomIn()"
+(zoomOutEvent)="zoomOut()"
+[zoomLevel]="zoomLevel"
+(rangeChangeEvent)="onRangeChange($event)"
+(locateUserEvent)="locateUser()"
+>
 </app-toolbar-map-vertical>
+<app-statistics></app-statistics> -->
+
+<!-- dasdsa -->
+<div id="map"></div>
+
+<button class="toggle-stats-btn" (click)="toggleStatistics()">
+  {{ showStatistics ? 'Ocultar' : 'Mostrar' }} Estadísticas
+</button>
+
+<app-statistics
+  #stats
+  [ngClass]="{ show: showStatistics }"
+  class="statistics-container"
+></app-statistics>
+
+<app-toolbar
+  [style.left.%]="toolbarLeftPercent"
+  [style.bottom.px]="statisticsHeight"
+></app-toolbar>
+
+<app-toolbar-map-vertical
+  [style.right]="toolbarRight"
+  [style.bottom.px]="statisticsHeight"
+  [zoomLevel]="zoomLevel"
+  (resetMapEvent)="resetMap()"
+  (zoomInEvent)="zoomIn()"
+  (zoomOutEvent)="zoomOut()"
+  (rangeChangeEvent)="onRangeChange($event)"
+  (locateUserEvent)="locateUser()"
+></app-toolbar-map-vertical>
+
+
+
+  
+

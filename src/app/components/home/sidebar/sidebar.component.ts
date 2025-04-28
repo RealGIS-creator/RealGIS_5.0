@@ -8,6 +8,7 @@ import { SidebarService } from '../../../core/services/home/sidebar.service';
 import { Subscription } from 'rxjs';
 import { DownloadComponent } from '../../widget/download/download.component';
 import { ContactCardInsertComponent } from '../../widget/contact-card-insert/contact-card-insert.component';
+import { StatisticsComponent } from '../../widget/statistics/statistics.component';
 // import { SidebarShowDataService } from '../../../core/services/widget/sidebar-show-data.service';
 
 @Component({
@@ -81,6 +82,9 @@ export class SidebarComponent {
         componentToLoad = DownloadComponent;
         break;
       case 3:
+          componentToLoad = StatisticsComponent;
+          break;
+      case 4:
           componentToLoad = ContactCardInsertComponent;
           break;
       // default:

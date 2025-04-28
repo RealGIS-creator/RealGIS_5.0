@@ -15,8 +15,8 @@ export class SidebarService {
       // { image: 'sidebar_add_layer', type: 'dark', id: 3, label: 'Importar Capa' },
       // { image: 'sidebar_print', type: 'dark', id: 4, label: 'Imprimir' },
       { image: 'sidebar_download', type: 'dark', id: 2, label: 'Descargas' },
-      { image: 'sidebar_form', type: 'dark', id: 3, label: 'Formulario' }
-      // { image: 'sidebar_statistics', type: 'dark', id: 6, label: 'Estadísticas' },
+      { image: 'sidebar_statistics', type: 'dark', id: 3, label: 'Estadísticas' },
+      { image: 'sidebar_form', type: 'dark', id: 4, label: 'Formulario' }
     ];
   }
 }

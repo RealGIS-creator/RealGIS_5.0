@@ -1,6 +1,6 @@
 import L from 'leaflet';
 
-import { Component, inject, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { ToolbarMapVerticalComponent } from '../../widget/toolbar-map-vertical/toolbar-map-vertical.component';
 import { ToolbarComponent } from '../../widget/toolbar/toolbar.component';
 import { GeometryService } from '../../../core/services/home/map/geometry.service';
@@ -11,11 +11,13 @@ import { takeUntil, tap, map, concatMap, filter } from 'rxjs/operators';
 import { LocationService } from '../../../core/services/home/map/location.service';
 import 'leaflet.coordinates/dist/Leaflet.Coordinates-0.1.5.src.js';
 import { MapService } from '../../../core/services/home/map/map.service';
+import { StatisticsComponent } from '../../widget/statistics/statistics.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   standalone: true,
   selector: 'app-map-main',
-  imports: [ToolbarComponent, ToolbarMapVerticalComponent],
+  imports: [ToolbarComponent, ToolbarMapVerticalComponent, StatisticsComponent, CommonModule],
   templateUrl: './map-main.component.html',
   styleUrl: './map-main.component.less'
 })
@@ -24,6 +26,7 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
   private location!: [number, number];
   private zoom!: number;
   zoomLevel = 8;
+  
 
   private markerClusterGroup!: L.MarkerClusterGroup;
   private loadedTiles = new Set<string>();
@@ -38,6 +41,33 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
     private mapService: MapService
   ) {
     this.getLocateMap();
+  }
+
+  showStatistics = false;
+  statisticsHeight = 0;
+  toolbarLeftPercent = 50;   // 50% o 25%
+  toolbarRight: string = '10px';  // '10px' o '50%'
+
+  @ViewChild('stats') statsEl?: ElementRef<HTMLElement>;
+  toggleStatistics() {
+    this.showStatistics = !this.showStatistics;
+
+    // Permite que Angular renderice el cambio de clase
+    setTimeout(() => this.updateLayout(), 0);
+  }
+
+  private updateLayout() {
+    if (this.statsEl && this.showStatistics) {
+      const el = this.statsEl.nativeElement;
+      this.statisticsHeight = el.offsetHeight;
+      // Cuando las estadísticas ocupan el 50% del ancho, el centro de la zona restante es 25%
+      this.toolbarLeftPercent = 25;                    
+      this.toolbarRight = '50%';                       
+    } else {
+      this.statisticsHeight = 0;
+      this.toolbarLeftPercent = 50;
+      this.toolbarRight = '10px';
+    }
   }
 
   ngOnInit(): void {

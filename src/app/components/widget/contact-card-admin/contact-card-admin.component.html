@@ -130,41 +130,11 @@
                     </ng-container>
                 </div>
             </div>
-            <!-- <div class="col">
-                <b>Teléfono:</b>
-                <ul class="list-unstyled">
-                    <li *ngFor="let laboral of data.Telefonos">
-                        <ng-container *ngIf="laboral.TipoTelefono_Id == '4'; else telefonoLaboral">
-                            <input type="text" name="telLaboralPre" id="telLaboralPre" pattern="^[0-9]+$" OnlyNumber
-                                class="form-control bg-property-input"
-                                [ngClass]="{'bg-active': isVisibleInformacionEmployment == true}"
-                                [disabled]="!isVisibleInformacionEmployment" [(ngModel)]="laboral.TelefonoPre">
 
-                            <input type="text" name="telLaboral" id="telLaboral" pattern="^[0-9]+$" OnlyNumber
-                                class="form-control bg-property-input"
-                                [ngClass]="{'bg-active': isVisibleInformacionEmployment == true}"
-                                [disabled]="!isVisibleInformacionEmployment" [(ngModel)]="laboral.TelefonoNum">
-                        </ng-container>
-                        <ng-template #telefonoLaboral>
-                            <div *ngIf="data.TipoDireccion_Id == '2' || data.TipoDireccion_Id == '3' ">
-                                <input type="text" name="telLaboralPre" id="telLaboralPre" pattern="^[0-9]+$" OnlyNumber
-                                    class="form-control bg-property-input"
-                                    [ngClass]="{'bg-active': isVisibleInformacionEmployment == true}"
-                                    [disabled]="!isVisibleInformacionEmployment" [(ngModel)]="telefonoPreLaboral">
-
-                                <input type="text" name="telLaboral" id="telLaboral" pattern="^[0-9]+$" OnlyNumber
-                                    class="form-control bg-property-input"
-                                    [ngClass]="{'bg-active': isVisibleInformacionEmployment == true}"
-                                    [disabled]="!isVisibleInformacionEmployment" [(ngModel)]="telefonoLaboral">
-                            </div>
-                        </ng-template>
-                    </li>
-                </ul>
-            </div> -->
             <div class="col">
                 <b>Teléfono:</b>
                 <ul class="list-unstyled">
-                    <ng-container *ngIf="hasLaboralTipo4; else telefonoLaboral">
+                    <ng-container *ngIf="hasLaboralTipo4; else telLaboral">
                         <li *ngFor="let laboral of data.Telefonos" class="d-flex mb-2">
                             <ng-container *ngIf="laboral.TipoTelefono_Id == '4'">
                                 <!-- Prefijo -->
@@ -181,19 +151,19 @@
                         </li>
                     </ng-container>
 
-                    <ng-template #telefonoLaboral>
+                    <ng-template #telLaboral>
                         <li *ngIf="
                         data.TipoDireccion_Id == '2' ||
                         data.TipoDireccion_Id == '3'
                       " class="d-flex mb-2">
                             <!-- Prefijo alternativo -->
                             <input type="text" name="telLaboralPreAlt" pattern="^[0-9]+$" onlyNumber
-                                class="form-control bg-property-input me-1"
+                                class="form-control bg-property-input me-1" placeholder="Prefijo"
                                 [ngClass]="{ 'bg-active': isVisibleInformacionEmployment }"
                                 [disabled]="!isVisibleInformacionEmployment" [(ngModel)]="telefonoPreLaboral" />
                             <!-- Número alternativo -->
                             <input type="text" name="telLaboralAlt" pattern="^[0-9]+$" onlyNumber
-                                class="form-control bg-property-input"
+                                class="form-control bg-property-input" placeholder="Número"
                                 [ngClass]="{ 'bg-active': isVisibleInformacionEmployment }"
                                 [disabled]="!isVisibleInformacionEmployment" [(ngModel)]="telefonoLaboral" />
                         </li>
