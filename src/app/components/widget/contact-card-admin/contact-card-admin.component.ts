@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ComponentRef, ElementRef, Input, ViewChild } from '@angular/core';
+import { Component, ComponentRef, Input } from '@angular/core';
 import { DialogService } from '../../../core/services/shared/dialog.service';
 import { SidebarShowDataService } from '../../../core/services/widget/sidebar-show-data.service';
 import { CommonModule } from '@angular/common';
@@ -9,6 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { ContactCardAdminService } from '../../../core/services/widget/contact-card-admin.service';
 import { OnlyNumberDirective } from '../../../core/directives/only-number.directive';
 import { ContactCardComponent } from '../contact-card/contact-card.component';
+import { PdfContactCardService } from '../../../core/services/widget/pdf-contact-card.service';
 
 @Component({
   selector: 'app-contact-card-admin',
@@ -31,6 +32,7 @@ export class ContactCardAdminComponent {
   isSave = false;
   isTC = false;
   isMensajeAlerta = false;
+  isMainMenu = true;
 
   infoUserCard!: InformationCard;
   nuevoTelefonoPre?: number | null;
@@ -65,8 +67,8 @@ export class ContactCardAdminComponent {
   constructor(
     private dialogService: DialogService,
     private sidebarShowDataService: SidebarShowDataService,
-    private cdr: ChangeDetectorRef,
-    private contactCardAdminService: ContactCardAdminService
+    private contactCardAdminService: ContactCardAdminService,
+    private pdfContactCardService: PdfContactCardService
   )
   {}
 
@@ -303,6 +305,8 @@ export class ContactCardAdminComponent {
 
     this.contactCardAdminService.updateContactCard([this.data]).subscribe((res) => {
       this.isSave = true;
+      this.isMainMenu = false;
+      this.download();
     })
   }
 
@@ -322,4 +326,9 @@ export class ContactCardAdminComponent {
     this.close();
     this.dialogService.open({ component: ContactCardComponent, data: data });
   }
+
+  download(): void {
+    this.pdfContactCardService.download(this.data);
+  }
+
 }

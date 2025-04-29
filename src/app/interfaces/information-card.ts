@@ -89,3 +89,7 @@ export interface InformationCard {
 export interface InformationCardObject {
     SDT_TarjetaContacto: InformationCard[];
 }
+
+export interface InformationCardObject2 {
+    WS_TarjetaContacto1: InformationCard[];
+}

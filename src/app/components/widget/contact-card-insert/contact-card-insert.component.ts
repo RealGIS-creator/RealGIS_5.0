@@ -8,10 +8,33 @@ import { FormsModule } from '@angular/forms';
 import { ContactCardAdminService } from '../../../core/services/widget/contact-card-admin.service';
 //import { OnlyTextDirective } from '../../../core/directives/only-text.directive';
 import { OnlyNumberDirective } from '../../../core/directives/only-number.directive';
+import { OnlyDecimal2IntDirectiveDirective } from '../../../core/directives/only-decimal2-int-directive.directive';
+import { OnlyDecimal3IntDirectiveDirective } from '../../../core/directives/only-decimal3-int-directive.directive';
+import { ContactCardComponent } from '../contact-card/contact-card.component';
+import { OnlyAlphanumericDashDirective } from '../../../core/directives/only-alphanumeric-dash.directive';
+import { OnlyAlphanumericDirective } from '../../../core/directives/only-alphanumeric.directive';
+import { OnlyDecimalCommaDirective } from '../../../core/directives/only-decimal-comma.directive';
+import { ExactLengthTenDirective } from '../../../core/directives/exact-length-ten.directive';
+import { ExactLengthThreeDirective } from '../../../core/directives/exact-length-three.directive';
+import { EmailFormatDirective } from '../../../core/directives/email-format.directive';
+import { NoQuotesDirective } from '../../../core/directives/no-quotes.directive';
 
 @Component({
   selector: 'app-contact-card-insert',
-  imports: [MovableCardComponent, CommonModule, FormsModule, OnlyNumberDirective],
+  imports: [MovableCardComponent, 
+    CommonModule, 
+    FormsModule, 
+    OnlyNumberDirective, 
+    OnlyDecimal2IntDirectiveDirective, 
+    OnlyDecimal3IntDirectiveDirective,
+    OnlyAlphanumericDashDirective,
+    OnlyAlphanumericDirective,
+    OnlyDecimalCommaDirective,
+    ExactLengthTenDirective,
+    ExactLengthThreeDirective,
+    EmailFormatDirective,
+    NoQuotesDirective
+  ],
   templateUrl: './contact-card-insert.component.html',
   styleUrl: './contact-card-insert.component.less'
 })
@@ -24,6 +47,9 @@ export class ContactCardInsertComponent {
   isAddTelefonoOtro = false;
   isAddEmail = false;
   isAddFinca = false;
+  isSave = false;
+  isMainMenu = true;
+  isSaveaAvailable = false;
 
   infoUserCard!: InformationCard;
   nuevoTelefonoPre: string = '';
@@ -47,10 +73,14 @@ export class ContactCardInsertComponent {
   direccionNombrePersonal: string = '';
   isMensajeAlerta = false;
   mensajeAlerta: string = '';
-  nameEstrategia: string = ''; 
+  nameEstrategia: string = '';
   idEstategia: string = '';
   geoDomicilioLati: string = '';
   geoDomicilioLongi: string = '';
+  nameProducto: string = '';
+  idProducto: string = '';
+  saveData!: InformationCard;
+  message: string = '';
 
   dialogRef!: ComponentRef<any>;
 
@@ -113,6 +143,8 @@ export class ContactCardInsertComponent {
     this.data.TipoProductoNom = nameProducto;
     this.data.TipoProducto_Id = idProducto;
     this.selectedOption = this.data.TipoProductoNom;
+    this.nameProducto = nameProducto;
+    this.idProducto = idProducto;
     this.clickSearcher();
     console.log(this.data);
   }
@@ -270,7 +302,7 @@ export class ContactCardInsertComponent {
       arr.splice(idx, 1);
     }
 
-    this.data.Fincas = arr as unknown as typeof this.data.Fincas;    
+    this.data.Fincas = arr as unknown as typeof this.data.Fincas;
     console.log(this.data);
   }
 
@@ -282,28 +314,33 @@ export class ContactCardInsertComponent {
   }
 
   save(): void {
+    this.isSaveaAvailable = true
+
     if (this.idCredito == '' || this.identificacion == '' || this.nombre == '' || this.noAcreditado == ''
-      || this.cis == '' || this.nameEstrategia == '' || this.idEstategia == '') {
+      || this.cis == '' || this.nameEstrategia == '' || this.idEstategia == '' || this.nameProducto == ''
+      || this.idProducto == '') {
       console.log('Faltan datos obligatorios');
       this.isMensajeAlerta = true;
       this.mensajeAlerta = 'Faltan datos obligatorios';
       this.resetMensajeAlerta();
+      this.isSaveaAvailable = false;
       return;
     }
 
-    if (this.isVisibleInformacionEmployment && (this.direccionLugarNombreLaboral == '' && this.direccionNombreLaboral == '')) {
-      console.log('DireccionesLugTra no puede estar vacio');
-      this.isMensajeAlerta = true;
-      this.mensajeAlerta = 'Direccion Laboral no puede estar vacio';
-      this.resetMensajeAlerta();
-      return;
-    }
+    // if (this.isVisibleInformacionEmployment && (this.direccionLugarNombreLaboral == '' && this.direccionNombreLaboral == '')) {
+    //   console.log('DireccionesLugTra no puede estar vacio');
+    //   this.isMensajeAlerta = true;
+    //   this.mensajeAlerta = 'Direccion Laboral no puede estar vacio';
+    //   this.resetMensajeAlerta();
+    //   return;
+    // }
 
     if (this.direccionNombrePersonal == '' && this.direccionLugarNombreLaboral == '' && this.direccionNombreLaboral == '') {
       console.log('Direccion no puede estar vacio');
       this.isMensajeAlerta = true;
       this.mensajeAlerta = 'Direccion no puede estar vacio';
       this.resetMensajeAlerta();
+      this.isSaveaAvailable = false;
       return;
     }
 
@@ -312,6 +349,7 @@ export class ContactCardInsertComponent {
       this.isMensajeAlerta = true;
       this.mensajeAlerta = 'Latitud y Longitud no pueden estar vacios';
       this.resetMensajeAlerta();
+      this.isSaveaAvailable = false;
       return;
     }
 
@@ -324,7 +362,7 @@ export class ContactCardInsertComponent {
     this.data.AcreditadoNum = this.noAcreditado.toString();
     this.data.CuentasCis = this.cis.toString();
 
-    if (this.isVisibleInformacionEmployment) {
+    if (this.direccionLugarNombreLaboral != '' || this.direccionNombreLaboral != '') {
       this.data.Direccion = this.direccionNombreLaboral;
       this.data.DireccionEst = 'A';
       this.data.TipoDireccionCod = '2';
@@ -332,7 +370,7 @@ export class ContactCardInsertComponent {
       this.data.DireccionesLugTra = this.direccionLugarNombreLaboral;
     }
 
-    if (this.isVisibleInformacionPersonal) {
+    if (this.direccionNombrePersonal != '') {
       this.data.Direccion = this.direccionNombrePersonal;
       this.data.DireccionEst = 'A';
       this.data.TipoDireccionCod = '1';
@@ -352,8 +390,30 @@ export class ContactCardInsertComponent {
       })
     }
 
-    console.log(this.data.CuentasDiasMoraGave);
-    console.log(this.data);
+    console.log('data final: ', this.data)
+    this.contactCardAdminService.insertContactCard([this.data]).subscribe((res) => {
+      console.log('espuesta: ', res);
+      this.isMainMenu = false;
+      if (res) {
+        this.saveData = res.WS_TarjetaContacto1[0];
+        console.log('info guardada: ', this.saveData)
+        this.message = 'Tarjeta de contacto creada con exito';
+        this.isSave = true;
+      } else {
+        this.message = 'Error al crear la tarjeta de contacto';
+        this.isSave = true;
+      }
+    })
+  }
 
+  goTC(): void {
+    const data = {
+      filterName: 'AcreditadoNumCuen',
+      filterValue: this.saveData.AcreditadoNumCuen,
+      idAdress: this.saveData.Direccion_Id
+    }
+    console.log('data: ', data)
+    this.close();
+    this.dialogService.open({ component: ContactCardComponent, data: data });
   }
 }

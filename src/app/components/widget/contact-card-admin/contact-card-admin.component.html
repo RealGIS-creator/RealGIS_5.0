@@ -1,5 +1,5 @@
 <!-- <ng-container *ngIf="data; else loading"> -->
-<app-movable-card [initialX]="10" [initialY]="10" [paramWidth]="30" [headerClass]="'card-header text-white'"
+<app-movable-card *ngIf="isMainMenu" [initialX]="10" [initialY]="10" [paramWidth]="30" [headerClass]="'card-header text-white'"
     [showFooter]="true">
     <div class="card-title">
         <div class="d-flex justify-content-between align-items-center">
@@ -329,7 +329,7 @@
             (click)="editGeolocalizacion()">
     </div> -->
 
-    <div class="card-footer d-flex justify-content-center align-items-center" (click)="save()">
+    <div class="card-footer d-flex justify-content-center align-items-center" (click)="save()" >
         Guardar
     </div>
 </app-movable-card>
@@ -448,7 +448,20 @@
     </div>
 </app-movable-card>
 
-<app-movable-card *ngIf="isSave" [initialX]="500" [initialY]="380" [paramWidth]="20" [showHeader]="true">
+<app-movable-card *ngIf="isMensajeAlerta" [initialX]="500" [initialY]="380" [paramWidth]="20"  [showHeader]="true">
+    <div class="card-title">
+        <div class="d-flex justify-content-between align-items-center">
+            <img class="icon button-header" src="assets/icon/company_white.svg" alt="">
+            <img class="icon-header button-header" src="assets/icon/contact_card_close.svg" alt=""
+                (click)="close()">
+        </div>
+    </div>
+    <div>
+        <p class="alerta">{{ mensajeAlerta }}</p>
+    </div>
+</app-movable-card> 
+
+<app-movable-card *ngIf="isSave" [initialX]="10" [initialY]="10" [paramWidth]="30" [showHeader]="true">
     <div class="card-title">
         <div class="d-flex justify-content-between align-items-center">
             <img class="icon button-header" src="assets/icon/company_white.svg" alt="">
@@ -462,20 +475,6 @@
         <button class="btn badge bg-active" (click)="goTC()">Ir a la TC</button>
     </div>
 </app-movable-card>
-
-<app-movable-card *ngIf="isMensajeAlerta" [initialX]="500" [initialY]="380" [paramWidth]="20" [showHeader]="true">
-    <div class="card-title">
-        <div class="d-flex justify-content-between align-items-center">
-            <img class="icon button-header" src="assets/icon/company_white.svg" alt="">
-            <img class="icon-header button-header" src="assets/icon/contact_card_close.svg" alt=""
-                (click)="close()">
-        </div>
-    </div>
-    <div>
-        <p class="alerta">{{ mensajeAlerta }}</p>
-    </div>
-</app-movable-card> 
-
 <!-- </ng-container>
 <ng-template #loading>
     <p>Cargando información...</p>
