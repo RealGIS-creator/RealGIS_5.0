@@ -1,53 +1,63 @@
-import { Directive, ElementRef, HostListener } from '@angular/core';
+import { Directive, ElementRef, HostListener, Renderer2 } from '@angular/core';
 
 @Directive({
   selector: 'input[OnlyDecimal2IntDirective]'
 })
 export class OnlyDecimal2IntDirectiveDirective {
+  private editRegex  = /^-?\d{0,2}(?:\.\d*)?$/;
+  private finalRegex = /^-?\d{1,2}\.\d+$/;
 
-  private regex = /^-?\d{1,2}(\.\d*)?$/;
+  constructor(
+    private el: ElementRef<HTMLInputElement>,
+    private renderer: Renderer2
+  ) {}
 
-  constructor(private el: ElementRef<HTMLInputElement>) {}
-
-  @HostListener('keypress', ['$event'])
-  onKeyPress(event: KeyboardEvent) {
+  @HostListener('input')
+  onInput() {
     const input = this.el.nativeElement;
-    const value = input.value ?? '';
-    const start = input.selectionStart ?? 0;
-    const end   = input.selectionEnd   ?? 0;
+    let value = input.value;
 
-    if (event.key.length > 1 && event.key !== '.' && event.key !== '-') {
-      return;
-    }
-    if (event.key === '.' && value.includes('.')) {
-      event.preventDefault();
-      return;
+    // 1) elimina caracteres no permitidos
+    value = value.replace(/[^0-9.\-]/g, '');
+
+    // 2) un solo signo al inicio
+    const hasSign = value.startsWith('-');
+    value = (hasSign ? '-' : '') + value.slice(hasSign ? 1 : 0).replace(/-/g, '');
+
+    // 3) máximo un punto
+    const parts = value.split('.');
+    if (parts.length > 2) {
+      value = parts.shift()! + '.' + parts.join('');
     }
 
-    const next = value.slice(0, start) + event.key + value.slice(end);
-    if (!this.regex.test(next)) {
-      event.preventDefault();
+    // 4) recorta la parte entera a 2 dígitos
+    const abs = (hasSign ? value.slice(1) : value).split('.');
+    const intPart = abs[0].slice(0, 2);
+    const decPart = abs[1] !== undefined ? '.' + abs[1] : '';
+    const sanitized = (hasSign ? '-' : '') + intPart + decPart;
+
+    // 5) si cambió el valor, actualizamos e informamos a Angular
+    if (sanitized !== input.value) {
+      input.value = sanitized;
+      const pos = sanitized.length;
+      input.setSelectionRange(pos, pos);
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+
+    // 6) VALIDACIÓN FINAL INMEDIATA
+    if (this.finalRegex.test(input.value)) {
+      this.renderer.removeClass(input, 'decimal-format-error');
     }
   }
 
-  @HostListener('paste', ['$event'])
-  onPaste(event: ClipboardEvent) {
-    event.preventDefault();
-    const pasted = event.clipboardData?.getData('text') ?? '';
-    const input  = this.el.nativeElement;
-    const value  = input.value ?? '';
-    const start  = input.selectionStart ?? 0;
-    const end    = input.selectionEnd   ?? 0;
-
-    if ((value + pasted).split('.').length > 2) {
-      return;
-    }
-
-    const next = value.slice(0, start) + pasted + value.slice(end);
-    if (this.regex.test(next)) {
-      input.value = next;
-      const pos = start + pasted.length;
-      input.setSelectionRange(pos, pos);
+  @HostListener('blur')
+  onBlur() {
+    const input = this.el.nativeElement;
+    const valid = this.finalRegex.test(input.value);
+    if (!valid) {
+      this.renderer.addClass(input, 'decimal-format-error');
+    } else {
+      this.renderer.removeClass(input, 'decimal-format-error');
     }
   }
 }

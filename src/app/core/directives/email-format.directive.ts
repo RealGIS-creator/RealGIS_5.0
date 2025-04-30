@@ -1,49 +1,38 @@
-import { Directive, ElementRef, HostListener } from '@angular/core';
+import { Directive, ElementRef, HostListener, Renderer2 } from '@angular/core';
 
 @Directive({
   selector: '[EmailFormat]'
 })
 export class EmailFormatDirective {
 
-  private emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;  
+  private allowedCharsRegex = /[^a-zA-Z0-9@._%+\-]/g;
+  private emailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
 
-  constructor(private el: ElementRef<HTMLInputElement>) {}
+  constructor(
+    private el: ElementRef<HTMLInputElement>,
+    private renderer: Renderer2
+  ) {}
 
-  @HostListener('keypress', ['$event'])
-  onKeyPress(event: KeyboardEvent) {
-    const key   = event.key;
+  @HostListener('input')
+  onInput() {
     const input = this.el.nativeElement;
-    const value = input.value ?? '';                                   
-    const start = input.selectionStart ?? 0;                           
-    const end   = input.selectionEnd   ?? 0;
-
-    if (key.length > 1) {
-      return;
-    }
-
-    const next = value.slice(0, start) + key + value.slice(end);
-
-    if (next.includes('@') && next.includes('.') && !this.emailRegex.test(next)) {
-      event.preventDefault();
+    // Elimina caracteres no permitidos
+    let sanitized = input.value.replace(this.allowedCharsRegex, '');
+    if (sanitized !== input.value) {
+      input.value = sanitized;
+      // Reposiciona el cursor al final
+      const pos = sanitized.length;
+      input.setSelectionRange(pos, pos);
     }
   }
 
-  @HostListener('paste', ['$event'])
-  onPaste(event: ClipboardEvent) {
-    event.preventDefault();
-
-    const pasted = event.clipboardData?.getData('text') ?? '';          
-    const input  = this.el.nativeElement;
-    const value  = input.value ?? '';
-    const start  = input.selectionStart ?? 0;                          
-    const end    = input.selectionEnd   ?? 0;
-
-    const next = value.slice(0, start) + pasted + value.slice(end);
-
-    if (this.emailRegex.test(next)) {
-      input.value = next;
-      const pos = start + pasted.length;
-      input.setSelectionRange(pos, pos);
+  @HostListener('blur')
+  onBlur() {
+    const input = this.el.nativeElement;
+    if (!this.emailRegex.test(input.value)) {
+      this.renderer.addClass(input, 'email-format-error');
+    } else {
+      this.renderer.removeClass(input, 'email-format-error');
     }
   }
 }

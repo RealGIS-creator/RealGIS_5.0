@@ -20,8 +20,8 @@
             <!-- ID DE CRÉDITO -->
             <div class="d-flex align-items-center mb-1 field-group">
                 <label for="idCredito" class="me-2 mb-0 label-sm">ID DE CRÉDITO:</label>
-                <input id="idCredito" type="text" class="form-control bg-none-input input-sm" OnlyNumber
-                    [(ngModel)]="idCredito" autocomplete="off">
+                <input id="idCredito" name="idCredito" type="text" class="form-control bg-none-input input-sm"
+                    OnlyNumber [(ngModel)]="idCredito" autocomplete="off">
             </div>
 
             <!-- Identificación -->
@@ -29,46 +29,42 @@
                 <div class="col-6">
                     <div class="d-flex align-items-center gap-2 custom-field-group">
                         <label for="identificacion" class="mb-0 label-sm">Identificación:</label>
-                        <input id="identificacion" type="text" class="form-control bg-none-input input-sm flex-shrink-0"
-                            OnlyAlphanumericDash [(ngModel)]="identificacion" autocomplete="off">
+                        <input id="identificacion" name="identificacion" id="identificacion" type="text"
+                            class="form-control bg-none-input input-sm flex-shrink-0" OnlyAlphanumericDash
+                            [(ngModel)]="identificacion" autocomplete="off">
 
                         <div class="content-select flex-shrink-0">
                             <div class="search-container-option">
-                                <div class="select-option" (click)="clickSearcher()">
-                                    CC
+                                <div class="select-option" (click)="clickSearcherTypeDocument()">
+                                    {{ selectedOptionTypeDocument }}
                                     <img class="search-icon" [src]="'assets/icon/' + displayIcon" alt="icono desplegar">
                                 </div>
                             </div>
-                            <div class="form-select-option content-select-type-doc" *ngIf="isVisible">
+                            <div class="form-select-option content-select-type-doc" *ngIf="isVisibleTypeDocument">
                                 <div class="search-container-option">
-                                    <div class="form-select-option" *ngIf="isVisible">
+                                    <div class="form-select-option" *ngIf="isVisibleTypeDocument">
                                         <div class="search-container-option">
-                                            <p class="option option-hover"
-                                                (click)="selectTipoIdentificacion('1')">
+                                            <p class="option option-hover" (click)="selectTipoIdentificacion('CC','1')">
                                                 CC
                                             </p>
                                             <p class="option option-hover"
-                                                (click)="selectTipoIdentificacion('2')">
+                                                (click)="selectTipoIdentificacion('Nit','2')">
                                                 Nit
                                             </p>
-                                            <p class="option option-hover"
-                                                (click)="selectTipoIdentificacion('4')">
+                                            <p class="option option-hover" (click)="selectTipoIdentificacion('E','4')">
                                                 E
                                             </p>
-                                            <p class="option option-hover"
-                                                (click)="selectTipoIdentificacion('5')">
+                                            <p class="option option-hover" (click)="selectTipoIdentificacion('N','5')">
                                                 N
                                             </p>
-                                            <p class="option option-hover"
-                                                (click)="selectTipoIdentificacion('6')">
+                                            <p class="option option-hover" (click)="selectTipoIdentificacion('PE','6')">
                                                 PE
                                             </p>
-                                            <p class="option option-hover"
-                                                (click)="selectTipoIdentificacion('7')">
+                                            <p class="option option-hover" (click)="selectTipoIdentificacion('PA','7')">
                                                 PA
                                             </p>
                                             <p class="option option-hover"
-                                                (click)="selectTipoIdentificacion('3')">
+                                                (click)="selectTipoIdentificacion('Otro','3')">
                                                 Otro
                                             </p>
                                         </div>
@@ -83,22 +79,22 @@
             <!-- Nombre -->
             <div class="d-flex align-items-center mb-1 field-group">
                 <label for="nombre" class="me-2 mb-0 label-sm">Nombre:</label>
-                <input id="nombre" type="text" class="form-control bg-none-input input-sm" OnlyAlphanumeric
-                    [(ngModel)]="nombre" autocomplete="off">
+                <input id="nombre" name="nombre" type="text" class="form-control bg-none-input input-sm"
+                    OnlyAlphanumeric [(ngModel)]="nombre" autocomplete="off">
             </div>
 
             <!-- No. Acreditado -->
             <div class="d-flex align-items-center mb-1 field-group">
                 <label for="noAcreditado" class="me-2 mb-0 label-sm">No. Acreditado:</label>
-                <input id="noAcreditado" type="text" class="form-control bg-none-input input-sm" OnlyNumber
-                    [(ngModel)]="noAcreditado" autocomplete="off">
+                <input id="noAcreditado" name="noAcreditado" type="text" class="form-control bg-none-input input-sm"
+                    OnlyNumber [(ngModel)]="noAcreditado" autocomplete="off">
             </div>
 
             <!-- CIS -->
             <div class="d-flex align-items-center mb-1 field-group">
                 <label for="cis" class="me-2 mb-0 label-sm">CIS:</label>
-                <input id="cis" type="text" class="form-control bg-none-input input-sm" OnlyNumber [(ngModel)]="cis"
-                    autocomplete="off">
+                <input id="cis" name="cis" type="text" class="form-control bg-none-input input-sm" OnlyNumber
+                    [(ngModel)]="cis" autocomplete="off">
             </div>
 
         </div>
@@ -160,7 +156,7 @@
             <div class="title mt-2">Dias de mora / Gaveta</div>
             <div class="col">
                 <div class="d-flex align-items-center">
-                    <input type="text" name="" id="" class="form-control bg-none-input bg-none-input-sm"
+                    <input type="text" name="diasMora" id="diasMora" class="form-control bg-none-input bg-none-input-sm"
                         placeholder="Dias Mora" OnlyNumber [(ngModel)]="data.CuentasDiasMoraGave" autocomplete="off">
                 </div>
             </div>
@@ -172,8 +168,8 @@
         <div class="col-6">
             <div class="title mt-2">Saldo de Producto</div>
             <div class="d-flex align-items-center">
-                <input type="text" name="" id="" class="form-control bg-none-input bg-none-input-sm" OnlyDecimalComma
-                    placeholder="Saldo Producto" [(ngModel)]="data.CuentasSalPro" autocomplete="off">
+                <input type="text" name="saldo" id="saldo" class="form-control bg-none-input bg-none-input-sm"
+                    OnlyDecimalComma placeholder="Saldo Producto" [(ngModel)]="data.CuentasSalPro" autocomplete="off">
             </div>
         </div>
     </div>
@@ -192,8 +188,9 @@
                 <b>Nombre:</b>
                 <div class="list-unstyled">
                     <ng-container>
-                        <input type="text" name="" id="" class="form-control bg-none-input bg-none-input-sm"
-                            placeholder="Nombre" [disabled]="!isVisibleInformacionEmployment" NoQuotes
+                        <input type="text" name="nombreDireccion" id="nombreDireccion"
+                            class="form-control bg-none-input bg-none-input-sm" placeholder="Nombre"
+                            [disabled]="!isVisibleInformacionEmployment" NoQuotes
                             [(ngModel)]="direccionLugarNombreLaboral" autocomplete="off">
                     </ng-container>
                 </div>
@@ -202,13 +199,50 @@
                 <b>Teléfono:</b>
                 <ul class="list-unstyled">
                     <ng-container>
-                        <input type="text" name="" id="" class="form-control bg-property-input"
-                            [disabled]="!isVisibleInformacionEmployment" OnlyNumber ExactLengthThree
-                            [(ngModel)]="telefonoPreLaboral" autocomplete="off">
+                        <input type="text" name="telPreModelLab" id="telPreModelLab"
+                            class="form-control bg-property-input" [disabled]="!isVisibleInformacionEmployment"
+                            ExactLengthThree #telPreModelLab="ngModel" [(ngModel)]="telefonoPreLaboral"
+                            autocomplete="off" maxlength="3" pattern="^[0-9]{1,3}$">
 
-                        <input type="text" name="" id="" class="form-control bg-none-input bg-none-input-sm"
-                            [disabled]="!isVisibleInformacionEmployment" OnlyNumber ExactLengthTen
-                            [(ngModel)]="telefonoNumLaboral" autocomplete="off">
+                        <input type="text" name="telModelLab" id="telModelLab"
+                            class="form-control bg-none-input bg-none-input-sm" #telModelLab="ngModel"
+                            pattern="^[0-9]{10}$" maxlength="10" [disabled]="!isVisibleInformacionEmployment"
+                            ExactLengthTen [(ngModel)]="telefonoNumLaboral" autocomplete="off">
+
+                        <!-- Mensaje de errores -->
+                        <div class="row">
+                            <div class="col">
+                                <div class="text-danger"
+                                    *ngIf="telPreModelLab.invalid && (telPreModelLab.dirty || telPreModelLab.touched)">
+                                    <div *ngIf="telPreModelLab.errors?.['pattern']">
+                                        Prefijo: Debe contener sólo dígitos y menos de 3 caracteres.
+                                    </div>
+                                    <div *ngIf="telPreModelLab.errors?.['maxlength']">
+                                        Prefijo: Máximo 3 caracteres permitidos.
+                                    </div>
+                                    <!-- Error de la directiva -->
+                                    <div
+                                        *ngIf="!telPreModelLab.errors && (telPreModelLab.viewModel?.length < 1 || telPreModelLab.viewModel?.length > 3)">
+                                        <em>Prefijo: Debe ingresar entre 1 y 3 dígitos.</em>
+                                    </div>
+                                </div>
+
+                                <div class="text-danger"
+                                    *ngIf="telModelLab.invalid && (telModelLab.dirty || telModelLab.touched)">
+                                    <div *ngIf="telModelLab.errors?.['pattern']">
+                                        Numero: Debe contener sólo dígitos y exactamente 10 caracteres.
+                                    </div>
+                                    <div *ngIf="telModelLab.errors?.['maxlength']">
+                                        Numero: Máximo 10 caracteres permitidos.
+                                    </div>
+                                    <!-- Error de la directiva -->
+                                    <div
+                                        *ngIf="telModelLab.valid && telModelLab.touched && telModelLab.viewModel.length !== 10">
+                                        <em>Numero: El número debe tener exactamente 10 dígitos.</em>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </ng-container>
                 </ul>
             </div>
@@ -216,7 +250,7 @@
                 <b>Dirección Laboral:</b>
                 <ul class="list-unstyled">
                     <li>
-                        <textarea name="" id="" class="form-control bg-none-input"
+                        <textarea name="direccionLaboral" id="direccionLaboral" class="form-control bg-none-input"
                             [disabled]="!isVisibleInformacionEmployment" NoQuotes [(ngModel)]="direccionNombreLaboral"
                             rows="1" placeholder="Dirección" autocomplete="off">
                         </textarea>
@@ -234,13 +268,10 @@
         <div *ngIf="isVisibleInformacionPersonal">
             <div class="row">
                 <div class="col-6"><b>Dirección Residencial:</b>
-                    <ul class="list-unstyled">
-                        <li [hidden]="direccionLugarNombreLaboral == '' || direccionNombreLaboral == ''">
-                            <textarea name="" id="" class="form-control bg-none-input"
-                                [(ngModel)]="direccionNombrePersonal" rows="1" NoQuotes placeholder="Dirección">
-                            </textarea>
-                        </li>
-                    </ul>
+                    <textarea name="" id="" class="form-control bg-none-input"
+                        [hidden]="direccionLugarNombreLaboral != '' || direccionNombreLaboral != ''" NoQuotes
+                        [(ngModel)]="direccionNombrePersonal" rows="1" placeholder="Dirección">
+                    </textarea>
                 </div>
             </div>
             <div class="row">
@@ -266,7 +297,8 @@
             </div>
             <div class="d-flex align-items-center mt-2">
                 <div><b>Residencial(es)</b>:</div>
-                <div class="badge bg-property" (click)="AddTelefonoResidencial(2)"><b>Añadir</b>
+                <div class="badge bg-property" [ngClass]="{'bg-active': isAddTelefonoResidencial == true}"
+                    (click)="AddTelefonoResidencial(2)"><b>Añadir</b>
                 </div>
             </div>
             <div class="row g-1">
@@ -285,7 +317,8 @@
 
             <div class="d-flex align-items-center mt-2">
                 <div><b>Otros</b>:</div>
-                <div class="badge bg-property" (click)="AddTelefonoOtro(5)"><b>Añadir</b>
+                <div class="badge bg-property" [ngClass]="{'bg-active': isAddTelefonoOtro == true}"
+                    (click)="AddTelefonoOtro(5)"><b>Añadir</b>
                 </div>
             </div>
             <div class="row g-1" *ngIf="(data.Telefonos ?? []).length > 0">
@@ -359,16 +392,29 @@
     </div>
 
     <!-- Geodomicilio -->
-    <div class="bg-info location mt-3 d-flex justify-content-center align-items-center"
+    <ng-container
         *ngIf="direccionNombrePersonal != '' || direccionLugarNombreLaboral != '' || direccionNombreLaboral != ''">
-        <!-- <img class="icon" src="assets/icon/contact_card_location.svg" alt=""> -->
-        <input type="text" name="" id="" class="form-control bg-none-input" placeholder="Longitud"
-            OnlyDecimal2IntDirective [(ngModel)]="geoDomicilioLongi" autocomplete="off">
-        -
-        <input type="text" name="" id="" class="form-control bg-none-input" placeholder="Latitud"
-            OnlyDecimal3IntDirective [(ngModel)]="geoDomicilioLati" autocomplete="off">
-        <img class="icon button-header" src="assets/icon/contact_card_location.svg" alt="icono desplegar">
-    </div>
+        <div class="bg-info location mt-3 d-flex justify-content-center align-items-center">
+
+            <!-- <img class="icon" src="assets/icon/contact_card_location.svg" alt=""> -->
+            <input type="text" name="longitud" id="longitud" class="form-control bg-none-input" placeholder="Longitud"
+                OnlyDecimal2IntDirective [(ngModel)]="geoDomicilioLongi" #longModel="ngModel" autocomplete="off"
+                pattern="^-?\\d{1,2}\\.\\d+$">
+            -
+            <input type="text" name="latitud" id="latitud" class="form-control bg-none-input" placeholder="Latitud"
+                OnlyDecimal3IntDirective [(ngModel)]="geoDomicilioLati" autocomplete="off">
+            <img class="icon button-header" src="assets/icon/contact_card_location.svg" alt="icono desplegar">
+
+            <!-- Mensajes de alerta -->
+            <div class="row mt-2" *ngIf="longModel.invalid && (longModel.dirty || longModel.touched)">
+                <div class="col-8 text-danger">
+                    <div *ngIf="longModel.errors?.['pattern']">
+                        Formato inválido: debe tener de 1-2 dígitos enteros, punto y al menos 1 decimal.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-container>
 
     <div class="card-footer d-flex justify-content-center align-items-center" (click)="save()">
         Guardar
@@ -394,14 +440,57 @@
             </div>
         </div>
     </div>
-    <div class="d-flex align-items-center">
-        <input type="text" name="" id="" pattern="^[0-9]+$" class="form-control bg-property-input" OnlyNumber
-            ExactLengthThree [(ngModel)]="nuevoTelefonoPre" placeholder="Prefijo" autocomplete="off">
+    <div class="align-items-center">
+        <div class="row">
+            <div class="col">
+                <input type="text" name="numberPreTel" id="numberPreTel" pattern="^[0-9]{1,3}$"
+                    class="form-control bg-property-input" ExactLengthThree #telPreModel="ngModel" maxlength="3"
+                    ExactLengthThree [(ngModel)]="nuevoTelefonoPre" placeholder="Prefijo" autocomplete="off">
+            </div>
 
-        <input type="text" name="" id="" pattern="^[0-9]+$" class="form-control bg-property-input" OnlyNumber
-            ExactLengthTen placeholder="Número" [(ngModel)]="nuevoTelefono" autocomplete="off">
+            <div class="col g-0">
+                <input type="text" name="numberTel" id="numberTel" pattern="^[0-9]{10}$"
+                    class="form-control bg-property-input" #telModel="ngModel" maxlength="10" ExactLengthTen
+                    placeholder="Número" [(ngModel)]="nuevoTelefono" autocomplete="off">
+            </div>
 
-        <button class="btn badge bg-active" (click)="newTelefono()">Guardar</button>
+            <div class="col">
+                <button class="btn badge bg-active" (click)="newTelefono()"
+                    [disabled]="telPreModel.invalid || telModel.invalid">Guardar</button>
+            </div>
+        </div>
+
+        <!-- Mensaje de errores -->
+        <div class="row">
+            <div class="col">
+                <div class="text-danger" *ngIf="telPreModel.invalid && (telPreModel.dirty || telPreModel.touched)">
+                    <div *ngIf="telPreModel.errors?.['pattern']">
+                        Prefijo: Debe contener sólo dígitos y menos de 3 caracteres.
+                    </div>
+                    <div *ngIf="telPreModel.errors?.['maxlength']">
+                        Prefijo: Máximo 3 caracteres permitidos.
+                    </div>
+                    <!-- Error de la directiva -->
+                    <div
+                        *ngIf="!telPreModel.errors && (telPreModel.viewModel?.length < 1 || telPreModel.viewModel?.length > 3)">
+                        <em>Prefijo: Debe ingresar entre 1 y 3 dígitos.</em>
+                    </div>
+                </div>
+
+                <div class="text-danger" *ngIf="telModel.invalid && (telModel.dirty || telModel.touched)">
+                    <div *ngIf="telModel.errors?.['pattern']">
+                        Numero: Debe contener sólo dígitos y exactamente 10 caracteres.
+                    </div>
+                    <div *ngIf="telModel.errors?.['maxlength']">
+                        Numero: Máximo 10 caracteres permitidos.
+                    </div>
+                    <!-- Error de la directiva -->
+                    <div *ngIf="telModel.valid && telModel.touched && telModel.viewModel.length !== 10">
+                        <em>Numero: El número debe tener exactamente 10 dígitos.</em>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </app-movable-card>
 
@@ -421,8 +510,9 @@
     <div class="align-items-center">
         <div class="row">
             <div class="col-8">
-                <input type="email" name="" id="" class="form-control bg-property-input" placeholder="Email" EmailFormat
-                    [(ngModel)]="nuevoEmail" autocomplete="off">
+                <input type="email" name="email" id="email" class="form-control bg-property-input" placeholder="Email"
+                    EmailFormat #emailModel="ngModel" [(ngModel)]="nuevoEmail" autocomplete="off"
+                    pattern="^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$">
             </div>
         </div>
 
@@ -436,10 +526,23 @@
                     (click)="onTipoEmail(2)">Laboral</span>
             </div>
             <div class="col">
-                <button class="btn badge bg-active" (click)="newEmail()">Guardar</button>
+                <button class="btn badge bg-active" (click)="newEmail()"
+                    [disabled]="emailModel.invalid || typeEmail == null">Guardar</button>
             </div>
         </div>
 
+        <div class="row mt-2">
+            <div class="col-8">
+                <div class="text-danger" *ngIf="emailModel.invalid && (emailModel.dirty || emailModel.touched)">
+                    <div *ngIf="emailModel.errors?.['required']">
+                        El email es obligatorio.
+                    </div>
+                    <div *ngIf="emailModel.errors?.['pattern']">
+                        Formato de email inválido.
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </app-movable-card>
 
@@ -459,15 +562,15 @@
     <div class="align-items-center">
         <div class="row">
             <div class="col">
-                <input type="text" name="" id="" class="form-control bg-property-input" placeholder="Finca/Folio"
-                    [(ngModel)]="nuevaFinca" autocomplete="off">
+                <input type="text" name="folio" id="folio" class="form-control bg-property-input"
+                    placeholder="Finca/Folio" [(ngModel)]="nuevaFinca" autocomplete="off">
             </div>
         </div>
 
         <div class="row mt-1">
             <div class="col">
-                <textarea name="" id="" class="form-control bg-property-input" [(ngModel)]="nuevaFincaDireccion"
-                    rows="2" placeholder="Dirección" autocomplete="off">
+                <textarea name="fincaDireccion" id="fincaDireccion" class="form-control bg-property-input"
+                    [(ngModel)]="nuevaFincaDireccion" rows="2" placeholder="Dirección" autocomplete="off">
                 </textarea>
             </div>
         </div>

@@ -43,6 +43,7 @@ export class ContactCardInsertComponent {
   isVisibleInformacionEmployment = false;
   isVisibleFarmsContactCard = false;
   isAddTelefonoMovil = false;
+  isVisibleTypeDocument = false;
   isAddTelefonoResidencial = false;
   isAddTelefonoOtro = false;
   isAddEmail = false;
@@ -88,6 +89,7 @@ export class ContactCardInsertComponent {
   isVisible: boolean = false;
   readonly DEFAULT_LABEL = 'Selecciona';
   selectedOption: string = this.DEFAULT_LABEL;
+  selectedOptionTypeDocument: string = this.DEFAULT_LABEL;
 
   data: InformationCard = {} as InformationCard;
 
@@ -120,6 +122,10 @@ export class ContactCardInsertComponent {
 
   clickSearcher(): void {
     this.isVisible = this.isVisible ? false : true;
+  }
+
+  clickSearcherTypeDocument(): void {
+    this.isVisibleTypeDocument = this.isVisibleTypeDocument ? false : true;
   }
 
   get displayIcon() {
@@ -161,16 +167,22 @@ export class ContactCardInsertComponent {
   AddTelefonoMovil(type: number = 0): void {
     this.isAddTelefonoMovil = this.isAddTelefonoMovil ? false : true;
     this.typeTelefono = type ? type : 0;
+    this.isAddTelefonoResidencial = false;
+    this.isAddTelefonoOtro = false;
   }
 
   AddTelefonoResidencial(type: number = 0): void {
     this.isAddTelefonoResidencial = this.isAddTelefonoResidencial ? false : true;
     this.typeTelefono = type ? type : 0;
+    this.isAddTelefonoMovil = false;
+    this.isAddTelefonoOtro = false;
   }
 
   AddTelefonoOtro(type: number = 0): void {
     this.isAddTelefonoOtro = this.isAddTelefonoOtro ? false : true;
     this.typeTelefono = type ? type : 0;
+    this.isAddTelefonoMovil = false;
+    this.isAddTelefonoResidencial = false;
   }
 
   AddEmail(): void {
@@ -181,9 +193,11 @@ export class ContactCardInsertComponent {
     this.isAddFinca = this.isAddFinca ? false : true;
   }
 
-  selectTipoIdentificacion(idTipo: string): void {
+  selectTipoIdentificacion(nombreTipo: string, idTipo: string): void {
     this.tipoDocumento = idTipo;
     this.data.TipoPersona_Id = idTipo
+    this.selectedOptionTypeDocument = nombreTipo
+    this.clickSearcherTypeDocument()
   }
 
   // telefono
@@ -324,7 +338,7 @@ export class ContactCardInsertComponent {
 
     if (this.idCredito == '' || this.identificacion == '' || this.nombre == '' || this.noAcreditado == ''
       || this.cis == '' || this.nameEstrategia == '' || this.idEstategia == '' || this.nameProducto == ''
-      || this.idProducto == '') {
+      || this.idProducto == '' || this.tipoDocumento == '') {
       console.log('Faltan datos obligatorios');
       this.isMensajeAlerta = true;
       this.mensajeAlerta = 'Faltan datos obligatorios';
@@ -383,7 +397,25 @@ export class ContactCardInsertComponent {
       this.data.TipoDireccion_Id = '1';
     }
 
-    if (this.telefonoPreLaboral == '' || this.telefonoNumLaboral == '') {
+    if (this.telefonoPreLaboral != '' || this.telefonoNumLaboral != '') {
+      console.log('tamaño', this.telefonoPreLaboral.length)
+
+      if (this.telefonoPreLaboral.length < 1 && this.telefonoPreLaboral.length > 3) {
+        this.isMensajeAlerta = true;
+        this.mensajeAlerta = 'Prefijo laboral debe estar entre 1 y 3 caracteres';
+        this.resetMensajeAlerta();
+        this.isSaveaAvailable = false;
+        return;
+      }
+
+      if (this.telefonoNumLaboral.length < 10) {
+        this.isMensajeAlerta = true;
+        this.mensajeAlerta = 'Numero laboral demasiado corto';
+        this.resetMensajeAlerta();
+        this.isSaveaAvailable = false;
+        return;
+      }
+
       this.data.Telefonos.push({
         TipoTelefono_Id: '4',
         TelefonoNum: this.telefonoNumLaboral,
@@ -397,19 +429,19 @@ export class ContactCardInsertComponent {
     }
 
     console.log('data final: ', this.data)
-    this.contactCardAdminService.insertContactCard([this.data]).subscribe((res) => {
-      console.log('espuesta: ', res);
-      this.isMainMenu = false;
-      if (res) {
-        this.saveData = res.WS_TarjetaContacto1[0];
-        console.log('info guardada: ', this.saveData)
-        this.message = 'Tarjeta de contacto creada con exito';
-        this.isSave = true;
-      } else {
-        this.message = 'Error al crear la tarjeta de contacto';
-        this.isSave = true;
-      }
-    })
+    // this.contactCardAdminService.insertContactCard([this.data]).subscribe((res) => {
+    //   console.log('espuesta: ', res);
+    //   this.isMainMenu = false;
+    //   if (res) {
+    //     this.saveData = res.WS_TarjetaContacto1[0];
+    //     console.log('info guardada: ', this.saveData)
+    //     this.message = 'Tarjeta de contacto creada con exito';
+    //     this.isSave = true;
+    //   } else {
+    //     this.message = 'Error al crear la tarjeta de contacto';
+    //     this.isSave = true;
+    //   }
+    // })
   }
 
   goTC(): void {

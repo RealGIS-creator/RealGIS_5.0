@@ -278,6 +278,20 @@ export class ContactCardAdminComponent {
       || this.telefonoLaboral != null || this.telefonoPreLaboral != null
 
     ) {
+      if (this.telefonoPreLaboral.length < 1 && this.telefonoPreLaboral.length > 3) {
+        this.isMensajeAlerta = true;
+        this.mensajeAlerta = 'Prefijo laboral debe estar entre 1 y 3 caracteres';
+        this.resetMensajeAlerta();
+        return;
+      }
+
+      if (this.telefonoLaboral.length < 10) {
+        this.isMensajeAlerta = true;
+        this.mensajeAlerta = 'Numero laboral demasiado corto';
+        this.resetMensajeAlerta();
+        return;
+      }
+
       this.data.Telefonos.push({
         TipoTelefono_Id: 4,
         TelefonoNum: this.telefonoLaboral,

@@ -1,6 +1,6 @@
 <!-- <ng-container *ngIf="data; else loading"> -->
-<app-movable-card *ngIf="isMainMenu" [initialX]="10" [initialY]="10" [paramWidth]="30" [headerClass]="'card-header text-white'"
-    [showFooter]="true">
+<app-movable-card *ngIf="isMainMenu" [initialX]="10" [initialY]="10" [paramWidth]="30"
+    [headerClass]="'card-header text-white'" [showFooter]="true">
     <div class="card-title">
         <div class="d-flex justify-content-between align-items-center">
             <b>Editar Tarjeta de Contacto</b>
@@ -138,17 +138,50 @@
                         <li *ngFor="let laboral of data.Telefonos" class="d-flex mb-2">
                             <ng-container *ngIf="laboral.TipoTelefono_Id == '4'">
                                 <!-- Prefijo -->
-                                <input type="text" name="telLaboralPre" pattern="^[0-9]+$" onlyNumber
-                                    class="form-control bg-property-input me-1"
-                                    [ngClass]="{ 'bg-active': isVisibleInformacionEmployment }"
+                                <input type="text" name="telPreModelLab" id="telPreModelLab" pattern="^[0-9]{1,3}$" ExactLengthThree
+                                    class="form-control bg-property-input me-1" maxlength="3"
+                                    [ngClass]="{ 'bg-active': isVisibleInformacionEmployment }" #telPreModelLab="ngModel"
                                     [disabled]="!isVisibleInformacionEmployment" [(ngModel)]="laboral.TelefonoPre" />
                                 <!-- Número -->
-                                <input type="text" name="telLaboral" pattern="^[0-9]+$" onlyNumber
-                                    class="form-control bg-property-input"
-                                    [ngClass]="{ 'bg-active': isVisibleInformacionEmployment }"
+                                <input type="text"  name="telModelLab" id="telModelLab" pattern="^[0-9]+$" ExactLengthTen
+                                    class="form-control bg-property-input" #telModelLab="ngModel" pattern="^[0-9]{10}$" maxlength="10" 
+                                    [ngClass]="{ 'bg-active': isVisibleInformacionEmployment }" autocomplete="off"
                                     [disabled]="!isVisibleInformacionEmployment" [(ngModel)]="laboral.TelefonoNum" />
                             </ng-container>
                         </li>
+
+                        <!-- Mensaje de errores -->
+                        <!-- <div class="row">
+                            <div class="col">
+                                <div class="text-danger"
+                                    *ngIf="telPreModelLab.invalid && (telPreModelLab.dirty || telPreModelLab.touched)">
+                                    <div *ngIf="telPreModelLab.errors?.['pattern']">
+                                        Prefijo: Debe contener sólo dígitos y menos de 3 caracteres.
+                                    </div>
+                                    <div *ngIf="telPreModelLab.errors?.['maxlength']">
+                                        Prefijo: Máximo 3 caracteres permitidos.
+                                    </div>
+                                    <div
+                                        *ngIf="!telPreModelLab.errors && (telPreModelLab.viewModel?.length < 1 || telPreModelLab.viewModel?.length > 3)">
+                                        <em>Prefijo: Debe ingresar entre 1 y 3 dígitos.</em>
+                                    </div>
+                                </div>
+
+                                <div class="text-danger"
+                                    *ngIf="telModelLab.invalid && (telModelLab.dirty || telModelLab.touched)">
+                                    <div *ngIf="telModelLab.errors?.['pattern']">
+                                        Numero: Debe contener sólo dígitos y exactamente 10 caracteres.
+                                    </div>
+                                    <div *ngIf="telModelLab.errors?.['maxlength']">
+                                        Numero: Máximo 10 caracteres permitidos.
+                                    </div>
+                                    <div
+                                        *ngIf="telModelLab.valid && telModelLab.touched && telModelLab.viewModel.length !== 10">
+                                        <em>Numero: El número debe tener exactamente 10 dígitos.</em>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> -->
                     </ng-container>
 
                     <ng-template #telLaboral>
@@ -329,11 +362,12 @@
             (click)="editGeolocalizacion()">
     </div> -->
 
-    <div class="card-footer d-flex justify-content-center align-items-center" (click)="save()" >
+    <div class="card-footer d-flex justify-content-center align-items-center" (click)="save()">
         Guardar
     </div>
 </app-movable-card>
 
+<!-- Telefono -->
 <app-movable-card *ngIf="isAddTelefonoMovil || isAddTelefonoResidencial || isAddTelefonoOtro" [initialX]="500"
     [initialY]="150" [paramWidth]="20" [showHeader]="true">
     <div class="card-title">
@@ -352,17 +386,61 @@
             </div>
         </div>
     </div>
-    <div class="d-flex align-items-center">
-        <input type="text" name="" id="" pattern="^[0-9]+$" OnlyNumber class="form-control bg-property-input"
-            placeholder="Prefijo" [(ngModel)]="nuevoTelefonoPre">
+    <div class="align-items-center">
+        <div class="row">
+            <div class="col">
+                <input type="text" name="numberPreTel" id="numberPreTel" pattern="^[0-9]{1,3}$"
+                    class="form-control bg-property-input" ExactLengthThree #telPreModel="ngModel" maxlength="3"
+                    ExactLengthThree [(ngModel)]="nuevoTelefonoPre" placeholder="Prefijo" autocomplete="off">
+            </div>
 
-        <input type="text" name="" id="" pattern="^[0-9]+$" OnlyNumber class="form-control bg-property-input"
-            placeholder="Número" [(ngModel)]="nuevoTelefono">
+            <div class="col g-0">
+                <input type="text" name="numberTel" id="numberTel" pattern="^[0-9]{10}$"
+                    class="form-control bg-property-input" #telModel="ngModel" maxlength="10" ExactLengthTen
+                    placeholder="Número" [(ngModel)]="nuevoTelefono" autocomplete="off">
+            </div>
 
-        <button class="btn badge bg-active" (click)="newTelefono()">Guardar</button>
+            <div class="col">
+                <button class="btn badge bg-active" (click)="newTelefono()"
+                    [disabled]="telPreModel.invalid || telModel.invalid">Guardar</button>
+            </div>
+        </div>
+
+        <!-- Mensaje de errores -->
+        <div class="row">
+            <div class="col">
+                <div class="text-danger" *ngIf="telPreModel.invalid && (telPreModel.dirty || telPreModel.touched)">
+                    <div *ngIf="telPreModel.errors?.['pattern']">
+                        Prefijo: Debe contener sólo dígitos y menos de 3 caracteres.
+                    </div>
+                    <div *ngIf="telPreModel.errors?.['maxlength']">
+                        Prefijo: Máximo 3 caracteres permitidos.
+                    </div>
+                    <!-- Error de la directiva -->
+                    <div
+                        *ngIf="!telPreModel.errors && (telPreModel.viewModel?.length < 1 || telPreModel.viewModel?.length > 3)">
+                        <em>Prefijo: Debe ingresar entre 1 y 3 dígitos.</em>
+                    </div>
+                </div>
+
+                <div class="text-danger" *ngIf="telModel.invalid && (telModel.dirty || telModel.touched)">
+                    <div *ngIf="telModel.errors?.['pattern']">
+                        Numero: Debe contener sólo dígitos y exactamente 10 caracteres.
+                    </div>
+                    <div *ngIf="telModel.errors?.['maxlength']">
+                        Numero: Máximo 10 caracteres permitidos.
+                    </div>
+                    <!-- Error de la directiva -->
+                    <div *ngIf="telModel.valid && telModel.touched && telModel.viewModel.length !== 10">
+                        <em>Numero: El número debe tener exactamente 10 dígitos.</em>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </app-movable-card>
 
+<!-- Email -->
 <app-movable-card *ngIf="isAddEmail" [initialX]="500" [initialY]="248" [paramWidth]="20" [showHeader]="true">
     <div class="card-title">
         <div class="d-flex justify-content-between align-items-center">
@@ -378,8 +456,9 @@
     <div class="align-items-center">
         <div class="row">
             <div class="col-8">
-                <input type="text" name="" id="" class="form-control bg-property-input" placeholder="Email"
-                    [(ngModel)]="nuevoEmail">
+                <input type="email" name="email" id="email" class="form-control bg-property-input" placeholder="Email"
+                    EmailFormat #emailModel="ngModel" [(ngModel)]="nuevoEmail" autocomplete="off"
+                    pattern="^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$">
             </div>
         </div>
 
@@ -393,13 +472,27 @@
                     (click)="onTipoEmail(2)">Laboral</span>
             </div>
             <div class="col">
-                <button class="btn badge bg-active" (click)="newEmail()">Guardar</button>
+                <button class="btn badge bg-active" (click)="newEmail()"
+                    [disabled]="emailModel.invalid || typeEmail == null">Guardar</button>
             </div>
         </div>
 
+        <div class="row mt-2">
+            <div class="col-8">
+                <div class="text-danger" *ngIf="emailModel.invalid && (emailModel.dirty || emailModel.touched)">
+                    <div *ngIf="emailModel.errors?.['required']">
+                        El email es obligatorio.
+                    </div>
+                    <div *ngIf="emailModel.errors?.['pattern']">
+                        Formato de email inválido.
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </app-movable-card>
 
+<!-- Finca -->
 <app-movable-card *ngIf="isAddFinca" [initialX]="500" [initialY]="380" [paramWidth]="20" [showHeader]="true">
     <div class="card-title">
         <div class="d-flex justify-content-between align-items-center">
@@ -415,8 +508,8 @@
     <div class="align-items-center">
         <div class="row">
             <div class="col">
-                <input type="text" name="" id="" class="form-control bg-property-input" placeholder="Finca/Folio"
-                    [(ngModel)]="nuevaFinca">
+                <input type="text" name="finca" id="finca" class="form-control bg-property-input"
+                    placeholder="Finca/Folio" [(ngModel)]="nuevaFinca">
             </div>
         </div>
 
@@ -448,25 +541,23 @@
     </div>
 </app-movable-card>
 
-<app-movable-card *ngIf="isMensajeAlerta" [initialX]="500" [initialY]="380" [paramWidth]="20"  [showHeader]="true">
+<app-movable-card *ngIf="isMensajeAlerta" [initialX]="500" [initialY]="380" [paramWidth]="20" [showHeader]="true">
     <div class="card-title">
         <div class="d-flex justify-content-between align-items-center">
             <img class="icon button-header" src="assets/icon/company_white.svg" alt="">
-            <img class="icon-header button-header" src="assets/icon/contact_card_close.svg" alt=""
-                (click)="close()">
+            <img class="icon-header button-header" src="assets/icon/contact_card_close.svg" alt="" (click)="close()">
         </div>
     </div>
     <div>
         <p class="alerta">{{ mensajeAlerta }}</p>
     </div>
-</app-movable-card> 
+</app-movable-card>
 
 <app-movable-card *ngIf="isSave" [initialX]="10" [initialY]="10" [paramWidth]="30" [showHeader]="true">
     <div class="card-title">
         <div class="d-flex justify-content-between align-items-center">
             <img class="icon button-header" src="assets/icon/company_white.svg" alt="">
-            <img class="icon-header button-header" src="assets/icon/contact_card_close.svg" alt=""
-                (click)="close()">
+            <img class="icon-header button-header" src="assets/icon/contact_card_close.svg" alt="" (click)="close()">
         </div>
     </div>
     <div>
