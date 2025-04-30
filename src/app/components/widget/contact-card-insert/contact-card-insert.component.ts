@@ -81,6 +81,7 @@ export class ContactCardInsertComponent {
   idProducto: string = '';
   saveData!: InformationCard;
   message: string = '';
+  tipoDocumento: string = '';
 
   dialogRef!: ComponentRef<any>;
 
@@ -178,6 +179,11 @@ export class ContactCardInsertComponent {
 
   AddFinca(): void {
     this.isAddFinca = this.isAddFinca ? false : true;
+  }
+
+  selectTipoIdentificacion(idTipo: string): void {
+    this.tipoDocumento = idTipo;
+    this.data.TipoPersona_Id = idTipo
   }
 
   // telefono

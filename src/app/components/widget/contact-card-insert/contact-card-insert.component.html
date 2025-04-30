@@ -1,7 +1,7 @@
 <!-- <ng-container *ngIf="data; else loading">  -->
 
-<app-movable-card *ngIf="isMainMenu" [initialX]="10" [initialY]="10" [paramWidth]="30" [headerClass]="'card-header text-white'"
-    [showFooter]="true">
+<app-movable-card *ngIf="isMainMenu" [initialX]="10" [initialY]="10" [paramWidth]="30"
+    [headerClass]="'card-header text-white'" [showFooter]="true">
     <div class="card-title">
         <div class="d-flex justify-content-between align-items-center">
             <b>Editar Tarjeta de Contacto</b>
@@ -18,38 +18,87 @@
     <div class="d-flex justify-content-between align-items-center">
         <div>
             <!-- ID DE CRÉDITO -->
-            <div class="d-flex align-items-center">
+            <div class="d-flex align-items-center mb-1 field-group">
                 <label for="idCredito" class="me-2 mb-0 label-sm">ID DE CRÉDITO:</label>
-                <input id="idCredito" type="text" class="form-control bg-none-input input-sm"
-                    OnlyNumber [(ngModel)]="idCredito" autocomplete="off">
+                <input id="idCredito" type="text" class="form-control bg-none-input input-sm" OnlyNumber
+                    [(ngModel)]="idCredito" autocomplete="off">
             </div>
 
             <!-- Identificación -->
-            <div class="d-flex align-items-center">
-                <label for="identificacion" class="me-2 mb-0 label-sm">Identificación:</label>
-                <input id="identificacion" type="text" class="form-control bg-none-input input-sm"
-                    OnlyAlphanumericDash [(ngModel)]="identificacion" autocomplete="off">
+            <div class="row align-items-center mb-1 field-group">
+                <div class="col-6">
+                    <div class="d-flex align-items-center gap-2 custom-field-group">
+                        <label for="identificacion" class="mb-0 label-sm">Identificación:</label>
+                        <input id="identificacion" type="text" class="form-control bg-none-input input-sm flex-shrink-0"
+                            OnlyAlphanumericDash [(ngModel)]="identificacion" autocomplete="off">
+
+                        <div class="content-select flex-shrink-0">
+                            <div class="search-container-option">
+                                <div class="select-option" (click)="clickSearcher()">
+                                    CC
+                                    <img class="search-icon" [src]="'assets/icon/' + displayIcon" alt="icono desplegar">
+                                </div>
+                            </div>
+                            <div class="form-select-option content-select-type-doc" *ngIf="isVisible">
+                                <div class="search-container-option">
+                                    <div class="form-select-option" *ngIf="isVisible">
+                                        <div class="search-container-option">
+                                            <p class="option option-hover"
+                                                (click)="selectTipoIdentificacion('1')">
+                                                CC
+                                            </p>
+                                            <p class="option option-hover"
+                                                (click)="selectTipoIdentificacion('2')">
+                                                Nit
+                                            </p>
+                                            <p class="option option-hover"
+                                                (click)="selectTipoIdentificacion('4')">
+                                                E
+                                            </p>
+                                            <p class="option option-hover"
+                                                (click)="selectTipoIdentificacion('5')">
+                                                N
+                                            </p>
+                                            <p class="option option-hover"
+                                                (click)="selectTipoIdentificacion('6')">
+                                                PE
+                                            </p>
+                                            <p class="option option-hover"
+                                                (click)="selectTipoIdentificacion('7')">
+                                                PA
+                                            </p>
+                                            <p class="option option-hover"
+                                                (click)="selectTipoIdentificacion('3')">
+                                                Otro
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Nombre -->
-            <div class="d-flex align-items-center">
+            <div class="d-flex align-items-center mb-1 field-group">
                 <label for="nombre" class="me-2 mb-0 label-sm">Nombre:</label>
-                <input id="nombre" type="text" class="form-control bg-none-input input-sm"
-                    OnlyAlphanumeric [(ngModel)]="nombre" autocomplete="off">
+                <input id="nombre" type="text" class="form-control bg-none-input input-sm" OnlyAlphanumeric
+                    [(ngModel)]="nombre" autocomplete="off">
             </div>
 
             <!-- No. Acreditado -->
-            <div class="d-flex align-items-center">
+            <div class="d-flex align-items-center mb-1 field-group">
                 <label for="noAcreditado" class="me-2 mb-0 label-sm">No. Acreditado:</label>
-                <input id="noAcreditado" type="text" class="form-control bg-none-input input-sm"
-                    OnlyNumber [(ngModel)]="noAcreditado" autocomplete="off">
+                <input id="noAcreditado" type="text" class="form-control bg-none-input input-sm" OnlyNumber
+                    [(ngModel)]="noAcreditado" autocomplete="off">
             </div>
 
             <!-- CIS -->
-            <div class="d-flex align-items-center">
+            <div class="d-flex align-items-center mb-1 field-group">
                 <label for="cis" class="me-2 mb-0 label-sm">CIS:</label>
-                <input id="cis" type="text" class="form-control bg-none-input input-sm"
-                    OnlyNumber [(ngModel)]="cis" autocomplete="off">
+                <input id="cis" type="text" class="form-control bg-none-input input-sm" OnlyNumber [(ngModel)]="cis"
+                    autocomplete="off">
             </div>
 
         </div>
@@ -81,26 +130,28 @@
                         </div>
                     </div>
                 </div>
-                <div class="form-select-option" *ngIf="isVisible">
-                    <div class="search-container-option">
-                        <p class="option option-hover" (click)="selectTipoProducto('FINANCOMER', '1')">
-                            FINANCOMER
-                        </p>
-                        <p class="option option-hover" (click)="selectTipoProducto('PRESTAMO HIPOTECARIO', '2')">
-                            PRESTAMO HIPOTECARIO
-                        </p>
-                        <p class="option option-hover" (click)="selectTipoProducto('PRESTAMO PERSONAL', '3')">
-                            PRESTAMO PERSONAL
-                        </p>
-                        <p class="option option-hover" (click)="selectTipoProducto('TARJETA DE CREDITO', '4')">
-                            TARJETA DE CREDITO
-                        </p>
-                        <p class="option option-hover" (click)="selectTipoProducto('PRESTAMO AUTO', '5')">
-                            PRESTAMO AUTO
-                        </p>
-                        <p class="option option-hover" (click)="selectTipoProducto('TARJETA DEBITO', '5')">
-                            TARJETA DEBITO
-                        </p>
+                <div class="search-container-option">
+                    <div class="form-select-option" *ngIf="isVisible">
+                        <div class="search-container-option">
+                            <p class="option option-hover" (click)="selectTipoProducto('FINANCOMER', '1')">
+                                FINANCOMER
+                            </p>
+                            <p class="option option-hover" (click)="selectTipoProducto('PRESTAMO HIPOTECARIO', '2')">
+                                PRESTAMO HIPOTECARIO
+                            </p>
+                            <p class="option option-hover" (click)="selectTipoProducto('PRESTAMO PERSONAL', '3')">
+                                PRESTAMO PERSONAL
+                            </p>
+                            <p class="option option-hover" (click)="selectTipoProducto('TARJETA DE CREDITO', '4')">
+                                TARJETA DE CREDITO
+                            </p>
+                            <p class="option option-hover" (click)="selectTipoProducto('PRESTAMO AUTO', '5')">
+                                PRESTAMO AUTO
+                            </p>
+                            <p class="option option-hover" (click)="selectTipoProducto('TARJETA DEBITO', '5')">
+                                TARJETA DEBITO
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -109,9 +160,8 @@
             <div class="title mt-2">Dias de mora / Gaveta</div>
             <div class="col">
                 <div class="d-flex align-items-center">
-                    <input type="text" name="" id=""
-                        class="form-control bg-none-input bg-none-input-sm" placeholder="Dias Mora"
-                        OnlyNumber [(ngModel)]="data.CuentasDiasMoraGave" autocomplete="off">
+                    <input type="text" name="" id="" class="form-control bg-none-input bg-none-input-sm"
+                        placeholder="Dias Mora" OnlyNumber [(ngModel)]="data.CuentasDiasMoraGave" autocomplete="off">
                 </div>
             </div>
         </div>
@@ -122,8 +172,8 @@
         <div class="col-6">
             <div class="title mt-2">Saldo de Producto</div>
             <div class="d-flex align-items-center">
-                <input type="text" name="" id="" class="form-control bg-none-input bg-none-input-sm"
-                    OnlyDecimalComma placeholder="Saldo Producto" [(ngModel)]="data.CuentasSalPro" autocomplete="off">
+                <input type="text" name="" id="" class="form-control bg-none-input bg-none-input-sm" OnlyDecimalComma
+                    placeholder="Saldo Producto" [(ngModel)]="data.CuentasSalPro" autocomplete="off">
             </div>
         </div>
     </div>
@@ -143,8 +193,8 @@
                 <div class="list-unstyled">
                     <ng-container>
                         <input type="text" name="" id="" class="form-control bg-none-input bg-none-input-sm"
-                            placeholder="Nombre" [disabled]="!isVisibleInformacionEmployment"
-                            NoQuotes [(ngModel)]="direccionLugarNombreLaboral" autocomplete="off">
+                            placeholder="Nombre" [disabled]="!isVisibleInformacionEmployment" NoQuotes
+                            [(ngModel)]="direccionLugarNombreLaboral" autocomplete="off">
                     </ng-container>
                 </div>
             </div>
@@ -153,13 +203,12 @@
                 <ul class="list-unstyled">
                     <ng-container>
                         <input type="text" name="" id="" class="form-control bg-property-input"
-                            [disabled]="!isVisibleInformacionEmployment" 
-                            OnlyNumber ExactLengthThree [(ngModel)]="telefonoPreLaboral" autocomplete="off">
+                            [disabled]="!isVisibleInformacionEmployment" OnlyNumber ExactLengthThree
+                            [(ngModel)]="telefonoPreLaboral" autocomplete="off">
 
-                        <input type="text" name="" id="" 
-                            class="form-control bg-none-input bg-none-input-sm"
-                            [disabled]="!isVisibleInformacionEmployment" 
-                            OnlyNumber ExactLengthTen [(ngModel)]="telefonoNumLaboral" autocomplete="off">
+                        <input type="text" name="" id="" class="form-control bg-none-input bg-none-input-sm"
+                            [disabled]="!isVisibleInformacionEmployment" OnlyNumber ExactLengthTen
+                            [(ngModel)]="telefonoNumLaboral" autocomplete="off">
                     </ng-container>
                 </ul>
             </div>
@@ -168,8 +217,8 @@
                 <ul class="list-unstyled">
                     <li>
                         <textarea name="" id="" class="form-control bg-none-input"
-                            [disabled]="!isVisibleInformacionEmployment" 
-                            NoQuotes [(ngModel)]="direccionNombreLaboral" rows="1" placeholder="Dirección" autocomplete="off">
+                            [disabled]="!isVisibleInformacionEmployment" NoQuotes [(ngModel)]="direccionNombreLaboral"
+                            rows="1" placeholder="Dirección" autocomplete="off">
                         </textarea>
                     </li>
                 </ul>
@@ -188,8 +237,7 @@
                     <ul class="list-unstyled">
                         <li [hidden]="direccionLugarNombreLaboral == '' || direccionNombreLaboral == ''">
                             <textarea name="" id="" class="form-control bg-none-input"
-                                [(ngModel)]="direccionNombrePersonal" rows="1"
-                                NoQuotes placeholder="Dirección">
+                                [(ngModel)]="direccionNombrePersonal" rows="1" NoQuotes placeholder="Dirección">
                             </textarea>
                         </li>
                     </ul>
@@ -311,16 +359,15 @@
     </div>
 
     <!-- Geodomicilio -->
-    <div class="bg-info location mt-3 d-flex justify-content-center align-items-center" 
-        *ngIf="direccionNombrePersonal != '' || direccionLugarNombreLaboral != '' || direccionNombreLaboral != ''" >
+    <div class="bg-info location mt-3 d-flex justify-content-center align-items-center"
+        *ngIf="direccionNombrePersonal != '' || direccionLugarNombreLaboral != '' || direccionNombreLaboral != ''">
         <!-- <img class="icon" src="assets/icon/contact_card_location.svg" alt=""> -->
         <input type="text" name="" id="" class="form-control bg-none-input" placeholder="Longitud"
             OnlyDecimal2IntDirective [(ngModel)]="geoDomicilioLongi" autocomplete="off">
         -
         <input type="text" name="" id="" class="form-control bg-none-input" placeholder="Latitud"
             OnlyDecimal3IntDirective [(ngModel)]="geoDomicilioLati" autocomplete="off">
-        <img class="icon button-header" src="assets/icon/contact_card_location.svg" alt="icono desplegar"
-            >
+        <img class="icon button-header" src="assets/icon/contact_card_location.svg" alt="icono desplegar">
     </div>
 
     <div class="card-footer d-flex justify-content-center align-items-center" (click)="save()">
@@ -348,11 +395,11 @@
         </div>
     </div>
     <div class="d-flex align-items-center">
-        <input type="text" name="" id="" pattern="^[0-9]+$" class="form-control bg-property-input"
-            OnlyNumber ExactLengthThree [(ngModel)]="nuevoTelefonoPre" placeholder="Prefijo" autocomplete="off">
+        <input type="text" name="" id="" pattern="^[0-9]+$" class="form-control bg-property-input" OnlyNumber
+            ExactLengthThree [(ngModel)]="nuevoTelefonoPre" placeholder="Prefijo" autocomplete="off">
 
-        <input type="text" name="" id="" pattern="^[0-9]+$" class="form-control bg-property-input"
-            OnlyNumber ExactLengthTen placeholder="Número" [(ngModel)]="nuevoTelefono" autocomplete="off">
+        <input type="text" name="" id="" pattern="^[0-9]+$" class="form-control bg-property-input" OnlyNumber
+            ExactLengthTen placeholder="Número" [(ngModel)]="nuevoTelefono" autocomplete="off">
 
         <button class="btn badge bg-active" (click)="newTelefono()">Guardar</button>
     </div>
@@ -374,8 +421,8 @@
     <div class="align-items-center">
         <div class="row">
             <div class="col-8">
-                <input type="email" name="" id="" class="form-control bg-property-input" placeholder="Email"
-                    EmailFormat [(ngModel)]="nuevoEmail" autocomplete="off">
+                <input type="email" name="" id="" class="form-control bg-property-input" placeholder="Email" EmailFormat
+                    [(ngModel)]="nuevoEmail" autocomplete="off">
             </div>
         </div>
 
@@ -449,21 +496,19 @@
     <div class="card-title">
         <div class="d-flex justify-content-between align-items-center">
             <img class="icon button-header" src="assets/icon/company_white.svg" alt="">
-            <img class="icon-header button-header" src="assets/icon/contact_card_close.svg" alt=""
-                (click)="close()">
+            <img class="icon-header button-header" src="assets/icon/contact_card_close.svg" alt="" (click)="close()">
         </div>
     </div>
     <div>
         <p class="alerta">{{ mensajeAlerta }}</p>
     </div>
-</app-movable-card> 
+</app-movable-card>
 
 <app-movable-card *ngIf="isSave" [initialX]="10" [initialY]="10" [paramWidth]="30" [showHeader]="true">
     <div class="card-title">
         <div class="d-flex justify-content-between align-items-center">
             <img class="icon button-header" src="assets/icon/company_white.svg" alt="">
-            <img class="icon-header button-header" src="assets/icon/contact_card_close.svg" alt=""
-                (click)="close()">
+            <img class="icon-header button-header" src="assets/icon/contact_card_close.svg" alt="" (click)="close()">
         </div>
     </div>
     <div>
