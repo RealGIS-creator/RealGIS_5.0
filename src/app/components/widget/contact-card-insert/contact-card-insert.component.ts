@@ -338,7 +338,7 @@ export class ContactCardInsertComponent {
         if (res) {
           this.saveData = res.WS_TarjetaContacto1[0];
           console.log('info guardada: ', this.saveData)
-          this.message = 'Tarjeta de contacto creada con exito y PDF generado';
+          this.message = 'Tarjeta de contacto creada con exito';
           this.isSave = true;
         } else {
           this.message = 'Error al crear la tarjeta de contacto';

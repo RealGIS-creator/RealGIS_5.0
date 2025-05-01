@@ -6,13 +6,14 @@ import { ToolbarComponent } from '../../widget/toolbar/toolbar.component';
 import { GeometryService } from '../../../core/services/home/map/geometry.service';
 import { ContactCardComponent } from '../../widget/contact-card/contact-card.component';
 import { DialogService } from '../../../core/services/shared/dialog.service';
-import { Subject, from } from 'rxjs';
-import { takeUntil, tap, map, concatMap, filter } from 'rxjs/operators';
+import { Subject, Subscription, from, fromEvent } from 'rxjs';
+import { takeUntil, tap, map, concatMap, filter, debounceTime } from 'rxjs/operators';
 import { LocationService } from '../../../core/services/home/map/location.service';
 import 'leaflet.coordinates/dist/Leaflet.Coordinates-0.1.5.src.js';
 import { MapService } from '../../../core/services/home/map/map.service';
 import { StatisticsComponent } from '../../widget/statistics/statistics.component';
 import { CommonModule } from '@angular/common';
+import { StatsToggleService } from '../../../core/services/widget/stats-toggle.service';
 
 @Component({
   standalone: true,
@@ -33,43 +34,48 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
   private addedFeatureIds = new Set<string>();
   private destroy$ = new Subject<void>();
 
-  private dialogService = inject(DialogService);
-
   constructor(
     private locationService: LocationService,
     private geometryService: GeometryService,
-    private mapService: MapService
+    private mapService: MapService,
+    private statsToggleService: StatsToggleService,
+    private dialogService: DialogService
   ) {
     this.getLocateMap();
   }
 
-  showStatistics = false;
-  statisticsHeight = 0;
+  /////
+
   toolbarLeftPercent = 50;   // 50% o 25%
   toolbarRight: string = '10px';  // '10px' o '50%'
+  private resizeSub!: Subscription;
+  private toggleSub!: Subscription;
 
-  @ViewChild('stats') statsEl?: ElementRef<HTMLElement>;
-  toggleStatistics() {
-    this.showStatistics = !this.showStatistics;
+  showStatistics = false;
+  toolbarLeftPx = 0;
+  toolbarRightPx = 0;
+  statisticsHeight = 60; // Ajusta según tu toolbar
+  toolbarOffset = 10;
 
-    // Permite que Angular renderice el cambio de clase
-    setTimeout(() => this.updateLayout(), 0);
+  @ViewChild('stats', { read: ElementRef }) statsRef!: ElementRef;
+
+  onStatsToggled(): void {
+    this.updateToolbarPositions();
   }
 
-  private updateLayout() {
-    if (this.statsEl && this.showStatistics) {
-      const el = this.statsEl.nativeElement;
-      this.statisticsHeight = el.offsetHeight;
-      // Cuando las estadísticas ocupan el 50% del ancho, el centro de la zona restante es 25%
-      this.toolbarLeftPercent = 25;
-      this.toolbarRight = '50%';
-    } else {
-      this.statisticsHeight = 0;
-      this.toolbarLeftPercent = 50;
-      this.toolbarRight = '10px';
-    }
+  private updateToolbarPositions(): void {
+    const statsEl = this.statsRef.nativeElement as HTMLElement;
+    const statsWidth = this.showStatistics
+      ? statsEl.getBoundingClientRect().width
+      : 0;
+
+    const containerWidth = (statsEl.parentElement as HTMLElement)
+      .getBoundingClientRect().width;
+    this.toolbarLeftPx = (containerWidth - statsWidth) / 2;
+    this.toolbarRightPx = statsWidth;
   }
 
+  //////
   ngOnInit(): void {
     this.initMap();
     this.getLayer()
@@ -128,6 +134,12 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
     // final punto enfocar
 
     this.mapService.updateZoomLevel(this.updateScale());
+
+    //estadisticas
+    this.toggleSub = this.statsToggleService.state$.subscribe(isOpen => {
+      this.showStatistics = isOpen;
+      this.updateToolbarPositions();
+    });
   }
 
   ngAfterViewInit(): void {
@@ -146,6 +158,14 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
         this.zoomLevel = this.map.getZoom();
       });
     }
+
+    // estadisticas
+    this.updateToolbarPositions();
+
+    // Recalculamos en resize de ventana
+    this.resizeSub = fromEvent(window, 'resize')
+      .pipe(debounceTime(100))
+      .subscribe(() => this.updateToolbarPositions());
   }
 
   private updateScale(): number {

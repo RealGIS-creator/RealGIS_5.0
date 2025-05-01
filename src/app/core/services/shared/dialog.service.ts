@@ -2,6 +2,7 @@ import { Injectable, createComponent, ApplicationRef, ComponentRef } from '@angu
 import { GenericDialogComponent } from '../../../components/shared/generic-dialog/generic-dialog.component';
 import { DialogConfig } from '../../../interfaces/dialog-config';
 import { BehaviorSubject } from 'rxjs';
+import { StatsToggleService } from '../widget/stats-toggle.service';
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +11,7 @@ export class DialogService {
   public activeDialog$ = new BehaviorSubject<ComponentRef<GenericDialogComponent> | null>(null);
   private dialogComponentRefs: ComponentRef<GenericDialogComponent>[] = [];
 
-  constructor(private appRef: ApplicationRef) { }
+  constructor(private appRef: ApplicationRef, private statsToggleService: StatsToggleService) { }
 
   open(config: DialogConfig): ComponentRef<any> {
     const dialogComponentRef = createComponent(GenericDialogComponent, {
@@ -47,6 +48,7 @@ export class DialogService {
         this.activeDialog$.next(this.dialogComponentRefs[0]);
       }
     }
+    this.statsToggleService.hide();
   }
 
   closeAll() {
@@ -56,5 +58,7 @@ export class DialogService {
     });
     this.dialogComponentRefs = [];
     this.activeDialog$.next(null);
+    this.statsToggleService.hide();
   }
+
 }

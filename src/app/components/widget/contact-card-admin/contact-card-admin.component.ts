@@ -46,6 +46,7 @@ export class ContactCardAdminComponent {
   isTC = false;
   isMensajeAlerta = false;
   isMainMenu = true;
+  isSaveaAvailable = true;
 
   infoUserCard!: InformationCard;
   nuevoTelefonoPre?: number | null;
@@ -303,11 +304,14 @@ export class ContactCardAdminComponent {
   }
 
   validateData(): boolean {
+    this.isSaveaAvailable = false;
+
     if (this.telefonoLaboral != '' || this.telefonoPreLaboral != '') {
       if (this.telefonoPreLaboral.length < 1 && this.telefonoPreLaboral.length > 3) {
         this.isMensajeAlerta = true;
         this.mensajeAlerta = 'Prefijo laboral debe estar entre 1 y 3 caracteres';
         this.resetMensajeAlerta();
+        this.isSaveaAvailable = true;
         return false;
       }
 
@@ -315,6 +319,7 @@ export class ContactCardAdminComponent {
         this.isMensajeAlerta = true;
         this.mensajeAlerta = 'Numero laboral demasiado corto';
         this.resetMensajeAlerta();
+        this.isSaveaAvailable = true;
         return false;
       }
 
@@ -331,6 +336,7 @@ export class ContactCardAdminComponent {
       this.isMensajeAlerta = true;
       this.mensajeAlerta = 'Estrategia obligatoria';
       this.resetMensajeAlerta();
+      this.isSaveaAvailable = true;
       return false;
     }
 
@@ -338,6 +344,7 @@ export class ContactCardAdminComponent {
       this.isMensajeAlerta = true;
       this.mensajeAlerta = 'Producto obligatorio';
       this.resetMensajeAlerta();
+      this.isSaveaAvailable = true;
       return false;
     }
 
@@ -346,6 +353,7 @@ export class ContactCardAdminComponent {
       this.isMensajeAlerta = true;
       this.mensajeAlerta = 'Direccion no puede estar vacio';
       this.resetMensajeAlerta();
+      this.isSaveaAvailable = true;
       return false;
     }
 
@@ -354,6 +362,7 @@ export class ContactCardAdminComponent {
       this.isMensajeAlerta = true;
       this.mensajeAlerta = 'Latitud y Longitud no pueden estar vacios';
       this.resetMensajeAlerta();
+      this.isSaveaAvailable = true;
       return false;
     }
 

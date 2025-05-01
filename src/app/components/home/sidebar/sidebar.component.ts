@@ -9,6 +9,7 @@ import { Subscription } from 'rxjs';
 import { DownloadComponent } from '../../widget/download/download.component';
 import { ContactCardInsertComponent } from '../../widget/contact-card-insert/contact-card-insert.component';
 import { StatisticsComponent } from '../../widget/statistics/statistics.component';
+import { StatsToggleService } from '../../../core/services/widget/stats-toggle.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -27,7 +28,8 @@ export class SidebarComponent {
 
   constructor(
     private sidebarService: SidebarService,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private statsToggleService: StatsToggleService
     // private sidebarShowDataService: SidebarShowDataService
   ) {}
 
@@ -82,10 +84,11 @@ export class SidebarComponent {
         componentToLoad = DownloadComponent;
         break;
       case 3:
-          componentToLoad = StatisticsComponent;
+          this.onShowStatistcs();
+          // componentToLoad = StatisticsComponent;
           break;
       case 4:
-          componentToLoad = ContactCardInsertComponent;
+        componentToLoad = ContactCardInsertComponent;
           break;
       // default:
       //   console.warn('Componente de diálogo no definido para el ID:', img.id);
@@ -99,5 +102,9 @@ export class SidebarComponent {
     this.imagesDefault.forEach((element) => {
       element.type = 'dark';
     });
+  }
+
+  onShowStatistcs(): void {
+    this.statsToggleService.show();
   }
 }

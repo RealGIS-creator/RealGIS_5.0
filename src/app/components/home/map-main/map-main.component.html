@@ -1,4 +1,4 @@
-<div id="map"></div>
+<!-- <div id="map"></div>
 <app-toolbar></app-toolbar>
 <app-toolbar-map-vertical
 (resetMapEvent)="resetMap()"
@@ -9,36 +9,35 @@
 (locateUserEvent)="locateUser()"
 >
 </app-toolbar-map-vertical>
-<app-statistics></app-statistics>
+<app-statistics></app-statistics> -->
 
 <!-- dasdsa -->
-<!-- <div id="map"></div>
 
-<button class="toggle-stats-btn" (click)="toggleStatistics()">
-  {{ showStatistics ? 'Ocultar' : 'Mostrar' }} Estadísticas
-</button>
+
+<div id="map"></div>
 
 <app-statistics
   #stats
-  [ngClass]="{ show: showStatistics }"
+  [class.show]="showStatistics"
   class="statistics-container"
+  (afterToggle)="onStatsToggled()"
 ></app-statistics>
 
 <app-toolbar
-  [style.left.%]="toolbarLeftPercent"
-  [style.bottom.px]="statisticsHeight"
+[style.left.px]="toolbarLeftPx"
+[style.bottom.px]="statisticsHeight + toolbarOffset"
 ></app-toolbar>
 
 <app-toolbar-map-vertical
-  [style.right]="toolbarRight"
-  [style.bottom.px]="statisticsHeight"
+[style.right.px]="toolbarRightPx"
+[style.bottom.px]="statisticsHeight + toolbarOffset"
   [zoomLevel]="zoomLevel"
   (resetMapEvent)="resetMap()"
   (zoomInEvent)="zoomIn()"
   (zoomOutEvent)="zoomOut()"
   (rangeChangeEvent)="onRangeChange($event)"
   (locateUserEvent)="locateUser()"
-></app-toolbar-map-vertical> -->
+></app-toolbar-map-vertical>
 
 
 
