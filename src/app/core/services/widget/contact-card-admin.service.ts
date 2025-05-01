@@ -22,7 +22,7 @@ export class ContactCardAdminService {
       "Gx_mode": "DSP",
       "SDT_TarjetaContacto1": data
     }
-    return this.http.post<any>(url, body, { headers });
+    return this.http.post<InformationCardObject2>(url, body, { headers });
   }
 
   insertContactCard(data: any): Observable<InformationCardObject2> {

@@ -1,38 +1,47 @@
-import { Directive, HostListener, ElementRef } from '@angular/core';
+import { Directive, HostListener, ElementRef, Renderer2 } from '@angular/core';
 
 @Directive({
   selector: '[OnlyText]'
 })
 export class OnlyTextDirective {
 
-  private regex: RegExp = /^[a-zA-Z]$/; 
+  private readonly letterRegex = /^[a-zA-Z]$/;
 
-  constructor(private el: ElementRef<HTMLInputElement>) {}
+  constructor(
+    private el: ElementRef<HTMLInputElement>,
+    private renderer: Renderer2) { }
 
   @HostListener('keypress', ['$event'])
-  onKeyPress(event: KeyboardEvent) {
-    const char = event.key;
-    if (!this.regex.test(char)) {
-      event.preventDefault();  
+  onKeyPress(event: KeyboardEvent): void {
+    const key = event.key;
+    if (!this.letterRegex.test(key)) {
+      event.preventDefault();
     }
   }
 
   @HostListener('paste', ['$event'])
-  onPaste(event: ClipboardEvent) {
+  onPaste(event: ClipboardEvent): void {
     event.preventDefault();
-    const pasted = event.clipboardData?.getData('text') || '';
-    const filtered = pasted.split('')
-                           .filter(c => this.regex.test(c))
-                           .join('');
+    const clipboardData = event.clipboardData?.getData('text') || '';
+    const filtered = this.filterInput(clipboardData);
+    this.insertText(filtered);
+  }
+
+  private filterInput(value: string): string {
+    const match = value.match(/[a-zA-Z]/);
+    return match ? match[0] : '';
+  }
+
+  private insertText(text: string): void {
     const input = this.el.nativeElement;
     const start = input.selectionStart || 0;
-    const end   = input.selectionEnd   || 0;
-    const current = input.value;
-    input.value = current.slice(0, start)
-                 + filtered
-                 + current.slice(end);
-    // opcional: mover cursor al final del texto pegado
-    const pos = start + filtered.length;
-    input.setSelectionRange(pos, pos);
+    const end = input.selectionEnd || 0;
+    const currentValue = input.value;
+    const newValue = currentValue.slice(0, start) + text + currentValue.slice(end);
+
+    this.renderer.setProperty(input, 'value', newValue);
+    const newPosition = start + text.length;
+    input.setSelectionRange(newPosition, newPosition);
+    input.dispatchEvent(new Event('input', { bubbles: true }));
   }
 }

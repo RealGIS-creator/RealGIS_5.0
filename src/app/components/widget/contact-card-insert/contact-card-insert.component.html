@@ -1,4 +1,4 @@
-<!-- <ng-container *ngIf="data; else loading">  -->
+<!-- <ng-container *ngIf="dataObject; else loading">  -->
 
 <app-movable-card *ngIf="isMainMenu" [initialX]="10" [initialY]="10" [paramWidth]="30"
     [headerClass]="'card-header text-white'" [showFooter]="true">
@@ -103,13 +103,13 @@
 
     <div class="col">
         <div class="title">Estrategia</div>
-        <span class="badge bg-property-input" [ngClass]="{'bg-active': data.TipoEstrategia_Id == '3'}"
+        <span class="badge bg-property-input" [ngClass]="{'bg-active': dataObject.TipoEstrategia_Id == '3'}"
             (click)="onEstrategia('TDD', '3')">TDD</span>
-        <span class="badge bg-property-input" [ngClass]="{'bg-active': data.TipoEstrategia_Id == '2'}"
+        <span class="badge bg-property-input" [ngClass]="{'bg-active': dataObject.TipoEstrategia_Id == '2'}"
             (click)="onEstrategia('TDC', '2')">TDC</span>
-        <span class="badge bg-property-input" [ngClass]="{'bg-active': data.TipoEstrategia_Id == '4'}"
+        <span class="badge bg-property-input" [ngClass]="{'bg-active': dataObject.TipoEstrategia_Id == '4'}"
             (click)="onEstrategia('TOKENIZACION', '4')">TOKENIZACIÓN</span>
-        <span class="badge bg-property-input" [ngClass]="{'bg-active': data.TipoEstrategia_Id == '1'}"
+        <span class="badge bg-property-input" [ngClass]="{'bg-active': dataObject.TipoEstrategia_Id == '1'}"
             (click)="onEstrategia('DESCUENTO DIRECTO', '1')">DESCUENTO DIRECTO</span>
     </div>
 
@@ -156,8 +156,9 @@
             <div class="title mt-2">Dias de mora / Gaveta</div>
             <div class="col">
                 <div class="d-flex align-items-center">
-                    <input type="text" name="diasMora" id="diasMora" class="form-control bg-none-input bg-none-input-sm"
-                        placeholder="Dias Mora" OnlyNumber [(ngModel)]="data.CuentasDiasMoraGave" autocomplete="off">
+                    <input type="text" name="diasMora" id="diasMora" pattern="^[0-9]+$"
+                        class="form-control bg-none-input bg-none-input-sm" placeholder="Dias Mora" OnlyNumber
+                        [(ngModel)]="dataObject.CuentasDiasMoraGave" autocomplete="off">
                 </div>
             </div>
         </div>
@@ -169,7 +170,14 @@
             <div class="title mt-2">Saldo de Producto</div>
             <div class="d-flex align-items-center">
                 <input type="text" name="saldo" id="saldo" class="form-control bg-none-input bg-none-input-sm"
-                    OnlyDecimalComma placeholder="Saldo Producto" [(ngModel)]="data.CuentasSalPro" autocomplete="off">
+                    pattern="^\d+(,\d*)?$" #saldoModel="ngModel" OnlyDecimalComma placeholder="Saldo Producto"
+                    [(ngModel)]="dataObject.CuentasSalPro" autocomplete="off">
+
+                <!-- <div class="text-info mt-1" *ngIf="saldoModel.touched">
+                    <div *ngIf="saldoModel.errors?.['pattern']">
+                        Formato inválido: solo se permiten dígitos y una única coma.
+                    </div>
+                </div> -->
             </div>
         </div>
     </div>
@@ -188,10 +196,17 @@
                 <b>Nombre:</b>
                 <div class="list-unstyled">
                     <ng-container>
-                        <input type="text" name="nombreDireccion" id="nombreDireccion"
+                        <input type="text" name="nombreDireccion" id="nombreDireccion" #direccionLaboral="ngModel"
                             class="form-control bg-none-input bg-none-input-sm" placeholder="Nombre"
                             [disabled]="!isVisibleInformacionEmployment" NoQuotes
                             [(ngModel)]="direccionLugarNombreLaboral" autocomplete="off">
+
+                        <div class="text-danger mt-1"
+                            *ngIf="direccionLaboral.invalid && (direccionLaboral.dirty || direccionLaboral.touched)">
+                            <div *ngIf="direccionLaboral.errors?.['noQuotes']">
+                                No se permiten comillas en la dirección.
+                            </div>
+                        </div>
                     </ng-container>
                 </div>
             </div>
@@ -268,7 +283,7 @@
         <div *ngIf="isVisibleInformacionPersonal">
             <div class="row">
                 <div class="col-6"><b>Dirección Residencial:</b>
-                    <textarea name="" id="" class="form-control bg-none-input"
+                    <textarea name="direccionPersonal" id="direccionPersonal" class="form-control bg-none-input"
                         [hidden]="direccionLugarNombreLaboral != '' || direccionNombreLaboral != ''" NoQuotes
                         [(ngModel)]="direccionNombrePersonal" rows="1" placeholder="Dirección">
                     </textarea>
@@ -283,8 +298,8 @@
                         </div>
                     </div>
 
-                    <div class="row g-1" *ngIf="(data.Telefonos ?? []).length > 0">
-                        <div *ngFor="let personal of data.Telefonos" class="col-auto">
+                    <div class="row g-1" *ngIf="(dataObject.Telefonos ?? []).length > 0">
+                        <div *ngFor="let personal of dataObject.Telefonos" class="col-auto">
                             <div *ngIf="personal.TipoTelefonoCod == '1'" class="d-flex align-items-center">
                                 <div class="badge bg-property"><b>{{ personal.TelefonoPre }}</b></div>
                                 <div class="badge bg-property me-1"><b>{{ personal.TelefonoNum }}</b></div>
@@ -302,8 +317,8 @@
                 </div>
             </div>
             <div class="row g-1">
-                <div class="row g-1" *ngIf="(data.Telefonos ?? []).length > 0">
-                    <div *ngFor="let personal of data.Telefonos" class="col-auto">
+                <div class="row g-1" *ngIf="(dataObject.Telefonos ?? []).length > 0">
+                    <div *ngFor="let personal of dataObject.Telefonos" class="col-auto">
                         <div *ngIf="personal.TipoTelefonoCod == '2' || personal.TipoTelefonoCod == '3'"
                             class="d-flex align-items-center">
                             <div class="badge bg-property"><b>{{ personal.TelefonoPre }}</b></div>
@@ -321,8 +336,8 @@
                     (click)="AddTelefonoOtro(5)"><b>Añadir</b>
                 </div>
             </div>
-            <div class="row g-1" *ngIf="(data.Telefonos ?? []).length > 0">
-                <div *ngFor="let personal of data.Telefonos" class="col-auto">
+            <div class="row g-1" *ngIf="(dataObject.Telefonos ?? []).length > 0">
+                <div *ngFor="let personal of dataObject.Telefonos" class="col-auto">
                     <div *ngIf="personal.TipoTelefonoCod == '5'" class="d-flex align-items-center">
                         <div class="badge bg-property"><b>{{ personal.TelefonoPre }}</b></div>
                         <div class="badge bg-property me-1"><b>{{ personal.TelefonoNum }}</b></div>
@@ -338,8 +353,8 @@
                     <b>Añadir</b>
                 </div>
             </div>
-            <ng-container *ngIf="(data.Correos ?? []).length > 0">
-                <div class="row g-1" *ngFor="let personal of data.Correos; let i = index">
+            <ng-container *ngIf="(dataObject.Correos ?? []).length > 0">
+                <div class="row g-1" *ngFor="let personal of dataObject.Correos; let i = index">
                     <div class="col-auto mt-2">
                         <div class="d-flex align-items-center">
                             <div class="badge bg-property"><b>{{ i + 1 }}. {{ personal.CorreoElec }}</b></div>
@@ -365,59 +380,89 @@
             <div class="col"><b>Dirección</b></div>
             <div class="col"><b></b></div>
         </div>
-        <ng-container *ngIf="(data.Fincas ?? []).length > 0">
-            <div class="row" *ngFor="let data of data.Fincas">
+        <ng-container *ngIf="(dataObject.Fincas ?? []).length > 0">
+            <div class="row" *ngFor="let dataObject of dataObject.Fincas">
                 <div class="col-5">
                     <div class="badge bg-property">
                         <b>
-                            <ng-container *ngIf="data.FincaFolio == ''">NN</ng-container>
-                            <ng-container *ngIf="data.FincaFolio != ''">{{ data.FincaFolio }}</ng-container>
+                            <ng-container *ngIf="dataObject.FincaFolio == ''">NN</ng-container>
+                            <ng-container *ngIf="dataObject.FincaFolio != ''">{{ dataObject.FincaFolio }}</ng-container>
                         </b>
                     </div>
                 </div>
                 <div class="col">
-                    <div class="badge bg-property">
+                    <!-- <div class="badge bg-property">
                         <b>
-                            <ng-container *ngIf="data.FincaDireccion == ''">NN</ng-container>
-                            <ng-container *ngIf="data.FincaDireccion != ''">{{ data.FincaDireccion }}</ng-container>
+                            <ng-container *ngIf="dataObject.FincaDireccion == ''">NN</ng-container>
+                            <ng-container *ngIf="dataObject.FincaDireccion != ''">{{ dataObject.FincaDireccion }}</ng-container>
                         </b>
-                    </div>
+                    </div> -->
+                    <ng-container *ngIf="dataObject.FincaDireccion == ''">
+                        <div class="badge bg-property">NN</div>
+                    </ng-container>
+                    <ng-container *ngIf="dataObject.FincaDireccion != ''">
+                        <textarea class="form-control bg-property" rows="1" [(ngModel)]="dataObject.FincaDireccion" disabled>
+                        </textarea>
+                    </ng-container>
                 </div>
                 <div class="col">
                     <img class="icon button-header" src="assets/icon/delete.svg" alt="icono desplegar"
-                        (click)="deleteFinca(data.Finca_Id)">
+                        (click)="deleteFinca(dataObject.Finca_Id)">
                 </div>
             </div>
         </ng-container>
     </div>
 
     <!-- Geodomicilio -->
-    <ng-container
-        *ngIf="direccionNombrePersonal != '' || direccionLugarNombreLaboral != '' || direccionNombreLaboral != ''">
+    <ng-container *ngIf="direccionNombrePersonal || direccionLugarNombreLaboral || direccionNombreLaboral">
         <div class="bg-info location mt-3 d-flex justify-content-center align-items-center">
 
-            <!-- <img class="icon" src="assets/icon/contact_card_location.svg" alt=""> -->
-            <input type="text" name="longitud" id="longitud" class="form-control bg-none-input" placeholder="Longitud"
-                OnlyDecimal2IntDirective [(ngModel)]="geoDomicilioLongi" #longModel="ngModel" autocomplete="off"
-                pattern="^-?\\d{1,2}\\.\\d+$">
-            -
-            <input type="text" name="latitud" id="latitud" class="form-control bg-none-input" placeholder="Latitud"
-                OnlyDecimal3IntDirective [(ngModel)]="geoDomicilioLati" autocomplete="off">
-            <img class="icon button-header" src="assets/icon/contact_card_location.svg" alt="icono desplegar">
+            <!-- Longitud -->
+            <div class="me-2">
+                <input type="text" name="longitud" id="longitud" class="form-control bg-none-input"
+                    placeholder="Longitud" OnlyDecimal2IntDirective [(ngModel)]="geoDomicilioLongi" #longModel="ngModel"
+                    autocomplete="off" required pattern="^-?\d{1,2}\.\d{5,}$"
+                    title="1-2 dígitos enteros, punto y mínimo 5 decimales">
 
-            <!-- Mensajes de alerta -->
-            <div class="row mt-2" *ngIf="longModel.invalid && (longModel.dirty || longModel.touched)">
-                <div class="col-8 text-danger">
-                    <div *ngIf="longModel.errors?.['pattern']">
-                        Formato inválido: debe tener de 1-2 dígitos enteros, punto y al menos 1 decimal.
+                <div class="row mt-2" *ngIf="longModel.invalid && (longModel.dirty || longModel.touched)">
+                    <div class="col-8 text-danger">
+                        <div *ngIf="longModel.errors?.['required']">
+                            La longitud es obligatoria.
+                        </div>
+                        <div *ngIf="longModel.errors?.['pattern']">
+                            Longitud inválido: 1-2 dígitos enteros, punto y al menos 5 decimales.
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <span class="mx-1">–</span>
+
+            <!-- Latitud -->
+            <div>
+                <input type="text" name="latitud" id="latitud" class="form-control bg-none-input" placeholder="Latitud"
+                    OnlyDecimal3IntDirective [(ngModel)]="geoDomicilioLati" #latModel="ngModel" autocomplete="off"
+                    required pattern="^-?\d{1,3}\.\d{5,}$" title="Hasta 3 dígitos enteros y mínimo 5 decimales">
+
+                <div class="row mt-2" *ngIf="latModel.invalid && (latModel.dirty || latModel.touched)">
+                    <div class="col-8 text-danger">
+                        <div *ngIf="latModel.errors?.['required']">
+                            La latitud es obligatoria.
+                        </div>
+                        <div *ngIf="latModel.errors?.['pattern']">
+                            Latitud inválida: hasta 3 dígitos enteros y mínimo 5 decimales.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <img class="icon button-header ms-3" src="assets/icon/contact_card_location.svg" alt="icono desplegar">
+
         </div>
     </ng-container>
 
     <div class="card-footer d-flex justify-content-center align-items-center" (click)="save()">
-        Guardar
+        {{ isSaveaAvailable ? 'Guardar' : 'Cargando...' }}
     </div>
 </app-movable-card>
 
@@ -527,7 +572,7 @@
             </div>
             <div class="col">
                 <button class="btn badge bg-active" (click)="newEmail()"
-                    [disabled]="emailModel.invalid || typeEmail == null">Guardar</button>
+                    [disabled]="emailModel.invalid || !typeEmail">Guardar</button>
             </div>
         </div>
 
@@ -577,11 +622,11 @@
 
         <div class="row mt-1">
             <div class="col">
-                <span class="badge bg-property" [ngClass]="{'bg-active': data.TipoPredioNom == 'Residencial'}"
+                <span class="badge bg-property" [ngClass]="{'bg-active': dataObject.TipoPredioNom == 'Residencial'}"
                     (click)="onPredio('Residencial', '1')">Residencial</span>
-                <span class="badge bg-property" [ngClass]="{'bg-active': data.TipoPredioNom == 'Comercial'}"
+                <span class="badge bg-property" [ngClass]="{'bg-active': dataObject.TipoPredioNom == 'Comercial'}"
                     (click)="onPredio('Comercial', '2')">Comercial</span>
-                <span class="badge bg-property" [ngClass]="{'bg-active': data.TipoPredioNom == 'Industrial'}"
+                <span class="badge bg-property" [ngClass]="{'bg-active': dataObject.TipoPredioNom == 'Industrial'}"
                     (click)="onPredio('Industrial', '3')">Industrial</span>
             </div>
         </div>
@@ -595,6 +640,7 @@
     </div>
 </app-movable-card>
 
+<!-- Mensaje Alerta -->
 <app-movable-card *ngIf="isMensajeAlerta" [initialX]="500" [initialY]="380" [paramWidth]="20" [showHeader]="true">
     <div class="card-title">
         <div class="d-flex justify-content-between align-items-center">

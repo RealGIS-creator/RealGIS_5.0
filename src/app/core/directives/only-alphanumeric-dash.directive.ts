@@ -1,54 +1,23 @@
-import { Directive, ElementRef, HostListener } from '@angular/core';
+import { Directive, ElementRef, HostListener, Renderer2 } from '@angular/core';
 
 @Directive({
   selector: '[OnlyAlphanumericDash]'
 })
 export class OnlyAlphanumericDashDirective {
 
-  private regex = /^[A-Za-z0-9-]*$/; 
+  private readonly allowedRegex = /^[A-Za-z0-9-]*$/;
 
-  constructor(private el: ElementRef<HTMLInputElement>) { }
+  constructor(private el: ElementRef<HTMLInputElement>, private renderer: Renderer2) {}
 
-  @HostListener('keypress', ['$event'])
-  onKeyPress(event: KeyboardEvent) {
+  @HostListener('input', ['$event'])
+  onInput(event: Event): void {
     const input = this.el.nativeElement;
-    const value = input.value ?? '';
-    const start = input.selectionStart ?? 0;
-    const end = input.selectionEnd ?? 0;
+    const originalValue = input.value;
+    const filteredValue = originalValue.replace(/[^A-Za-z0-9-]/g, '');
 
-    if (event.key.length > 1) {
-      return;
-    }
-
-    if (event.key === '.' && value.includes('.')) {
-      event.preventDefault();
-      return;
-    }
-
-    const next = value.slice(0, start) + event.key + value.slice(end);
-    if (!this.regex.test(next)) {
-      event.preventDefault();
+    if (originalValue !== filteredValue) {
+      this.renderer.setProperty(input, 'value', filteredValue);
+      input.dispatchEvent(new Event('input', { bubbles: true }));
     }
   }
-
-  @HostListener('paste', ['$event'])
-  onPaste(event: ClipboardEvent) {
-    event.preventDefault();
-    const input = this.el.nativeElement;
-    const value = input.value ?? '';
-    const pasted = event.clipboardData?.getData('text') ?? '';
-    const start = input.selectionStart ?? 0;
-    const end = input.selectionEnd ?? 0;
-
-    if ((value + pasted).split('.').length > 2) {
-      return;
-    }
-
-    const next = value.slice(0, start) + pasted + value.slice(end);
-    if (this.regex.test(next)) {
-      input.value = next;
-      input.setSelectionRange(start + pasted.length, start + pasted.length);
-    }
-  }
-
 }

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ComponentRef, Input } from '@angular/core';
+import { Component, ComponentRef } from '@angular/core';
 import { DialogService } from '../../../core/services/shared/dialog.service';
 import { SidebarShowDataService } from '../../../core/services/widget/sidebar-show-data.service';
 import { CommonModule } from '@angular/common';
@@ -6,7 +6,6 @@ import { InformationCard } from '../../../interfaces/information-card';
 import { MovableCardComponent } from '../../shared/movable-card/movable-card.component';
 import { FormsModule } from '@angular/forms';
 import { ContactCardAdminService } from '../../../core/services/widget/contact-card-admin.service';
-//import { OnlyTextDirective } from '../../../core/directives/only-text.directive';
 import { OnlyNumberDirective } from '../../../core/directives/only-number.directive';
 import { OnlyDecimal2IntDirectiveDirective } from '../../../core/directives/only-decimal2-int-directive.directive';
 import { OnlyDecimal3IntDirectiveDirective } from '../../../core/directives/only-decimal3-int-directive.directive';
@@ -50,7 +49,7 @@ export class ContactCardInsertComponent {
   isAddFinca = false;
   isSave = false;
   isMainMenu = true;
-  isSaveaAvailable = false;
+  isSaveaAvailable = true;
 
   infoUserCard!: InformationCard;
   nuevoTelefonoPre: string = '';
@@ -91,7 +90,7 @@ export class ContactCardInsertComponent {
   selectedOption: string = this.DEFAULT_LABEL;
   selectedOptionTypeDocument: string = this.DEFAULT_LABEL;
 
-  data: InformationCard = {} as InformationCard;
+  dataObject: InformationCard = {} as InformationCard;
 
   optionsTipoProducto: string[] = ['PRESTAMO HIPOTECARIO', 'PRESTAMO PERSONAL', 'TARJETA DE CREDITO', 'PRESTAMO AUTO', 'TARJETA DEBITO'];
 
@@ -100,9 +99,9 @@ export class ContactCardInsertComponent {
     private sidebarShowDataService: SidebarShowDataService,
     private contactCardAdminService: ContactCardAdminService
   ) {
-    this.data.Telefonos = [] as unknown as InformationCard['Telefonos'];
-    this.data.Correos = [] as unknown as InformationCard['Correos'];
-    this.data.Fincas = [] as unknown as InformationCard['Fincas'];
+    this.dataObject.Telefonos = [] as unknown as InformationCard['Telefonos'];
+    this.dataObject.Correos = [] as unknown as InformationCard['Correos'];
+    this.dataObject.Fincas = [] as unknown as InformationCard['Fincas'];
   }
 
   close(): void {
@@ -133,27 +132,24 @@ export class ContactCardInsertComponent {
   }
 
   onEstrategia(nameEstrategia: string, idEstategia: string): void {
-    this.data.TipoEstrategiaNom = nameEstrategia;
-    this.data.TipoEstrategia_Id = idEstategia;
+    this.dataObject.TipoEstrategiaNom = nameEstrategia;
+    this.dataObject.TipoEstrategia_Id = idEstategia;
     this.nameEstrategia = nameEstrategia;
     this.idEstategia = idEstategia;
-    console.log(this.data);
   }
 
   onPredio(namePredio: string, idPredio: string): void {
-    this.data.TipoPredioNom = namePredio;
-    this.data.TipoPredio_Id = idPredio;
-    console.log(this.data);
+    this.dataObject.TipoPredioNom = namePredio;
+    this.dataObject.TipoPredio_Id = idPredio;
   }
 
   selectTipoProducto(nameProducto: string, idProducto: string): void {
-    this.data.TipoProductoNom = nameProducto;
-    this.data.TipoProducto_Id = idProducto;
-    this.selectedOption = this.data.TipoProductoNom;
+    this.dataObject.TipoProductoNom = nameProducto;
+    this.dataObject.TipoProducto_Id = idProducto;
+    this.selectedOption = this.dataObject.TipoProductoNom;
     this.nameProducto = nameProducto;
     this.idProducto = idProducto;
     this.clickSearcher();
-    console.log(this.data);
   }
 
   editInformacionLaboral(): void {
@@ -195,7 +191,7 @@ export class ContactCardInsertComponent {
 
   selectTipoIdentificacion(nombreTipo: string, idTipo: string): void {
     this.tipoDocumento = idTipo;
-    this.data.TipoPersona_Id = idTipo
+    this.dataObject.TipoPersona_Id = idTipo
     this.selectedOptionTypeDocument = nombreTipo
     this.clickSearcherTypeDocument()
   }
@@ -205,9 +201,9 @@ export class ContactCardInsertComponent {
     if (this.nuevoTelefonoPre == "" || this.nuevoTelefono == "") {
       return;
     }
-    const sumId = this.data.Telefonos.length + 1;
+    const sumId = this.dataObject.Telefonos.length + 1;
 
-    this.data.Telefonos.push({
+    this.dataObject.Telefonos.push({
       TelefonoEst: 'A',
       TelefonoNum: this.nuevoTelefono,
       TelefonoPre: this.nuevoTelefonoPre,
@@ -223,16 +219,16 @@ export class ContactCardInsertComponent {
   }
 
   deleteTelefono(id: any): void {
-    const arr: any[] = this.data.Telefonos as any[];
+    const arr: any[] = this.dataObject.Telefonos as any[];
 
     const idx = arr.findIndex(t => t.Telefono_Id === id);
     if (idx > -1) {
       arr.splice(idx, 1);
     }
 
-    this.data.Telefonos = arr as unknown as typeof this.data.Telefonos;
+    this.dataObject.Telefonos = arr as unknown as typeof this.dataObject.Telefonos;
 
-    console.log(this.data);
+    console.log(this.dataObject);
   }
 
   closeTelefono(): void {
@@ -255,9 +251,9 @@ export class ContactCardInsertComponent {
       return;
     }
 
-    const sumId = this.data.Correos.length + 1;
+    const sumId = this.dataObject.Correos.length + 1;
 
-    this.data.Correos.push({
+    this.dataObject.Correos.push({
       CorreoElec: this.nuevoEmail.trim(),
       CorreoEst: 'A',
       Correo_Id: sumId.toString(),
@@ -270,7 +266,7 @@ export class ContactCardInsertComponent {
 
     this.typeEmail = 0;
     this.nuevoEmail = '';
-    console.log(this.data);
+    console.log(this.dataObject);
   }
 
   closeEmail(): void {
@@ -278,15 +274,15 @@ export class ContactCardInsertComponent {
   }
 
   deleteEmail(id: string): void {
-    const arr: any[] = this.data.Correos as any[];
+    const arr: any[] = this.dataObject.Correos as any[];
 
     const idx = arr.findIndex(c => c.Correo_Id === id);
     if (idx > -1) {
       arr.splice(idx, 1);
     }
 
-    this.data.Correos = arr as unknown as typeof this.data.Correos;
-    console.log(this.data);
+    this.dataObject.Correos = arr as unknown as typeof this.dataObject.Correos;
+    console.log(this.dataObject);
   }
 
   //fincas
@@ -294,129 +290,189 @@ export class ContactCardInsertComponent {
     if (this.nuevaFinca.trim() == '' && this.nuevaFincaDireccion.trim() == '') {
       return;
     }
-    const sumId = this.data.Correos.length + 1;
+    const sumId = this.dataObject.Correos.length + 1;
 
-    this.data.Fincas.push({
+    this.dataObject.Fincas.push({
       FincaDireccion: this.nuevaFincaDireccion,
       FincaEst: 'A',
       FincaFolio: this.nuevaFinca,
       Finca_Id: sumId.toString(),
       Finca_Nuevo: '1',
       PropiedadEst: 'A',
-      Propiedad_Id: this.data.TipoPredio_Id
+      Propiedad_Id: this.dataObject.TipoPredio_Id
     });
 
     this.closeFinca();
-    this.data.TipoPredioNom = '';
-    this.data.TipoPredio_Id = '';
+    this.dataObject.TipoPredioNom = '';
+    this.dataObject.TipoPredio_Id = '';
     this.nuevaFinca = '';
     this.nuevaFincaDireccion = '';
-    console.log(this.data);
+    console.log(this.dataObject);
   }
 
   deleteFinca(id: string): void {
-    const arr: any[] = this.data.Fincas as any[];
+    const arr: any[] = this.dataObject.Fincas as any[];
 
     const idx = arr.findIndex(f => f.Finca_Id === id);
     if (idx > -1) {
       arr.splice(idx, 1);
     }
 
-    this.data.Fincas = arr as unknown as typeof this.data.Fincas;
-    console.log(this.data);
+    this.dataObject.Fincas = arr as unknown as typeof this.dataObject.Fincas;
+    console.log(this.dataObject);
   }
 
   resetMensajeAlerta(): void {
     setTimeout(() => {
       this.isMensajeAlerta = false;
       this.mensajeAlerta = '';
-    }, 2000);
+    }, 1000);
   }
 
   save(): void {
-    this.isSaveaAvailable = true
+    console.log('dataObject final: ', this.dataObject)
+    if (this.validateData()) {
+      this.contactCardAdminService.insertContactCard([this.dataObject]).subscribe((res) => {
+        console.log('espuesta: ', res);
+        this.isMainMenu = false;
+        if (res) {
+          this.saveData = res.WS_TarjetaContacto1[0];
+          console.log('info guardada: ', this.saveData)
+          this.message = 'Tarjeta de contacto creada con exito y PDF generado';
+          this.isSave = true;
+        } else {
+          this.message = 'Error al crear la tarjeta de contacto';
+          this.isSave = true;
+        }
+      })
+    }
+  }
 
-    if (this.idCredito == '' || this.identificacion == '' || this.nombre == '' || this.noAcreditado == ''
-      || this.cis == '' || this.nameEstrategia == '' || this.idEstategia == '' || this.nameProducto == ''
-      || this.idProducto == '' || this.tipoDocumento == '') {
-      console.log('Faltan datos obligatorios');
+  validateData(): boolean {
+    this.isSaveaAvailable = false;
+
+    if (this.idCredito == '') {
       this.isMensajeAlerta = true;
-      this.mensajeAlerta = 'Faltan datos obligatorios';
+      this.mensajeAlerta = 'Id Credito obligatorio';
       this.resetMensajeAlerta();
-      this.isSaveaAvailable = false;
-      return;
+     this.isSaveaAvailable = true;
+      return false;
     }
 
-    // if (this.isVisibleInformacionEmployment && (this.direccionLugarNombreLaboral == '' && this.direccionNombreLaboral == '')) {
-    //   console.log('DireccionesLugTra no puede estar vacio');
-    //   this.isMensajeAlerta = true;
-    //   this.mensajeAlerta = 'Direccion Laboral no puede estar vacio';
-    //   this.resetMensajeAlerta();
-    //   return;
-    // }
+    if (this.identificacion == '') {
+      this.isMensajeAlerta = true;
+      this.mensajeAlerta = 'Identificación obligatoria';
+      this.resetMensajeAlerta();
+     this.isSaveaAvailable = true;
+      return false;
+    }
+
+    if (this.tipoDocumento == '') {
+      this.isMensajeAlerta = true;
+      this.mensajeAlerta = 'Tipo Documento obligatorio';
+      this.resetMensajeAlerta();
+     this.isSaveaAvailable = true;
+      return false;
+    }
+
+    if (this.nombre == '') {
+      this.isMensajeAlerta = true;
+      this.mensajeAlerta = 'Nombre obligatorio';
+      this.resetMensajeAlerta();
+     this.isSaveaAvailable = true;
+      return false;
+    }
+
+    if (this.noAcreditado == '') {
+      this.isMensajeAlerta = true;
+      this.mensajeAlerta = 'Número Acreditado obligatorio';
+      this.resetMensajeAlerta();
+     this.isSaveaAvailable = true;
+      return false;
+    }
+
+    if (this.cis == '') {
+      this.isMensajeAlerta = true;
+      this.mensajeAlerta = 'CIS obligatorio';
+      this.resetMensajeAlerta();
+     this.isSaveaAvailable = true;
+      return false;
+    }
+
+    if (this.nameEstrategia == '' || this.idEstategia == '') {
+      this.isMensajeAlerta = true;
+      this.mensajeAlerta = 'Estrategia obligatoria';
+      this.resetMensajeAlerta();
+     this.isSaveaAvailable = true;
+      return false;
+    }
+
+    if (this.nameProducto == '' || this.idProducto == '') {
+      this.isMensajeAlerta = true;
+      this.mensajeAlerta = 'Producto obligatorio';
+      this.resetMensajeAlerta();
+     this.isSaveaAvailable = true;
+      return false;
+    }
 
     if (this.direccionNombrePersonal == '' && this.direccionLugarNombreLaboral == '' && this.direccionNombreLaboral == '') {
-      console.log('Direccion no puede estar vacio');
       this.isMensajeAlerta = true;
       this.mensajeAlerta = 'Direccion no puede estar vacio';
       this.resetMensajeAlerta();
-      this.isSaveaAvailable = false;
-      return;
+     this.isSaveaAvailable = true;
+      return false;
     }
 
     if (this.geoDomicilioLati == '' && this.geoDomicilioLati == '') {
-      console.log('GeoDomicilioLati y GeoDomicilioLongi no pueden estar vacios');
       this.isMensajeAlerta = true;
       this.mensajeAlerta = 'Latitud y Longitud no pueden estar vacios';
       this.resetMensajeAlerta();
-      this.isSaveaAvailable = false;
-      return;
+     this.isSaveaAvailable = true;
+      return false;
     }
 
-    this.data.GeoDomicilioLongi = this.geoDomicilioLongi;
-    this.data.GeoDomicilioLati = this.geoDomicilioLati;
+    this.dataObject.GeoDomicilioLongi = this.geoDomicilioLongi;
+    this.dataObject.GeoDomicilioLati = this.geoDomicilioLati;
 
-    this.data.AcreditadoNumCuen = this.idCredito.toString();
-    this.data.AcreditadoIdenti = this.identificacion.toString();
-    this.data.AcreditadoNom = this.nombre.toString();
-    this.data.AcreditadoNum = this.noAcreditado.toString();
-    this.data.CuentasCis = this.cis.toString();
+    this.dataObject.AcreditadoNumCuen = this.idCredito.toString();
+    this.dataObject.AcreditadoIdenti = this.identificacion.toString();
+    this.dataObject.AcreditadoNom = this.nombre.toString();
+    this.dataObject.AcreditadoNum = this.noAcreditado.toString();
+    this.dataObject.CuentasCis = this.cis.toString();
 
     if (this.direccionLugarNombreLaboral != '' || this.direccionNombreLaboral != '') {
-      this.data.Direccion = this.direccionNombreLaboral;
-      this.data.DireccionEst = 'A';
-      this.data.TipoDireccionCod = '2';
-      this.data.TipoDireccion_Id = '2';
-      this.data.DireccionesLugTra = this.direccionLugarNombreLaboral;
+      this.dataObject.Direccion = this.direccionNombreLaboral;
+      this.dataObject.DireccionEst = 'A';
+      this.dataObject.TipoDireccionCod = '2';
+      this.dataObject.TipoDireccion_Id = '2';
+      this.dataObject.DireccionesLugTra = this.direccionLugarNombreLaboral;
     }
 
     if (this.direccionNombrePersonal != '') {
-      this.data.Direccion = this.direccionNombrePersonal;
-      this.data.DireccionEst = 'A';
-      this.data.TipoDireccionCod = '1';
-      this.data.TipoDireccion_Id = '1';
+      this.dataObject.Direccion = this.direccionNombrePersonal;
+      this.dataObject.DireccionEst = 'A';
+      this.dataObject.TipoDireccionCod = '1';
+      this.dataObject.TipoDireccion_Id = '1';
     }
 
     if (this.telefonoPreLaboral != '' || this.telefonoNumLaboral != '') {
-      console.log('tamaño', this.telefonoPreLaboral.length)
-
       if (this.telefonoPreLaboral.length < 1 && this.telefonoPreLaboral.length > 3) {
         this.isMensajeAlerta = true;
         this.mensajeAlerta = 'Prefijo laboral debe estar entre 1 y 3 caracteres';
         this.resetMensajeAlerta();
-        this.isSaveaAvailable = false;
-        return;
+       this.isSaveaAvailable = true;
+        return false;
       }
 
       if (this.telefonoNumLaboral.length < 10) {
         this.isMensajeAlerta = true;
         this.mensajeAlerta = 'Numero laboral demasiado corto';
         this.resetMensajeAlerta();
-        this.isSaveaAvailable = false;
-        return;
+       this.isSaveaAvailable = true;
+        return false;
       }
 
-      this.data.Telefonos.push({
+      this.dataObject.Telefonos.push({
         TipoTelefono_Id: '4',
         TelefonoNum: this.telefonoNumLaboral,
         TelefonoPre: this.telefonoPreLaboral,
@@ -428,30 +484,30 @@ export class ContactCardInsertComponent {
       })
     }
 
-    console.log('data final: ', this.data)
-    // this.contactCardAdminService.insertContactCard([this.data]).subscribe((res) => {
-    //   console.log('espuesta: ', res);
-    //   this.isMainMenu = false;
-    //   if (res) {
-    //     this.saveData = res.WS_TarjetaContacto1[0];
-    //     console.log('info guardada: ', this.saveData)
-    //     this.message = 'Tarjeta de contacto creada con exito';
-    //     this.isSave = true;
-    //   } else {
-    //     this.message = 'Error al crear la tarjeta de contacto';
-    //     this.isSave = true;
-    //   }
-    // })
+    const LONG_REGEX = /^-?\d{1,2}\.\d{5,}$/;
+    const LATI_REGEX = /^-?\d{1,3}\.\d{5,}$/;
+    const longitudValida = LONG_REGEX.test(this.geoDomicilioLongi);
+    const latitudValida = LATI_REGEX.test(this.geoDomicilioLati);
+
+    if (!longitudValida || !latitudValida) {
+      this.isMensajeAlerta = true;
+      this.mensajeAlerta = 'Latitud o longitud inválida';
+      this.resetMensajeAlerta();
+     this.isSaveaAvailable = true;
+      return false;
+    }
+
+    return true;
   }
 
   goTC(): void {
-    const data = {
+    const dataObject = {
       filterName: 'AcreditadoNumCuen',
       filterValue: this.saveData.AcreditadoNumCuen,
       idAdress: this.saveData.Direccion_Id
     }
-    console.log('data: ', data)
+    console.log('dataObject: ', dataObject)
     this.close();
-    this.dialogService.open({ component: ContactCardComponent, data: data });
+    this.dialogService.open({ component: ContactCardComponent, data: dataObject });
   }
 }

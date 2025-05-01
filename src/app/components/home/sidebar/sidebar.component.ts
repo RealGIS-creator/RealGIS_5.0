@@ -9,7 +9,6 @@ import { Subscription } from 'rxjs';
 import { DownloadComponent } from '../../widget/download/download.component';
 import { ContactCardInsertComponent } from '../../widget/contact-card-insert/contact-card-insert.component';
 import { StatisticsComponent } from '../../widget/statistics/statistics.component';
-// import { SidebarShowDataService } from '../../../core/services/widget/sidebar-show-data.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -21,13 +20,14 @@ import { StatisticsComponent } from '../../widget/statistics/statistics.componen
 export class SidebarComponent {
   activeIndex: number | null = null;
   imagesDefault: SideBar[] = [];
-  private dialogService = inject(DialogService);
+  
   dialog: ComponentRef<GenericDialogComponent> | null | any = null;
 
   private dialogSub!: Subscription;
 
   constructor(
     private sidebarService: SidebarService,
+    private dialogService: DialogService
     // private sidebarShowDataService: SidebarShowDataService
   ) {}
 

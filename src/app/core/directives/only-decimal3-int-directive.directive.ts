@@ -1,53 +1,63 @@
-import { Directive, ElementRef, HostListener } from '@angular/core';
+import { Directive, ElementRef, HostListener, Renderer2 } from '@angular/core';
 
 @Directive({
-  selector: 'input[OnlyDecimal3IntDirective]'
+  selector: '[OnlyDecimal3IntDirective]'
 })
 export class OnlyDecimal3IntDirectiveDirective {
+  private editRegex = /^-?\d{0,3}(?:\.\d*)?$/;
+  private finalRegex = /^-?\d{1,3}\.\d{5,}$/;
 
-  private regex = /^-?\d{1,3}(\.\d*)?$/;
+  constructor(
+    private el: ElementRef<HTMLInputElement>,
+    private renderer: Renderer2
+  ) { }
 
-  constructor(private el: ElementRef<HTMLInputElement>) {}
-
-  @HostListener('keypress', ['$event'])
-  onKeyPress(event: KeyboardEvent) {
+  @HostListener('input')
+  onInput() {
     const input = this.el.nativeElement;
-    const value = input.value ?? '';
-    const start = input.selectionStart ?? 0;
-    const end   = input.selectionEnd   ?? 0;
+    let value = input.value;
 
-    if (event.key.length > 1 && event.key !== '.' && event.key !== '-') {
-      return;
-    }
-    if (event.key === '.' && value.includes('.')) {
-      event.preventDefault();
-      return;
+    value = value.replace(/[^0-9.\-]/g, '');
+
+    const hasSign = value.startsWith('-');
+    value = (hasSign ? '-' : '') + value.slice(hasSign ? 1 : 0).replace(/-/g, '');
+
+    const parts = value.split('.');
+    if (parts.length > 3) {
+      value = parts.shift()! + '.' + parts.join('');
     }
 
-    const next = value.slice(0, start) + event.key + value.slice(end);
-    if (!this.regex.test(next)) {
-      event.preventDefault();
+    const abs = (hasSign ? value.slice(1) : value).split('.');
+    const intPart = abs[0].slice(0, 3);
+    const decPart = abs[1] !== undefined ? '.' + abs[1] : '';
+    const sanitized = (hasSign ? '-' : '') + intPart + decPart;
+
+    if (sanitized !== input.value) {
+      input.value = sanitized;
+      const pos = sanitized.length;
+      input.setSelectionRange(pos, pos);
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+
+    const rawDec = abs[1] || '';
+    if (this.finalRegex.test(input.value)) {
+      this.renderer.removeClass(input, 'decimal-format-error');
+    } else {
+      if (rawDec.length < 5) {
+        this.renderer.addClass(input, 'decimal-format-error');
+      } else {
+        this.renderer.addClass(input, 'decimal-format-error');
+      }
     }
   }
 
-  @HostListener('paste', ['$event'])
-  onPaste(event: ClipboardEvent) {
-    event.preventDefault();
-    const pasted = event.clipboardData?.getData('text') ?? '';
-    const input  = this.el.nativeElement;
-    const value  = input.value ?? '';
-    const start  = input.selectionStart ?? 0;
-    const end    = input.selectionEnd   ?? 0;
-
-    if ((value + pasted).split('.').length > 2) {
-      return;
-    }
-
-    const next = value.slice(0, start) + pasted + value.slice(end);
-    if (this.regex.test(next)) {
-      input.value = next;
-      const pos = start + pasted.length;
-      input.setSelectionRange(pos, pos);
+  @HostListener('blur')
+  onBlur() {
+    const input = this.el.nativeElement;
+    if (!this.finalRegex.test(input.value)) {
+      this.renderer.addClass(input, 'decimal-format-error');
+    } else {
+      this.renderer.removeClass(input, 'decimal-format-error');
     }
   }
 }

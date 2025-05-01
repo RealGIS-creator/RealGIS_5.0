@@ -10,10 +10,23 @@ import { ContactCardAdminService } from '../../../core/services/widget/contact-c
 import { OnlyNumberDirective } from '../../../core/directives/only-number.directive';
 import { ContactCardComponent } from '../contact-card/contact-card.component';
 import { PdfContactCardService } from '../../../core/services/widget/pdf-contact-card.service';
+import { OnlyDecimalCommaDirective } from '../../../core/directives/only-decimal-comma.directive';
+import { ExactLengthTenDirective } from '../../../core/directives/exact-length-ten.directive';
+import { ExactLengthThreeDirective } from '../../../core/directives/exact-length-three.directive';
+import { EmailFormatDirective } from '../../../core/directives/email-format.directive';
+import { NoQuotesDirective } from '../../../core/directives/no-quotes.directive';
 
 @Component({
   selector: 'app-contact-card-admin',
-  imports: [MovableCardComponent, CommonModule, FormsModule, OnlyNumberDirective ],
+  imports: [MovableCardComponent,
+    CommonModule,
+    FormsModule,
+    OnlyNumberDirective,
+    OnlyDecimalCommaDirective,
+    ExactLengthTenDirective,
+    ExactLengthThreeDirective,
+    EmailFormatDirective,
+    NoQuotesDirective],
   templateUrl: './contact-card-admin.component.html',
   styleUrl: './contact-card-admin.component.less'
 })
@@ -56,7 +69,7 @@ export class ContactCardAdminComponent {
   data: any;
 
   optionsTipoProducto: string[] = ['PRESTAMO HIPOTECARIO', 'PRESTAMO PERSONAL', 'TARJETA DE CREDITO', 'PRESTAMO AUTO', 'TARJETA DEBITO'];
-  
+
   ngOnInit(): void {
     this.data = this.data$.value._value;
     this.selectedOption = this.data.TipoProductoNom
@@ -69,8 +82,7 @@ export class ContactCardAdminComponent {
     private sidebarShowDataService: SidebarShowDataService,
     private contactCardAdminService: ContactCardAdminService,
     private pdfContactCardService: PdfContactCardService
-  )
-  {}
+  ) { }
 
   close(): void {
     this.dialogService.closeAll();
@@ -86,7 +98,7 @@ export class ContactCardAdminComponent {
     this.selectedOption = option;
     this.isVisible = false;
   }
-  
+
   clickSearcher(): void {
     this.isVisible = this.isVisible ? false : true;
   }
@@ -102,13 +114,11 @@ export class ContactCardAdminComponent {
   onEstrategia(nameEstrategia: string, idEstategia: number): void {
     this.data.TipoEstrategiaNom = nameEstrategia;
     this.data.TipoEstrategia_Id = idEstategia;
-    console.log(this.data);
   }
 
   onPredio(namePredio: string, idPredio: number): void {
     this.data.TipoPredioNom = namePredio;
     this.data.TipoPredioCod = idPredio;
-    console.log(this.data);
   }
 
   selectTipoProducto(nameProducto: string, idProducto: number): void {
@@ -116,7 +126,6 @@ export class ContactCardAdminComponent {
     this.data.TipoProducto_Id = idProducto;
     this.selectedOption = this.data.TipoProductoNom;
     this.clickSearcher();
-    console.log(this.data);
   }
 
   editDiasMora(): void {
@@ -143,16 +152,22 @@ export class ContactCardAdminComponent {
   AddTelefonoMovil(type: number = 0): void {
     this.isAddTelefonoMovil = this.isAddTelefonoMovil ? false : true;
     this.typeTelefono = type ? type : 0;
+    this.isAddTelefonoResidencial = false;
+    this.isAddTelefonoOtro = false;
   }
 
   AddTelefonoResidencial(type: number = 0): void {
     this.isAddTelefonoResidencial = this.isAddTelefonoResidencial ? false : true;
     this.typeTelefono = type ? type : 0;
+    this.isAddTelefonoMovil = false;
+    this.isAddTelefonoOtro = false
   }
 
   AddTelefonoOtro(type: number = 0): void {
     this.isAddTelefonoOtro = this.isAddTelefonoOtro ? false : true;
     this.typeTelefono = type ? type : 0;
+    this.isAddTelefonoMovil = false;
+    this.isAddTelefonoResidencial = false;
   }
 
   clearTelefono(): void {
@@ -181,10 +196,10 @@ export class ContactCardAdminComponent {
   deleteTelefono(id: number): void {
     this.data.Telefonos = this.data.Telefonos.map((t: any) =>
       t.Telefono_Id == id
-        ? { ...t, TelefonoEst: 'I' }  
-        : t       
+        ? { ...t, TelefonoEst: 'I' }
+        : t
     );
-    
+
     console.log(this.data);
   }
 
@@ -204,7 +219,7 @@ export class ContactCardAdminComponent {
   }
 
   onTipoEmail(selectedOption: number): void {
-    this.typeEmail = selectedOption;  
+    this.typeEmail = selectedOption;
   }
 
   newEmail(): void {
@@ -233,10 +248,10 @@ export class ContactCardAdminComponent {
   deleteEmail(id: number): void {
     this.data.Correos = this.data.Correos.map((c: any) =>
       c.Correo_Id == id
-        ? { ...c, CorreoEst : 'I' }  
-        : c       
+        ? { ...c, CorreoEst: 'I' }
+        : c
     );
-    
+
     console.log(this.data);
   }
 
@@ -256,10 +271,6 @@ export class ContactCardAdminComponent {
       FincaEst: 'A',
       Finca_Nuevo: '1',
     });
-    // this.closeFinca();
-    // this.data.FincaFolio = this.nuevaFinca;
-    // this.data.FincaDireccion = this.nuevaFincaDireccion;
-    // this.data.FincaEst = 'A';
     this.nuevaFinca = '';
     this.nuevaFincaDireccion = '';
     this.closeFinca();
@@ -268,28 +279,43 @@ export class ContactCardAdminComponent {
   deleteFinca(id: number): void {
     this.data.Fincas = this.data.Fincas.map((f: any) =>
       f.Finca_Id == id
-        ? { ...f, FincaEst: 'I' }  
-        : f       
+        ? { ...f, FincaEst: 'I' }
+        : f
     );
   }
 
   save(): void {
-    if (this.telefonoLaboral != '' || this.telefonoPreLaboral != ''
-      || this.telefonoLaboral != null || this.telefonoPreLaboral != null
+    console.log('data final: ', this.data)
+    if (this.validateData()) {
+      this.contactCardAdminService.updateContactCard([this.data]).subscribe((res) => {
+        this.isSave = true;
+        this.isMainMenu = false;
+        this.download();
+      })
+    }
+  }
 
-    ) {
+  resetMensajeAlerta(): void {
+    setTimeout(() => {
+      this.isMensajeAlerta = false;
+      this.mensajeAlerta = '';
+    }, 1000);
+  }
+
+  validateData(): boolean {
+    if (this.telefonoLaboral != '' || this.telefonoPreLaboral != '') {
       if (this.telefonoPreLaboral.length < 1 && this.telefonoPreLaboral.length > 3) {
         this.isMensajeAlerta = true;
         this.mensajeAlerta = 'Prefijo laboral debe estar entre 1 y 3 caracteres';
         this.resetMensajeAlerta();
-        return;
+        return false;
       }
 
       if (this.telefonoLaboral.length < 10) {
         this.isMensajeAlerta = true;
         this.mensajeAlerta = 'Numero laboral demasiado corto';
         this.resetMensajeAlerta();
-        return;
+        return false;
       }
 
       this.data.Telefonos.push({
@@ -301,12 +327,26 @@ export class ContactCardAdminComponent {
       })
     }
 
+    if (this.data.TipoEstrategiaNom == '' || this.data.TipoEstrategia_Id == '') {
+      this.isMensajeAlerta = true;
+      this.mensajeAlerta = 'Estrategia obligatoria';
+      this.resetMensajeAlerta();
+      return false;
+    }
+
+    if (this.data.TipoProductoNom == '' || this.data.TipoProducto_Id == '') {
+      this.isMensajeAlerta = true;
+      this.mensajeAlerta = 'Producto obligatorio';
+      this.resetMensajeAlerta();
+      return false;
+    }
+
     if (this.data.Direccion == '' && this.data.DireccionesLugTra == '' && this.data.TipoDireccion_Id == '') {
       console.log('Direccion no puede estar vacio');
       this.isMensajeAlerta = true;
       this.mensajeAlerta = 'Direccion no puede estar vacio';
       this.resetMensajeAlerta();
-      return;
+      return false;
     }
 
     if (this.data.GeoDomicilioLati == '' && this.data.GeoDomicilioLongi == '') {
@@ -314,21 +354,10 @@ export class ContactCardAdminComponent {
       this.isMensajeAlerta = true;
       this.mensajeAlerta = 'Latitud y Longitud no pueden estar vacios';
       this.resetMensajeAlerta();
-      return;
+      return false;
     }
 
-    this.contactCardAdminService.updateContactCard([this.data]).subscribe((res) => {
-      this.isSave = true;
-      this.isMainMenu = false;
-      this.download();
-    })
-  }
-
-  resetMensajeAlerta(): void {
-    setTimeout(() => {
-      this.isMensajeAlerta = false;
-      this.mensajeAlerta = '';
-    }, 2000);
+    return true;
   }
 
   goTC(): void {
