@@ -27,6 +27,7 @@ export class MapService {
   }
 
   setMarkerClusterGroup(markerClusterGroup: L.MarkerClusterGroup) {
+    console.log('info funcion', markerClusterGroup)
     this.markerClusterGroupSubject.next(markerClusterGroup);
   }
 

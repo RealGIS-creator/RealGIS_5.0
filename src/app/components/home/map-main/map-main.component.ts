@@ -1,124 +1,118 @@
 import L from 'leaflet';
-
-import { Component, inject, OnInit, OnDestroy, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
-import { ToolbarMapVerticalComponent } from '../../widget/toolbar-map-vertical/toolbar-map-vertical.component';
-import { ToolbarComponent } from '../../widget/toolbar/toolbar.component';
-import { GeometryService } from '../../../core/services/home/map/geometry.service';
-import { ContactCardComponent } from '../../widget/contact-card/contact-card.component';
-import { DialogService } from '../../../core/services/shared/dialog.service';
-import { Subject, Subscription, from, fromEvent } from 'rxjs';
-import { takeUntil, tap, map, concatMap, filter, debounceTime } from 'rxjs/operators';
-import { LocationService } from '../../../core/services/home/map/location.service';
+import {
+  Component,
+  OnInit,
+  AfterViewInit,
+  OnDestroy,
+  ViewChild,
+  ElementRef,
+  NgZone,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+} from '@angular/core';
+import 'leaflet.markercluster';
 import 'leaflet.coordinates/dist/Leaflet.Coordinates-0.1.5.src.js';
-import { MapService } from '../../../core/services/home/map/map.service';
-import { StatisticsComponent } from '../../widget/statistics/statistics.component';
+
 import { CommonModule } from '@angular/common';
+import { from, fromEvent, Subject } from 'rxjs';
+import { takeUntil, debounceTime, filter, tap, concatMap, map } from 'rxjs/operators';
+
+import { ToolbarComponent } from '../../widget/toolbar/toolbar.component';
+import { ToolbarMapVerticalComponent } from '../../widget/toolbar-map-vertical/toolbar-map-vertical.component';
+import { StatisticsComponent } from '../../widget/statistics/statistics.component';
+import { ContactCardComponent } from '../../widget/contact-card/contact-card.component';
+
+import { GeometryService } from '../../../core/services/home/map/geometry.service';
+import { LocationService } from '../../../core/services/home/map/location.service';
+import { MapService } from '../../../core/services/home/map/map.service';
+import { DialogService } from '../../../core/services/shared/dialog.service';
 import { StatsToggleService } from '../../../core/services/widget/stats-toggle.service';
 
 @Component({
   standalone: true,
   selector: 'app-map-main',
-  imports: [ToolbarComponent, ToolbarMapVerticalComponent, StatisticsComponent, CommonModule],
+  imports: [
+    CommonModule,
+    ToolbarComponent,
+    ToolbarMapVerticalComponent,
+    StatisticsComponent,
+  ],
   templateUrl: './map-main.component.html',
-  styleUrl: './map-main.component.less'
+  styleUrls: ['./map-main.component.less'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
+export class MapMainComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('stats', { read: ElementRef, static: false })
+  private statsRef!: ElementRef<HTMLElement>;
+
   private map!: L.Map;
-  private location!: [number, number];
-  private zoom!: number;
-  zoomLevel = 8;
-  lastMarker?: L.Marker;
-  lastClick?: L.LatLng;
-  markMode = false;
+  private markerCluster!: L.MarkerClusterGroup;
   private wmsLayers: L.TileLayer.WMS[] = [];
-
-  private markerClusterGroup!: L.MarkerClusterGroup;
-  private loadedTiles = new Set<string>();
-  private addedFeatureIds = new Set<string>();
   private destroy$ = new Subject<void>();
+  // private configLayerControl: any;
 
-  constructor(
-    private locationService: LocationService,
-    private geometryService: GeometryService,
-    private mapService: MapService,
-    private statsToggleService: StatsToggleService,
-    private dialogService: DialogService
-  ) {
-    this.getLocateMap();
-  }
+  // Estado de marcado y zoom
+  lastMarker?: L.CircleMarker | null = null;
+  markMode = false;
+  zoomLevel = 8;
 
-  /////
-
-  toolbarLeftPercent = 50;   // 50% o 25%
-  toolbarRight: string = '10px';  // '10px' o '50%'
-  private resizeSub!: Subscription;
-  private toggleSub!: Subscription;
-
+  // Estadísticas & toolbar
   showStatistics = false;
   toolbarLeftPx = 0;
   toolbarRightPx = 0;
-  statisticsHeight = 60; // Ajusta según tu toolbar
-  toolbarOffset = 10;
+  readonly statisticsHeight = 60;
+  readonly toolbarOffset = 10;
+  private loadedTiles = new Set<string>();
+  private addedFeatureIds = new Set<string>();
 
-  @ViewChild('stats', { read: ElementRef }) statsRef!: ElementRef;
+  constructor(
+    private ngZone: NgZone,
+    private cd: ChangeDetectorRef,
+    private locationSvc: LocationService,
+    private geometrySvc: GeometryService,
+    private mapSvc: MapService,
+    private dialog: DialogService,
+    private statsToggle: StatsToggleService
+  ) { }
 
-  onStatsToggled(): void {
-    this.updateToolbarPositions();
-  }
-
-  private updateToolbarPositions(): void {
-    const statsEl = this.statsRef.nativeElement as HTMLElement;
-    const statsWidth = this.showStatistics
-      ? statsEl.getBoundingClientRect().width
-      : 0;
-
-    const containerWidth = (statsEl.parentElement as HTMLElement)
-      .getBoundingClientRect().width;
-    this.toolbarLeftPx = (containerWidth - statsWidth) / 2;
-    this.toolbarRightPx = statsWidth;
-  }
-
-  //////
   ngOnInit(): void {
     this.initMap();
-    this.getLayer()
+    this.initWmsLayers();
+    this.initMarkerCluster();
+    this.addLayerControl();
+    this.subscribeStatsToggle();
 
-    this.locationService.pointData$
-      .pipe(
-        filter((pd): pd is any => pd != null),
-        takeUntil(this.destroy$)
-      )
+    this.locationSvc.pointDataParam$
+    .pipe(
+      filter(
+        (pd): pd is [number, number] =>
+          pd != null && Array.isArray(pd) && pd.length === 2
+      ),
+      takeUntil(this.destroy$),
+      tap(([lat, lng]) => {
+        if (this.map && this.markerCluster) {
+          console.log(lat,lng)
+          const allMarkers = this.markerCluster.getLayers() as L.Marker[];
+          const target = allMarkers.find(m => {
+            const ll = m.getLatLng();
+            return ll.lat === lat && ll.lng === lng;
+          });
 
-    // punto enfocar
-    this.locationService.pointDataParam$
-      .pipe(
-        filter(
-          (pd): pd is [number, number] =>
-            pd != null && Array.isArray(pd) && pd.length === 2
-        ),
-        takeUntil(this.destroy$),
-        tap(([lat, lng]) => {
-          if (this.map && this.markerClusterGroup) {
-            const allMarkers = this.markerClusterGroup.getLayers() as L.Marker[];
-            const target = allMarkers.find(m => {
-              const ll = m.getLatLng();
-              return ll.lat === lat && ll.lng === lng;
-            });
-
-            if (target) {
-              this.markerClusterGroup.zoomToShowLayer(target, () => {
+          if (target) {
+            this.markerCluster.zoomToShowLayer(target, () => {
+              this.markerCluster.zoomToShowLayer(target, () => {
                 const highlightOpts: L.CircleMarkerOptions = {
-                  radius: (target as any)._icon?.offsetWidth / 2 || 8,
-                  fillColor: '#ff0000',     // rojo para resaltar
+                  radius: 8, // Ajusta el radio si es necesario
+                  fillColor: '#ff0000',
                   color: '#000',
                   weight: 1,
                   opacity: 1,
                   fillOpacity: 1
                 };
-                const highlightIcon = this.createCircleDivIcon(highlightOpts);
-
-                target.setIcon(highlightIcon);
-
+                if (target instanceof L.CircleMarker) {
+                  target.setStyle(highlightOpts);
+                }
+            
                 const { lat: tLat, lng: tLng } = target.getLatLng();
                 target
                   .bindPopup(
@@ -127,131 +121,144 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
                   )
                   .openPopup();
               });
-            } else {
-              this.map.flyTo([lat, lng], 18, { animate: true });
-            }
+            });
+          } else {
+            this.map.flyTo([lat, lng], 18, { animate: true });
           }
-        })
-      )
-      .subscribe();
-    // final punto enfocar
-
-    this.mapService.updateZoomLevel(this.updateScale());
-
-    //estadisticas
-    this.toggleSub = this.statsToggleService.state$.subscribe(isOpen => {
-      this.showStatistics = isOpen;
-      this.updateToolbarPositions();
-    });
+        }
+      })
+    )
+    .subscribe();
   }
 
   ngAfterViewInit(): void {
-    if (this.map) {
-      this.initCluster();
-      this.loadTiles();
+    this.setupMapListeners();
 
-      this.map.on('moveend', () => this.loadTiles());
-      this.map.on('mousemove', (e: L.LeafletMouseEvent) => {
-        const { lat, lng } = e.latlng;
-        this.mapService.updateCursorCoords([lat, lng]);
+    // Posición inicial de toolbar
+    setTimeout(() => {
+      this.updateToolbarPositions();
+      this.cd.markForCheck();
+    }, 0);
+
+    // Ajuste en resize
+    fromEvent(window, 'resize')
+      .pipe(debounceTime(100), takeUntil(this.destroy$))
+      .subscribe(() => {
+        setTimeout(() => {
+          this.updateToolbarPositions();
+          this.cd.markForCheck();
+        }, 0);
       });
-
-      this.map.on('zoomend', () => {
-        this.mapService.updateZoomLevel(this.updateScale());
-        this.zoomLevel = this.map.getZoom();
-      });
-    }
-
-    // estadisticas
-    this.updateToolbarPositions();
-
-    // Recalculamos en resize de ventana
-    this.resizeSub = fromEvent(window, 'resize')
-      .pipe(debounceTime(100))
-      .subscribe(() => this.updateToolbarPositions());
-
-    //ubicacion con punto
-    this.map.on('click', (e: L.LeafletMouseEvent) => {
-      if (this.markMode) {
-        this.onMapClick(e);
-        // opcionalmente, desactivar modo tras un solo clic:
-        // this.markMode = false;
-      }
-    });
-  }
-
-  toggleMarkMode(): void {
-    this.markMode = !this.markMode;
-  }
-
-  /** Procesa el clic y pinta el marcador */
-  private onMapClick(e: L.LeafletMouseEvent): void {
-    const myIcon = L.icon({
-      iconUrl: 'assets/marker.svg',
-      // shadowUrl: 'assets/custom-shadow.png',
-      iconSize: [36, 36],
-      iconAnchor: [18, 36],
-      popupAnchor: [0, -30]
-    });
-
-    // elimina marcador previo
-    if (this.lastMarker) {
-      this.map.removeLayer(this.lastMarker);
-    }
-
-    // crea nuevo marcador con icono
-    this.lastMarker = L.marker(e.latlng, { icon: myIcon })
-      .addTo(this.map)
-      .bindPopup(`Lat: ${e.latlng.lat}, Lng: ${e.latlng.lng}`)
-      .openPopup();
-
-    // this.lastClick = e.latlng;
-    // if (this.lastMarker) {
-    //   this.map.removeLayer(this.lastMarker);
-    // }
-    // this.lastMarker = L.marker(e.latlng)
-    //   .addTo(this.map)
-    //   .bindPopup(
-    //     `Lat: ${e.latlng.lat.toFixed(6)}<br>Lng: ${e.latlng.lng.toFixed(6)}`
-    //   )
-    //   .openPopup();
-  }
-
-  private updateScale(): number {
-    const mapSize = this.map.getSize();
-    const y = mapSize.y / 2;
-
-    const pointA = this.map.containerPointToLatLng([0, y]);
-    const pointB = this.map.containerPointToLatLng([100, y]);
-
-    const distanceMeters = pointA.distanceTo(pointB);
-    const distanceKm = distanceMeters / 1000;
-
-    const roundedKm = Math.round(distanceKm);
-    return roundedKm;
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-    if (this.map) {
-      this.map.off('moveend');
-      this.map.off('zoomend');
-    }
+    if (this.map) this.map.remove();
   }
 
-  /**
-   * Carga datos en teselas geográficas de tamaño fijo, sin recargar las ya solicitadas.
-   */
+  // ─── Inicialización de Leaflet ───────────────────────────────────────────
 
-  private getTileSizeForZoom(zoom: number): number {
-    if (zoom <= 5) return 5.0;    // Continental view: 5° tiles
-    if (zoom <= 8) return 2.0;    // Regional view: 2° tiles
-    if (zoom <= 12) return 1.0;   // Sub-regional: 1° tiles
-    if (zoom <= 15) return 0.5;   // Local: 0.5° tiles
-    return 0.25;                  // Detailed: 0.25° tiles
+  private initMap(): void {
+    const init = this.locationSvc.getLocationInitial();
+    const [lat, lng] = init.location as [number, number];
+    this.map = L.map('map', {
+      zoomControl: false,
+      maxZoom: 18,
+      minZoom: 3,
+      attributionControl: false,
+    }).setView([lat, lng], init.zoom);
+
+    this.zoomLevel = init.zoom;
+    L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}').addTo(this.map);
+    this.mapSvc.setMap(this.map);
   }
 
+  private initWmsLayers(): void {
+    const configs = this.geometrySvc.getAllLayersConfig();
+    configs.forEach(cfg => {
+      const layer = L.tileLayer.wms(
+        this.geometrySvc.getWMSLayersURL(),
+        this.geometrySvc.getWMSLayersParams(cfg)
+      );
+      this.wmsLayers.push(layer);
+      layer.addTo(this.map);
+    });
+  }
+
+  private initMarkerCluster(): void {
+    this.markerCluster = L.markerClusterGroup({
+      chunkedLoading: true,
+      chunkInterval: 200,
+      chunkDelay: 50,
+      maxClusterRadius: 80,
+      spiderfyOnMaxZoom: true,
+    });
+    this.map.addLayer(this.markerCluster);
+    this.debouncedLoadTiles(); // carga inicial
+  }
+
+  /** Control de capas: WMS layers + marcador cluster **/
+  private addLayerControl(): void {
+    const overlays: Record<string, L.Layer> = {
+      'Puntos (Cluster)': this.markerCluster,
+    };
+    this.wmsLayers.forEach((layer, i) => {
+      // console.log(layer.options.layers)
+      overlays[`${layer.options.layers}`] = layer;
+    });
+    L.control.layers({}, overlays, { collapsed: false }).addTo(this.map);
+  }
+
+  /** Suscribe toggle de estadísticas para reposicionar toolbar **/
+  private subscribeStatsToggle(): void {
+    this.statsToggle.state$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(open => {
+        this.showStatistics = open;
+        setTimeout(() => {
+          this.updateToolbarPositions();
+          this.cd.markForCheck();
+        }, 0);
+      });
+  }
+
+  // ─── Listeners y carga de datos ────────────────────────────────────────────
+
+  private setupMapListeners(): void {
+    this.ngZone.runOutsideAngular(() => {
+      this.map.on('click', e => {
+        if (this.markMode) {
+          this.ngZone.run(() => this.onMapClick(e));
+        } else {
+          if (this.lastMarker) {
+            this.map.removeLayer(this.lastMarker);
+          }
+        }
+      });
+      this.map.on('moveend', () => this.debouncedLoadTiles());
+      this.map.on('zoomend', () => {
+        this.ngZone.run(() => {
+          this.zoomLevel = this.map.getZoom();
+          this.mapSvc.updateZoomLevel(this.zoomLevel);
+          this.cd.markForCheck();
+          this.debouncedLoadTiles();
+        });
+      });
+      this.map.on('mousemove', (e: L.LeafletMouseEvent) => {
+        this.mapSvc.updateCursorCoords([e.latlng.lat, e.latlng.lng]);
+      });
+    });
+  }
+
+  /** Debounce manual para moveend/zoomend **/
+  private debouncedLoadTiles = (() => {
+    const s = new Subject<void>();
+    s.pipe(debounceTime(250), takeUntil(this.destroy$)).subscribe(() => this.loadTiles());
+    return () => s.next();
+  })();
+
+  /** Carga GeoJSON por teselas y añade círculos al cluster **/
   private loadTiles(): void {
     const zoom = this.map.getZoom();
     const tileSize = this.getTileSizeForZoom(zoom);
@@ -279,7 +286,7 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
           const eastLng = (tile.x + 1) * tileSize;
           const southLat = tile.y * tileSize;
           const northLat = (tile.y + 1) * tileSize;
-          return this.geometryService.getGeoJsonData(northLat, southLat, eastLng, westLng).pipe(
+          return this.geometrySvc.getGeoJsonData(northLat, southLat, eastLng, westLng).pipe(
             takeUntil(this.destroy$),
             tap(resp => this.loadedTiles.add(tile.key)),
             map(resp => resp.SDT_GeoJson)
@@ -288,59 +295,80 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
         takeUntil(this.destroy$)
       )
       .subscribe(json => {
-        if (json) this.addMarkers(json);
+        if (json) this.addCircles(json);
       });
 
+    // const zoom = this.map.getZoom();
+    // const tileSize = this.getTileSizeForZoom(zoom);
+    // const bounds = this.map.getBounds();
+
+    // // Calcula tiles visibles
+    // const xMin = Math.floor(bounds.getWest() / tileSize);
+    // const xMax = Math.floor(bounds.getEast() / tileSize);
+    // const yMin = Math.floor(bounds.getSouth() / tileSize);
+    // const yMax = Math.floor(bounds.getNorth() / tileSize);
+
+    // const requests: Array<Promise<any>> = [];
+    // for (let x = xMin; x <= xMax; x++) {
+    //   for (let y = yMin; y <= yMax; y++) {
+    //     requests.push(
+    //       this.geometrySvc
+    //         .getGeoJsonData(
+    //           y * tileSize + tileSize,
+    //           y * tileSize,
+    //           (x + 1) * tileSize,
+    //           x * tileSize
+    //         )
+    //         .toPromise()
+    //     );
+    //   }
+    // }
+
+    // // Una vez se resuelvan todas las promesas, actualizamos cluster de una sola vez
+    // Promise.all(requests).then(resps => {
+    //   this.markerCluster.clearLayers();
+    //   resps.forEach(resp => this.addCircles(resp.SDT_GeoJson));
+    // });
   }
 
-  private initMap(): void {
-    const baseMapURL = 'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
-    this.map = L.map('map', { zoomControl: false, maxZoom: 18, minZoom: 3, attributionControl: false, })
-      .setView(this.location, this.zoom);
-    L.tileLayer(baseMapURL, {
-      // opacity: 0.8
-    }).addTo(this.map);
-    this.mapService.setMap(this.map);
+  private getTileSizeForZoom(z: number): number {
+    if (z <= 5) return 5.0;
+    if (z <= 8) return 2.0;
+    if (z <= 12) return 1.0;
+    if (z <= 15) return 0.5;
+    return 0.25;
   }
 
-  private getLayer() {
-    const configs = this.geometryService.getAllLayersConfig()
-    configs.forEach(async config => {
-      const url = this.geometryService.getWMSLayersURL();
-      const options = this.geometryService.getWMSLayersParams(config);
-      const layer = L.tileLayer.wms(url, options);
-      layer.addTo(this.map);
-      this.wmsLayers.push(layer);
-    });
+  /** Añade circleMarkers al cluster, filtrando por viewport y coloreando **/
+  // private addCircles(data: any): void {
+  //   const bounds = this.map.getBounds();
+  //   const features = (data.features || data).filter((feat: any) => {
+  //     const [lng, lat] = feat.geometry.coordinates;
+  //     return bounds.contains([lat, lng]);
+  //   });
 
-    const overlays = this.wmsLayers.reduce((acc, layer, idx) => {
-      const key = configs[idx].layerName;
-      acc[key] = layer;
-      return acc;
-    }, {} as Record<string, L.TileLayer.WMS>);
+  //   features.forEach((feat: any) => {
+  //     const [lng, lat] = feat.geometry.coordinates;
+  //     const opts: L.CircleMarkerOptions = {
+  //       radius: 6,
+  //       fillOpacity: 0.8,
+  //       color: '#000',
+  //       weight: 1,
+  //       fillColor: feat.properties.TipoDireccionCod === '1' ? 'green' : 'orange',
+  //     };
+  //     const circle = L.circleMarker([lat, lng], opts)
+  //       .on('click', e => this.onFeatureClick(e, feat));
+  //     this.markerCluster.addLayer(circle);
+  //   });
 
-    L.control.layers({}, overlays, { collapsed: false })
-      .addTo(this.map);
-  }
+  //   console.log('info cluster: ', this.markerCluster)
+  //   this.mapSvc.setMarkerClusterGroup(this.markerCluster);
+  // }
 
-  private initCluster(): void {
-    this.markerClusterGroup = L.markerClusterGroup({
-      spiderfyOnMaxZoom: true,
-      removeOutsideVisibleBounds: true,
-      chunkedLoading: true,
-      chunkInterval: 200,
-      chunkDelay: 50,
-      iconCreateFunction: cluster => {
-        const count = cluster.getChildCount();
-        return L.divIcon({ html: `<div class="custom-cluster">${count}</div>`, className: 'marker-cluster-custom', iconSize: L.point(40, 40) });
-      }
-    });
-    this.map.addLayer(this.markerClusterGroup);
-  }
-
-  private addMarkers(data: any): void {
-    const greenOpts: L.CircleMarkerOptions = { radius: 8, fillColor: '#157d35', color: '#000', weight: 1, opacity: 1, fillOpacity: 1 };
-    const orangeOpts: L.CircleMarkerOptions = { radius: 8, fillColor: '#d75810', color: '#000', weight: 1, opacity: 1, fillOpacity: 1 };
+  
+  private addCircles(data: any): void {
+    const greenOpts: L.CircleMarkerOptions = { radius: 6, fillColor: '#157d35', color: '#000', weight: 1, opacity: 1, fillOpacity: 0.8 };
+    const orangeOpts: L.CircleMarkerOptions = { radius: 6, fillColor: '#d75810', color: '#000', weight: 1, opacity: 1, fillOpacity: 0.8 };
 
     L.geoJSON(data, {
       pointToLayer: (feature, latlng) => {
@@ -362,107 +390,13 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
             this.map.flyTo(loc, 17, { animate: false });
             this.showCardUser(acct, id);
           });
-          this.markerClusterGroup.addLayer(layer);
+          this.markerCluster.addLayer(layer);
         }
       }
     });
-    this.mapService.setMarkerClusterGroup(this.markerClusterGroup);
+    this.mapSvc.setMarkerClusterGroup(this.markerCluster);
   }
 
-  private updateMarkers(data: any): void {
-    const baseOpts: L.CircleMarkerOptions = {
-      radius: 8,
-      fillColor: "#FFA500",
-      color: "#000000",
-      weight: 1,
-      opacity: 1,
-      fillOpacity: 1
-    };
-    const greenOpts = { ...baseOpts, fillColor: "#157d35" };
-    const orangeOpts = { ...baseOpts, fillColor: "#d75810" };
-
-    // 1) Inicializa o limpia el cluster
-    if (!this.markerClusterGroup) {
-      this.markerClusterGroup = L.markerClusterGroup({
-        spiderfyOnMaxZoom: true,
-        iconCreateFunction: cluster => {
-          const count = cluster.getChildCount();
-          return L.divIcon({
-            html: `<div class="custom-cluster">${count}</div>`,
-            className: 'marker-cluster-custom',
-            iconSize: L.point(40, 40)
-          });
-        }
-      });
-      this.map.addLayer(this.markerClusterGroup);
-    } else {
-      this.markerClusterGroup.clearLayers();
-    }
-
-    // 2) Creamos una capa GeoJSON que devuelve L.Marker con DivIcon
-    const geoJsonLayer = L.geoJSON(data, {
-      pointToLayer: (feature, latlng) => {
-        const opts = feature.properties.TipoDireccionCod === 1 ? greenOpts : orangeOpts;
-        const icon = this.createCircleDivIcon(opts);
-        const marker = L.marker(latlng, { icon });
-        // guarda la feature para referencia futura
-        (marker as any).feature = feature;
-        // click handler (igual que antes)
-        marker.on("click", e => {
-          // tu lógica de click aquí...
-        });
-        return marker;
-      }
-    });
-
-    // 3) Añadimos cada marcador al cluster
-    geoJsonLayer.eachLayer(layer => {
-      if (layer instanceof L.Marker) {
-        this.markerClusterGroup!.addLayer(layer);
-      }
-    });
-
-    // 4) Emitimos el cluster YA poblado
-    this.mapService.setMarkerClusterGroup(this.markerClusterGroup);
-  }
-
-  private focusOnPoint(adressId: string, latitude?: number, longitude?: number): void {
-
-    const all = this.markerClusterGroup.getLayers() as L.CircleMarker[];
-    const target = all.find(
-      m => m.feature?.properties?.Direccion_Id === adressId
-    );
-
-    if (target) {
-      const parent = this.markerClusterGroup.getVisibleParent(
-        target as any as L.Marker
-      );
-      if (parent) {
-        this.map.fitBounds((parent as any).getBounds());
-      }
-
-      const ll = target.getLatLng();
-      this.map.setView(ll, this.map.getMaxZoom());
-      target.openPopup();
-      target.setStyle({ radius: 12, fillColor: '#ff0000' });
-
-    } else if (latitude != null && longitude != null) {
-      const delta = 0.01; // ~1km aprox.
-      const north = latitude + delta, south = latitude - delta;
-      const east = longitude + delta, west = longitude - delta;
-
-      this.geometryService.getGeoJsonData(north, south, east, west)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe(resp => {
-          const json = resp.SDT_GeoJson;
-          // 4) actualizo markers y vuelvo a intentar enfoque
-          this.updateMarkers(json);
-          // this.focusOnPoint(adressId, latitude, longitude);
-        });
-    } else {
-      console.warn(`Ni marcador ni lat/lng disponibles para Direccion_Id ${adressId}`);
-    }
-  }
 
   private createCircleDivIcon(opts: L.CircleMarkerOptions): L.DivIcon {
     const size = opts.radius! * 2;
@@ -473,59 +407,118 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
     const html = `<div style="width:${size}px;height:${size}px;background-color:${color};border:${border}px solid ${stroke};border-radius:50%;opacity:${fillOpacity};"></div>`;
     return L.divIcon({ className: '', html, iconSize: [size, size], iconAnchor: [size / 2, size / 2] });
   }
+ 
 
-  private getLocateMap(): void {
-    const response = this.locationService.getLocationInitial();
-    this.location = response.location as [number, number];
-    this.zoom = response.zoom;
+  /** Maneja clic en circleMarker **/
+  private onFeatureClick(e: L.LeafletMouseEvent, feat: any): void {
+    const circle = e.target as L.CircleMarker;
+    const { lat, lng } = circle.getLatLng();
+    this.map.flyTo([lat, lng], 17, { animate: false });
+    circle
+      .bindPopup(`Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}`)
+      .openPopup();
+    this.showCardUser(feat.properties.AcreditadoNumCuen, feat.properties.Direccion_Id);
   }
 
-  onZoomChange(newZoom: number): void {
-    this.zoomLevel = newZoom;
-    this.map.setZoom(this.zoomLevel);
+  // ─── Mark Mode ──────────────────────────────────────────────────────────────
+
+  toggleMarkMode(): void {
+    this.markMode = !this.markMode;
   }
+
+  private onMapClick(e: L.LeafletMouseEvent): void {
+    if (this.lastMarker) {
+      this.map.removeLayer(this.lastMarker)
+      this.lastMarker = null
+    };
+    this.lastMarker = L.circleMarker(e.latlng, {
+      radius: 6,
+      fillOpacity: 1,
+      color: '#000',
+      weight: 1,
+      fillColor: 'blue',
+    })
+      .addTo(this.map)
+      .bindPopup(`Lat: ${e.latlng.lat.toFixed(6)}, Lng: ${e.latlng.lng.toFixed(6)}`)
+      .openPopup();
+  }
+
+  // ─── Estadísticas & Toolbar ────────────────────────────────────────────────
+
+  onStatsToggled(): void {
+    this.showStatistics = !this.showStatistics;
+    setTimeout(() => {
+      this.updateToolbarPositions();
+      this.cd.markForCheck();
+    }, 0);
+  }
+
+  private updateToolbarPositions(): void {
+    const el = this.statsRef?.nativeElement;
+    const statsW = this.showStatistics && el
+      ? el.getBoundingClientRect().width
+      : 0;
+    const parentW = el?.parentElement
+      ? (el.parentElement as HTMLElement).getBoundingClientRect().width
+      : 0;
+    this.toolbarLeftPx = (parentW - statsW) / 2;
+    this.toolbarRightPx = statsW + this.toolbarOffset;
+  }
+
+  // ─── Acciones del Toolbar ───────────────────────────────────────────────────
 
   resetMap(): void {
-    this.map.setView(this.location, this.zoom);
+    const init = this.locationSvc.getLocationInitial();
+    const [lat, lng] = init.location as [number, number];
+    this.map.setView([lat, lng], init.zoom);
+    if (this.lastMarker) {
+      this.map.removeLayer(this.lastMarker);
+      this.lastMarker = undefined;
+    }
   }
 
   zoomIn(): void {
-    if (this.zoomLevel < 18) this.map.setZoom(++this.zoomLevel);
+    this.map.zoomIn();
   }
 
   zoomOut(): void {
-    if (this.zoomLevel > 3) this.map.setZoom(--this.zoomLevel);
+    this.map.zoomOut();
   }
 
-  onRangeChange(newZoom: number): void {
-    this.zoomLevel = newZoom;
-    this.onZoomChange(this.zoomLevel);
+  onRangeChange(z: number): void {
+    this.map.setZoom(z);
+    this.zoomLevel = z;
   }
 
   locateUser(): void {
-    this.map.locate({ setView: true, maxZoom: 16 });
-    this.map.on('locationfound', (e: any) => this.onLocationFound(e));
-    this.map.on('locationerror', (e: any) => this.onLocationError(e));
+    this.map
+    .locate({ setView: true, maxZoom: 16 })
+    .on('locationfound', e => {
+      const latlng = e.latlng;
+  
+      const myIcon = L.icon({
+        iconUrl: 'assets/marker.svg',
+        iconSize: [36, 36],       
+        iconAnchor: [18, 36],     
+        popupAnchor: [0, -30]     
+      });
+      L.marker(latlng, { icon: myIcon })
+        .addTo(this.map)
+        .bindPopup(`Latitud: ${latlng.lat.toFixed(6)}<br>Longitud: ${latlng.lng.toFixed(6)}<br>Precisión: ${e.accuracy.toFixed(2)} metros`)
+        .openPopup(); 
+    })
+    .on('locationerror', e => alert(e.message));
   }
 
-  onLocationFound(e: any): void {
-    const radius = e.accuracy / 2;
-    // L.marker(e.latlng).addTo(this.map).bindPopup('You are within ' + radius + ' meters from this point').openPopup();
-
-    L.circle(e.latlng, {
-      radius: radius,
-    }).addTo(this.map);
-  }
-
-  onLocationError(e: any): void {
-    alert(e.message);
-  }
-
-  showCardUser(infoInput: string, infoAdress: string): void {
-    const data = { filterName: 'AcreditadoNumCuen', filterValue: infoInput, idAdress: infoAdress };
-    this.dialogService.closeAll();
-    this.dialogService.open({ component: ContactCardComponent, data });
+  private showCardUser(account: string, addressId: string): void {
+    this.dialog.closeAll();
+    this.dialog.open({
+      component: ContactCardComponent,
+      data: {
+        filterName: 'AcreditadoNumCuen',
+        filterValue: account,
+        idAdress: addressId,
+      },
+    });
   }
 }
-
-
