@@ -27,6 +27,9 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
   private location!: [number, number];
   private zoom!: number;
   zoomLevel = 8;
+  lastMarker?: L.Marker;
+  lastClick?: L.LatLng;
+  markMode = false;
   private wmsLayers: L.TileLayer.WMS[] = [];
 
   private markerClusterGroup!: L.MarkerClusterGroup;
@@ -166,6 +169,52 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
     this.resizeSub = fromEvent(window, 'resize')
       .pipe(debounceTime(100))
       .subscribe(() => this.updateToolbarPositions());
+
+    //ubicacion con punto
+    this.map.on('click', (e: L.LeafletMouseEvent) => {
+      if (this.markMode) {
+        this.onMapClick(e);
+        // opcionalmente, desactivar modo tras un solo clic:
+        // this.markMode = false;
+      }
+    });
+  }
+
+  toggleMarkMode(): void {
+    this.markMode = !this.markMode;
+  }
+
+  /** Procesa el clic y pinta el marcador */
+  private onMapClick(e: L.LeafletMouseEvent): void {
+    const myIcon = L.icon({
+      iconUrl: 'assets/marker.svg',
+      // shadowUrl: 'assets/custom-shadow.png',
+      iconSize: [36, 36],
+      iconAnchor: [18, 36],
+      popupAnchor: [0, -30]
+    });
+
+    // elimina marcador previo
+    if (this.lastMarker) {
+      this.map.removeLayer(this.lastMarker);
+    }
+
+    // crea nuevo marcador con icono
+    this.lastMarker = L.marker(e.latlng, { icon: myIcon })
+      .addTo(this.map)
+      .bindPopup(`Lat: ${e.latlng.lat}, Lng: ${e.latlng.lng}`)
+      .openPopup();
+
+    // this.lastClick = e.latlng;
+    // if (this.lastMarker) {
+    //   this.map.removeLayer(this.lastMarker);
+    // }
+    // this.lastMarker = L.marker(e.latlng)
+    //   .addTo(this.map)
+    //   .bindPopup(
+    //     `Lat: ${e.latlng.lat.toFixed(6)}<br>Lng: ${e.latlng.lng.toFixed(6)}`
+    //   )
+    //   .openPopup();
   }
 
   private updateScale(): number {
@@ -245,13 +294,6 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private initMap(): void {
-    // const baseMapURl = 'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
-    // this.map = L.map('map', { zoomControl: false, maxZoom: 18, minZoom: 3, attributionControl: false });
-    // L.tileLayer(baseMapURl).addTo(this.map);
-    // this.resetMap();
-    // //this.initCluster();
-    // this.mapService.setMap(this.map);
-
     const baseMapURL = 'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
     this.map = L.map('map', { zoomControl: false, maxZoom: 18, minZoom: 3, attributionControl: false, })
       .setView(this.location, this.zoom);
@@ -267,8 +309,8 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
       const url = this.geometryService.getWMSLayersURL();
       const options = this.geometryService.getWMSLayersParams(config);
       const layer = L.tileLayer.wms(url, options);
-      layer.addTo(this.map);              
-      this.wmsLayers.push(layer);        
+      layer.addTo(this.map);
+      this.wmsLayers.push(layer);
     });
 
     const overlays = this.wmsLayers.reduce((acc, layer, idx) => {
@@ -302,7 +344,7 @@ export class MapMainComponent implements OnInit, OnDestroy, AfterViewInit {
 
     L.geoJSON(data, {
       pointToLayer: (feature, latlng) => {
-        const opts = feature.properties.TipoDireccionCod === 1 ? greenOpts : orangeOpts;
+        const opts = feature.properties.TipoDireccionCod == "1" ? greenOpts : orangeOpts;
         const icon = this.createCircleDivIcon(opts);
         const marker = L.marker(latlng, { icon });
         (marker as any).feature = feature;

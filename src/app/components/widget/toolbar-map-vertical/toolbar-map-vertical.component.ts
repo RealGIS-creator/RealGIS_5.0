@@ -24,6 +24,7 @@ export class ToolbarMapVerticalComponent {
   @Output() zoomOutEvent = new EventEmitter<void>();
   @Output() rangeChangeEvent = new EventEmitter<number>();
   @Output() locateUserEvent = new EventEmitter<void>();
+  @Output() markPointEvent = new EventEmitter<void>();
 
   constructor(private toolbarMapVerticalService: ToolbarMapVerticalService) {}
 
@@ -53,5 +54,9 @@ export class ToolbarMapVerticalComponent {
 
   locateUserClick(): void {
     this.locateUserEvent.emit();
+  }
+
+  onMarkPointClick(): void {
+    this.markPointEvent.emit();
   }
 }

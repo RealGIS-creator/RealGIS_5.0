@@ -17,7 +17,7 @@ export class StatsToggleService {
     this.stateSubject.next(false);
   }
 
-  /** Si quieres alternar manualmente */
+  /** alternar manualmente */
   toggle(): void {
     this.stateSubject.next(!this.stateSubject.value);
   }
