@@ -59,7 +59,7 @@ export class ContactCardComponent {
       if (response && response.SDT_TarjetaContacto && response.SDT_TarjetaContacto.length) {
         this.infoUserCard = response.SDT_TarjetaContacto[0];
         this.cdRef.detectChanges();
-        this.selectAddress()
+        // this.selectAddress()
         this.showPointOnMap();
       } else {
         console.error('No se encontraron datos en la respuesta');
@@ -71,6 +71,7 @@ export class ContactCardComponent {
     const latitude = parseFloat(this.infoUserCard.GeoDomicilioLati);
     const longitude = parseFloat(this.infoUserCard.GeoDomicilioLongi);
     this.locationService.emitPoint(latitude, longitude);
+    //this.selectAddress()
   }
 
   showInformationPersonal(): void {

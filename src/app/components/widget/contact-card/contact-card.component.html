@@ -4,12 +4,12 @@
             <div class="d-flex justify-content-between align-items-center">
                 <b>Tarjeta de Contacto</b>
                 <div>
-                    <img class="icon button-header" src="assets/icon/company_white.svg" alt="">
-                    <img class="icon-header button-header" src="assets/icon/contact_card_download.svg" alt=""
+                    <img class="pointer-defaul icon button-header" src="assets/icon/company_white.svg" alt="">
+                    <img class="pointer-defaul icon-header button-header" src="assets/icon/contact_card_download.svg" alt=""
                         (click)="download()">
-                    <img class="icon-header button-header" src="assets/icon/contact_card_minimize.svg" alt=""
+                    <img class="pointer-defaul icon-header button-header" src="assets/icon/contact_card_minimize.svg" alt=""
                         (click)="minimize()">
-                    <img class="icon-header button-header" src="assets/icon/contact_card_close.svg" alt=""
+                    <img class="pointer-defaul icon-header button-header" src="assets/icon/contact_card_close.svg" alt=""
                         (click)="close()">
                 </div>
             </div>
@@ -17,24 +17,24 @@
 
         <div class="d-flex justify-content-between align-items-center">
             <div>
-                <div class="title id-credit">ID DE CRÉDITO : {{ infoUserCard.AcreditadoNumCuen }}</div>
-                <div>Identificación : {{ infoUserCard.AcreditadoIdenti }}</div>
-                <div>Nombre : {{ infoUserCard.AcreditadoNom }}</div>
-                <div>No. Acreditado : {{ infoUserCard.AcreditadoNum }}</div>
-                <div class="title">CIS : {{ infoUserCard.CuentasCis }}</div>
+                <div class="pointer-defaul title id-credit">ID DE CRÉDITO : {{ infoUserCard.AcreditadoNumCuen }}</div>
+                <div class="pointer-defaul">Identificación : {{ infoUserCard.AcreditadoIdenti }}</div>
+                <div class="pointer-defaul">Nombre : {{ infoUserCard.AcreditadoNom }}</div>
+                <div class="pointer-defaul">No. Acreditado : {{ infoUserCard.AcreditadoNum }}</div>
+                <div class="title pointer-defaul">CIS : {{ infoUserCard.CuentasCis }}</div>
             </div>
             <img class="icon-user" src="assets/icon/contact_card_user.svg" alt="icono desplegar">
         </div>
 
         <div class="col">
             <div class="title">Estrategia</div>
-            <span class="badge bg-strategy"
+            <span class="pointer-defaul badge bg-strategy"
                 [ngClass]="{'bg-product': infoUserCard.TipoEstrategia_Id == '3'}">TDD</span>
-            <span class="badge bg-strategy"
+            <span class="pointer-defaul badge bg-strategy"
                 [ngClass]="{'bg-product': infoUserCard.TipoEstrategia_Id == '2'}">TDC</span>
-            <span class="badge bg-strategy"
+            <span class="pointer-defaul badge bg-strategy"
                 [ngClass]="{'bg-product': infoUserCard.TipoEstrategia_Id == '1'}">TOKENIZACIÓN</span>
-            <span class="badge bg-strategy"
+            <span class="pointer-defaul badge bg-strategy"
                 [ngClass]="{'bg-product': infoUserCard.TipoEstrategia_Id == '4'}">DESCUENTO
                 DIRECTO</span>
         </div>
@@ -43,28 +43,28 @@
             <div class="col">
                 <div class="title mt-2">Tipo de producto</div>
                 <div class="col">
-                    <span class="badge bg-product">{{ infoUserCard.TipoProductoNom }}</span>
+                    <span class="pointer-defaul badge bg-product">{{ infoUserCard.TipoProductoNom }}</span>
                 </div>
             </div>
             <div class="col">
                 <div class="title mt-2">Dias de mora / Gaveta</div>
                 <div class="col">
-                    <span class="badge bg-days">{{ infoUserCard.CuentasDiasMoraGave }}</span>
+                    <span class="pointer-defaul badge bg-days">{{ infoUserCard.CuentasDiasMoraGave }}</span>
                 </div>
             </div>
         </div>
 
         <div class="title mt-2">Tipo de Predio</div>
         <div>
-            <span class="badge bg-property" [ngClass]="{'bg-days': infoUserCard.TipoDireccionCod == '1'}">Residencial</span>
-            <span class="badge bg-property" [ngClass]="{'bg-days': infoUserCard.TipoDireccionCod == '2' || infoUserCard.TipoDireccionCod == '3'}">Comercial</span>
-            <span class="badge bg-property" >Industrial</span>
+            <span class="pointer-defaul badge bg-property" [ngClass]="{'bg-days': infoUserCard.TipoDireccion_Id == '1'}">Residencial</span>
+            <span class="pointer-defaul badge bg-property" [ngClass]="{'bg-days': infoUserCard.TipoDireccion_Id == '2' || infoUserCard.TipoDireccion_Id == '3'}">Comercial</span>
+            <span class="pointer-defaul badge bg-property" >Industrial</span>
         </div>
 
         <div class="title mt-2">Saldo de Producto</div>
-        <div class="badge bg-product"><b>$ {{ infoUserCard.CuentasSalPro }} USD</b></div>
+        <div class="pointer-defaul badge bg-product"><b>$ {{ infoUserCard.CuentasSalPro }} USD</b></div>
 
-        <div>
+        <div class="pointer-defaul">
             <div class="bg-info mt-3 d-flex justify-content-between align-items-center"
                 (click)="showInformationEmployment()">
                 <div class="title">Información Laboral</div>
@@ -107,7 +107,7 @@
             </div>
         </div>
 
-        <div>
+        <div class="pointer-defaul">
             <div class="bg-info mt-3 d-flex justify-content-between align-items-center"
                 (click)="showInformationPersonal()">
                 <div class="title">Información Personal</div>
@@ -153,25 +153,29 @@
             </div>
         </div>
 
-        <div class="mt-2">
+        <div class="mt-2 pointer">
             <div class="badge" [class]="isVisibleFarmsContactCard ? 'bg-green' : 'bg-days'"
                 (click)="openAssociatedFarmsContactCard()">FINCAS ASOCIADAS</div>
         </div>
 
-        <div class="bg-info location mt-3 d-flex justify-content-center align-items-center" (click)="showPointOnMap()">
+        <div class="pointer bg-info location mt-3 d-flex justify-content-center align-items-center" (click)="showPointOnMap()">
             <img class="icon" src="assets/icon/contact_card_location.svg" alt="">
             {{ infoUserCard.GeoDomicilioLongi }} - {{ infoUserCard.GeoDomicilioLati }}
         </div>
 
+        <div class="d-flex justify-content-center align-items-center mt-3">
+            <div class="pointer badge bg-days" (click)="updateContactCard()">EDITAR TC</div>
+        </div>
+
     </app-movable-card>
 
-    <app-movable-card [initialX]="10" [initialY]="566" [paramWidth]="30"  [showHeader]="false">
+    <!-- <app-movable-card [initialX]="10" [initialY]="566" [paramWidth]="30"  [showHeader]="false">
         <div>
             <div class="d-flex justify-content-center align-items-center">
                 <div class="badge bg-days" (click)="updateContactCard()">EDITAR TC</div>
             </div>
         </div>
-    </app-movable-card>
+    </app-movable-card> -->
 
 </ng-container>
 <ng-template #loading>

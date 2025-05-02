@@ -103,13 +103,13 @@
 
     <div class="col">
         <div class="title">Estrategia</div>
-        <span class="badge bg-property-input" [ngClass]="{'bg-active': dataObject.TipoEstrategia_Id == '3'}"
+        <span class="pointer badge bg-property-input" [ngClass]="{'bg-active': dataObject.TipoEstrategia_Id == '3'}"
             (click)="onEstrategia('TDD', '3')">TDD</span>
-        <span class="badge bg-property-input" [ngClass]="{'bg-active': dataObject.TipoEstrategia_Id == '2'}"
+        <span class="pointer badge bg-property-input" [ngClass]="{'bg-active': dataObject.TipoEstrategia_Id == '2'}"
             (click)="onEstrategia('TDC', '2')">TDC</span>
-        <span class="badge bg-property-input" [ngClass]="{'bg-active': dataObject.TipoEstrategia_Id == '4'}"
+        <span class="pointer badge bg-property-input" [ngClass]="{'bg-active': dataObject.TipoEstrategia_Id == '4'}"
             (click)="onEstrategia('TOKENIZACION', '4')">TOKENIZACIÓN</span>
-        <span class="badge bg-property-input" [ngClass]="{'bg-active': dataObject.TipoEstrategia_Id == '1'}"
+        <span class="pointer badge bg-property-input" [ngClass]="{'bg-active': dataObject.TipoEstrategia_Id == '1'}"
             (click)="onEstrategia('DESCUENTO DIRECTO', '1')">DESCUENTO DIRECTO</span>
     </div>
 
@@ -170,7 +170,7 @@
             <div class="title mt-2">Saldo de Producto</div>
             <div class="d-flex align-items-center">
                 <input type="text" name="saldo" id="saldo" class="form-control bg-none-input bg-none-input-sm"
-                    pattern="^\d+(,\d*)?$" #saldoModel="ngModel" OnlyDecimalComma placeholder="Saldo Producto"
+                    pattern="^-?\d+(,\d*)?$" #saldoModel="ngModel" OnlyDecimalComma placeholder="Saldo Producto"
                     [(ngModel)]="dataObject.CuentasSalPro" autocomplete="off">
 
                 <!-- <div class="text-info mt-1" *ngIf="saldoModel.touched">
@@ -183,7 +183,7 @@
     </div>
 
     <!-- informacion laboral -->
-    <div>
+    <div class="pointer-defaul">
         <div class="bg-info mt-3 d-flex justify-content-between align-items-center" (click)="editInformacionLaboral()">
             <div class="title">Información Laboral</div>
             <div class="badge bg-property">
@@ -276,7 +276,7 @@
     </div>
 
     <!-- Informacion Personal -->
-    <div>
+    <div class="pointer-defaul">
         <div class="bg-info mt-3 d-flex justify-content-between align-items-center" (click)="editInformacionPersonal()">
             <div class="title">Información Personal</div>
         </div>
@@ -293,7 +293,7 @@
                 <div class="col"><b>Teléfonos de Contacto:</b>
                     <div class="d-flex align-items-center">
                         <div class=""><b>Móvil(es)</b>:</div>
-                        <div class="badge bg-property" [ngClass]="{'bg-active': isAddTelefonoMovil == true}"
+                        <div class="pointer badge bg-property" [ngClass]="{'bg-active': isAddTelefonoMovil == true}"
                             (click)="AddTelefonoMovil(1)"><b>Añadir</b>
                         </div>
                     </div>
@@ -303,7 +303,7 @@
                             <div *ngIf="personal.TipoTelefonoCod == '1'" class="d-flex align-items-center">
                                 <div class="badge bg-property"><b>{{ personal.TelefonoPre }}</b></div>
                                 <div class="badge bg-property me-1"><b>{{ personal.TelefonoNum }}</b></div>
-                                <img class="icon button-header me-1" src="assets/icon/delete.svg" alt="Eliminar"
+                                <img class="pointer icon button-header me-1" src="assets/icon/delete.svg" alt="Eliminar"
                                     (click)="deleteTelefono(personal.Telefono_Id)">
                             </div>
                         </div>
@@ -312,7 +312,7 @@
             </div>
             <div class="d-flex align-items-center mt-2">
                 <div><b>Residencial(es)</b>:</div>
-                <div class="badge bg-property" [ngClass]="{'bg-active': isAddTelefonoResidencial == true}"
+                <div class="pointer badge bg-property" [ngClass]="{'bg-active': isAddTelefonoResidencial == true}"
                     (click)="AddTelefonoResidencial(2)"><b>Añadir</b>
                 </div>
             </div>
@@ -323,7 +323,7 @@
                             class="d-flex align-items-center">
                             <div class="badge bg-property"><b>{{ personal.TelefonoPre }}</b></div>
                             <div class="badge bg-property me-1"><b>{{ personal.TelefonoNum }}</b></div>
-                            <img class="icon button-header me-1" src="assets/icon/delete.svg" alt="Eliminar"
+                            <img class="pointer icon button-header me-1" src="assets/icon/delete.svg" alt="Eliminar"
                                 (click)="deleteTelefono(personal.Telefono_Id)">
                         </div>
                     </div>
@@ -332,7 +332,7 @@
 
             <div class="d-flex align-items-center mt-2">
                 <div><b>Otros</b>:</div>
-                <div class="badge bg-property" [ngClass]="{'bg-active': isAddTelefonoOtro == true}"
+                <div class="pointer badge bg-property" [ngClass]="{'bg-active': isAddTelefonoOtro == true}"
                     (click)="AddTelefonoOtro(5)"><b>Añadir</b>
                 </div>
             </div>
@@ -341,7 +341,7 @@
                     <div *ngIf="personal.TipoTelefonoCod == '5'" class="d-flex align-items-center">
                         <div class="badge bg-property"><b>{{ personal.TelefonoPre }}</b></div>
                         <div class="badge bg-property me-1"><b>{{ personal.TelefonoNum }}</b></div>
-                        <img class="icon button-header me-1" src="assets/icon/delete.svg" alt="Eliminar"
+                        <img class="pointer icon button-header me-1" src="assets/icon/delete.svg" alt="Eliminar"
                             (click)="deleteTelefono(personal.Telefono_Id)">
                     </div>
                 </div>
@@ -349,7 +349,7 @@
 
             <div class="d-flex align-items-center mt-2">
                 <div><b>Email de contacto</b>:</div>
-                <div class="badge bg-property" [ngClass]="{'bg-active': isAddEmail == true}" (click)="AddEmail()">
+                <div class="pointer badge bg-property" [ngClass]="{'bg-active': isAddEmail == true}" (click)="AddEmail()">
                     <b>Añadir</b>
                 </div>
             </div>
@@ -358,7 +358,7 @@
                     <div class="col-auto mt-2">
                         <div class="d-flex align-items-center">
                             <div class="badge bg-property"><b>{{ i + 1 }}. {{ personal.CorreoElec }}</b></div>
-                            <img class="icon button-header" src="assets/icon/delete.svg" alt="icono desplegar"
+                            <img class="pointer icon button-header" src="assets/icon/delete.svg" alt="icono desplegar"
                                 (click)="deleteEmail(personal.Correo_Id)">
                         </div>
                     </div>
@@ -367,10 +367,10 @@
         </div>
     </div>
 
-    <div class="mt-3">
+    <div class="mt-3 pointer-defaul">
         <div class="d-flex align-items-center">
             <div class="title mt-2">FINCAS ASOCIADAS</div>
-            <div class="badge bg-property" [ngClass]="{'bg-active': isAddFinca == true}" (click)="AddFinca()">
+            <div class="pointer badge bg-property" [ngClass]="{'bg-active': isAddFinca == true}" (click)="AddFinca()">
                 <b>Añadir</b>
             </div>
         </div>
@@ -406,7 +406,7 @@
                     </ng-container>
                 </div>
                 <div class="col">
-                    <img class="icon button-header" src="assets/icon/delete.svg" alt="icono desplegar"
+                    <img class="pointer icon button-header" src="assets/icon/delete.svg" alt="icono desplegar"
                         (click)="deleteFinca(dataObject.Finca_Id)">
                 </div>
             </div>
@@ -500,7 +500,7 @@
             </div>
 
             <div class="col">
-                <button class="btn badge bg-active" (click)="newTelefono()"
+                <button class="pointer btn badge bg-active" (click)="newTelefono()"
                     [disabled]="telPreModel.invalid || telModel.invalid">Guardar</button>
             </div>
         </div>
@@ -563,15 +563,15 @@
 
         <div class="row mt-2">
             <div class="col-4">
-                <span class="badge bg-strategy" [ngClass]="{'bg-active': typeEmail == 1}"
+                <span class="pointer badge bg-strategy" [ngClass]="{'bg-active': typeEmail == 1}"
                     (click)="onTipoEmail(1)">Personal</span>
             </div>
             <div class="col-4">
-                <span class="badge bg-strategy" [ngClass]="{'bg-active': typeEmail == 2}"
+                <span class="pointer badge bg-strategy" [ngClass]="{'bg-active': typeEmail == 2}"
                     (click)="onTipoEmail(2)">Laboral</span>
             </div>
             <div class="col">
-                <button class="btn badge bg-active" (click)="newEmail()"
+                <button class="pointer btn badge bg-active" (click)="newEmail()"
                     [disabled]="emailModel.invalid || !typeEmail">Guardar</button>
             </div>
         </div>
@@ -622,18 +622,18 @@
 
         <div class="row mt-1">
             <div class="col">
-                <span class="badge bg-property" [ngClass]="{'bg-active': dataObject.TipoPredioNom == 'Residencial'}"
+                <span class="pointer badge bg-property" [ngClass]="{'bg-active': dataObject.TipoPredioNom == 'Residencial'}"
                     (click)="onPredio('Residencial', '1')">Residencial</span>
-                <span class="badge bg-property" [ngClass]="{'bg-active': dataObject.TipoPredioNom == 'Comercial'}"
+                <span class="pointer badge bg-property" [ngClass]="{'bg-active': dataObject.TipoPredioNom == 'Comercial'}"
                     (click)="onPredio('Comercial', '2')">Comercial</span>
-                <span class="badge bg-property" [ngClass]="{'bg-active': dataObject.TipoPredioNom == 'Industrial'}"
+                <span class="pointer badge bg-property" [ngClass]="{'bg-active': dataObject.TipoPredioNom == 'Industrial'}"
                     (click)="onPredio('Industrial', '3')">Industrial</span>
             </div>
         </div>
 
         <div class="row mt-1">
             <div class="col">
-                <button class="btn badge bg-active" (click)="newFinca()">Guardar</button>
+                <button class="pointer btn badge bg-active" (click)="newFinca()">Guardar</button>
             </div>
         </div>
 
@@ -663,7 +663,7 @@
     <div>
         {{ message }}
 
-        <button class="btn badge bg-active" (click)="goTC()">Ir a la TC</button>
+        <button class="pointer btn badge bg-active" (click)="goTC()">Ir a la TC</button>
     </div>
 </app-movable-card>
 

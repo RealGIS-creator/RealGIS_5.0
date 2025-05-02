@@ -51,6 +51,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.mapService.markerClusterGroup$.subscribe(group => {
         this.markerClusterGroup = group
+        console.log('llega info', this.markerClusterGroup)
       })
     );
   }
@@ -183,6 +184,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
       return turf.booleanPointInPolygon(pt, polyGeo);
     });
 
+    console.log('dentro poli', insideMarkers)
     // 3. Extraemos únicamente la Direccion_Id de cada marker.feature.properties
     const ids = insideMarkers
       .map(m => (m as any).feature?.properties?.Direccion_Id)

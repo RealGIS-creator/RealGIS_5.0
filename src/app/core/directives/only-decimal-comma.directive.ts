@@ -4,7 +4,7 @@ import { Directive, ElementRef, HostListener, Renderer2 } from '@angular/core';
   selector: 'input[OnlyDecimalComma]'
 })
 export class OnlyDecimalCommaDirective {
-  private readonly FOCUS_MSG = 'Recuerda: puedes usar una sola coma (,) como separador decimal';
+  private readonly FOCUS_MSG = 'Recuerda: puedes usar una sola coma (,) como separador decimal y un signo menos (-) al inicio para valores negativos';
 
   constructor(
     private el: ElementRef<HTMLInputElement>,
@@ -14,14 +14,14 @@ export class OnlyDecimalCommaDirective {
   @HostListener('focus')
   onFocus() {
     const input = this.el.nativeElement;
-    input.setCustomValidity(this.FOCUS_MSG);                        
-    input.reportValidity();                                         
+    input.setCustomValidity(this.FOCUS_MSG);
+    input.reportValidity();
   }
 
   @HostListener('input')
   onInput() {
     const input = this.el.nativeElement;
-    input.setCustomValidity('');                                    
+    input.setCustomValidity('');
     const raw = input.value;
     const filtered = this.filterValue(raw);
     if (filtered !== raw) {
@@ -31,11 +31,24 @@ export class OnlyDecimalCommaDirective {
   }
 
   private filterValue(value: string): string {
-    let v = Array.from(value).filter(c => /\d|,/.test(c)).join('');
+    let v = value;
+
+    // 1. Permitir opcionalmente un '-' al inicio
+    const isNegative = v.startsWith('-');
+    if (isNegative) {
+      v = v.substring(1);
+    }
+
+    // 2. Filtrar dígitos y coma
+    v = Array.from(v).filter(c => /\d|,/.test(c)).join('');
+
+    // 3. Asegurar sólo una coma
     const parts = v.split(',');
     if (parts.length > 1) {
       v = parts.shift()! + ',' + parts.join('');
     }
-    return v;
+
+    // 4. Reconstruir con el signo negativo si lo había
+    return isNegative ? '-' + v : v;
   }
 }

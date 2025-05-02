@@ -56,6 +56,7 @@ export class GeometryService {
       { workspace: 'ws_Banistmo', layerName: 'Distritos_Pnm', format: 'image/png', opacity: 0.3 },
       { workspace: 'ws_Banistmo', layerName: 'Vias_Pnm', format: 'image/png', opacity: 0.8 },
       { workspace: 'ws_Banistmo', layerName: 'mancha_urbana', format: 'image/png', opacity: 0.8 },
+      { workspace: 'ws_Banistmo', layerName: 'SINAP_Pnm', format: 'image/png', opacity: 0.5 },
     ];
   }
 

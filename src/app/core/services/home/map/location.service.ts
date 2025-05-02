@@ -8,8 +8,8 @@ import { LocationMap } from '../../../../interfaces/location-map';
 export class LocationService {
 
   // private pointDataSubject = new BehaviorSubject<any>(null);
-  private pointDataSubject = new BehaviorSubject<null>(null);
-  pointData$: Observable<null> = this.pointDataSubject.asObservable();
+  private pointDataSubject = new Subject<any>();
+  pointData$: Observable<any> = this.pointDataSubject.asObservable();
 
   private pointDataParamSubject = new Subject<[number, number]>();
   public readonly pointDataParam$: Observable<[number, number]> = this.pointDataParamSubject.asObservable();

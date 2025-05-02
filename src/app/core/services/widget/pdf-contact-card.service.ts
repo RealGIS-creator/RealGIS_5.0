@@ -123,15 +123,16 @@ export class PdfContactCardService {
     posY += 5;
     let posX = marginX;
     checkAddPage(9);
-    const estrategias = ['TDD', 'TDC', 'TOKENIZACIÓN', 'DESCUENTO DIRECTO']
-    estrategias.forEach((badge: string) => {
-      const textWidth = pdf.getTextWidth(badge);
+    // const estrategias = ['TDD', 'TDC', 'TOKENIZACIÓN', 'DESCUENTO DIRECTO']
+    const estrategias = [{name:'TDD', id: 3}, {name:'TDC', id:2}, {name:'TOKENIZACIÓN', id:4}, {name:'DESCUENTO DIRECTO', id:1}]
+    estrategias.forEach((badge: any) => {
+      const textWidth = pdf.getTextWidth(badge.name);
       const dynamicBadgeWidth = textWidth + badgePadding;
 
-      contactoData.TipoEstrategiaNom == badge ? pdf.setFillColor(21, 125, 53) : pdf.setFillColor(80, 80, 80);
+      contactoData.TipoEstrategia_Id == badge.id ? pdf.setFillColor(21, 125, 53) : pdf.setFillColor(80, 80, 80);
       pdf.roundedRect(posX, posY, dynamicBadgeWidth, badgeHeight, 2, 2, 'F');
       pdf.setTextColor(255, 255, 255);
-      pdf.text(badge, posX + badgePadding / 2, posY + badgeHeight - 2);
+      pdf.text(badge.name, posX + badgePadding / 2, posY + badgeHeight - 2);
 
       posX += dynamicBadgeWidth + badgeSpacing;
     });
@@ -196,8 +197,20 @@ export class PdfContactCardService {
     posY += 1;
     pdf.setFont('Helvetica', 'normal');
     if (contactoData.TipoDireccionCod === '2' || contactoData.TipoDireccionCod === '2') {
+      // posY += 7;
+      // pdf.text(`Nombre: ${contactoData.Direccion}`, marginX, posY);
+
       posY += 7;
-      pdf.text(`Nombre: ${contactoData.Direccion}`, marginX, posY);
+      checkAddPage(9);
+    
+      const fullLabDir = `Nombre: ${contactoData.Direccion}`;
+      const maxWidth = pageWidth - marginX * 2;
+      const labLines = pdf.splitTextToSize(fullLabDir, maxWidth);
+      labLines.forEach((line: string, i: number) => {
+        checkAddPage(9 * (labLines.length - i));
+        pdf.text(line, marginX, posY);
+        posY += 7;
+      });
     }
 
     // const laboralDireccionFiltro = contactoData.Direcciones
@@ -224,9 +237,23 @@ export class PdfContactCardService {
     //   pdf.text(`Dirección Laboral: ${direcciones}`, marginX, posY);
     // }
     if (contactoData.TipoDireccionCod === '2' || contactoData.TipoDireccionCod === '2') {
+      // posY += 7;
+      // pdf.text(`Dirección Laboral: ${contactoData.DireccionesLugTra}`, marginX, posY);
+
       posY += 7;
-      pdf.text(`Dirección Laboral: ${contactoData.DireccionesLugTra}`, marginX, posY);
+      checkAddPage(9);
+    
+      const fullLabDir = `Dirección Laboral: ${contactoData.DireccionesLugTra}`;
+      const maxWidth = pageWidth - marginX * 2;
+      const labLines = pdf.splitTextToSize(fullLabDir, maxWidth);
+      labLines.forEach((line: string, i: number) => {
+        checkAddPage(9 * (labLines.length - i));
+        pdf.text(line, marginX, posY);
+        posY += 7;
+      });
     }
+
+    
 
     // --- Información Personal ---
     posY += 10;
@@ -243,8 +270,20 @@ export class PdfContactCardService {
     //   pdf.text(`Dirección Residencial: ${direccionesResidenciales}`, marginX, posY);
     // }
     if (contactoData.TipoDireccionCod === '1') {
+      // posY += 7;
+      // pdf.text(`Dirección Residencial: ${contactoData.Direccion}`, marginX, posY);
+
       posY += 7;
-      pdf.text(`Dirección Residencial: ${contactoData.Direccion}`, marginX, posY);
+      checkAddPage(9);
+    
+      const fullLabDir = `Dirección Residencial: ${contactoData.Direccion}`;
+      const maxWidth = pageWidth - marginX * 2;
+      const labLines = pdf.splitTextToSize(fullLabDir, maxWidth);
+      labLines.forEach((line: string, i: number) => {
+        checkAddPage(9 * (labLines.length - i));
+        pdf.text(line, marginX, posY);
+        posY += 7;
+      });
     }
 
     checkAddPage(9);
@@ -284,13 +323,39 @@ export class PdfContactCardService {
     checkAddPage(9);
     pdf.setFont('Helvetica', 'bold');
     pdf.text("Fincas Asociadas", marginX, posY);
-    posY += 7;
-    checkAddPage(9);
-    pdf.setFont('Helvetica', 'normal');
-    pdf.text(`Número de Finca / Folio N.: ${contactoData.FincaFolio}`, marginX, posY);
-    posY += 7;
-    checkAddPage(9);
-    pdf.text(`Dirección: ${contactoData.FincaDireccion}`, marginX, posY);
+
+    contactoData.Fincas.forEach((element: any, index: number) => {
+      // Número de finca / folio
+      posY += 7;
+      checkAddPage(9);
+      pdf.setFont('Helvetica', 'normal');
+      pdf.text(
+        `Número de Finca / Folio N.: ${element.FincaFolio}`,
+        marginX,
+        posY
+      );
+    
+      // Dirección con wrap automático
+      posY += 7;
+      checkAddPage(9);
+    
+      // 1. Construimos el texto completo
+      const fullDirText = `Dirección: ${element.FincaDireccion}`;
+    
+      // 2. Definimos el ancho máximo (ancho de página menos márgenes)
+      const maxWidth = pageWidth - marginX * 2;
+    
+      // 3. Dividimos el texto en líneas que quepan en maxWidth
+      const lines = pdf.splitTextToSize(fullDirText, maxWidth);
+    
+      // 4. Dibujamos cada línea y vamos avanzando posY
+      lines.forEach((line: string, i: number) => {
+        // Antes de dibujar, comprobamos si caben las siguientes líneas
+        checkAddPage(9 * (lines.length - i));
+        pdf.text(line, marginX, posY);
+        posY += 7;
+      });
+    });
 
     // --- Ubicación ---
     posY += 7;
