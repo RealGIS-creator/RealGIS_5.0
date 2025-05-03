@@ -1,6 +1,7 @@
 import L from 'leaflet';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { FeatureCollection } from 'geojson';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,10 @@ export class MapService {
   markerClusterGroup$ = this.markerClusterGroupSubject.asObservable();
 
   private selectedIdsSubject = new BehaviorSubject<string[]>([]);
-  selectedIds$ = this.selectedIdsSubject.asObservable();
+  selectedIds$: Observable<string[]> = this.selectedIdsSubject.asObservable();
+
+  private _selectedGeoJson = new BehaviorSubject<FeatureCollection>({ type: 'FeatureCollection', features: [] });
+  public selectedGeoJson$: Observable<FeatureCollection> = this._selectedGeoJson.asObservable();
 
   private cursorCoordsSubject = new BehaviorSubject<[number, number] | null>(null);
   cursorPosition$ = this.cursorCoordsSubject.asObservable();
@@ -37,7 +41,13 @@ export class MapService {
   }  
 
   setSelectedIds(ids: string[]) {
+    console.log('cambia ids: ', ids)
     this.selectedIdsSubject.next(ids);
+  }
+
+  setSelectedGeoJson(data: FeatureCollection) {
+    console.log('cambia geoJson: ', data)
+    this._selectedGeoJson.next(data);
   }
 
   updateCursorCoords(coords: [number, number]) {

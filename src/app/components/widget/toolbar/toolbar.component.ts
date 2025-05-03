@@ -11,7 +11,7 @@ import { MapService } from '../../../core/services/home/map/map.service';
 import '@geoman-io/leaflet-geoman-free';
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
 
-import type { Feature, Polygon } from 'geojson';
+import type { Feature, FeatureCollection, Polygon } from 'geojson';
 
 @Component({
   selector: 'app-toolbar',
@@ -28,6 +28,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
   currentPolygon: L.Polygon | null = null;
   private currentPolyline: L.Polyline | null = null;
   drawing = false;
+  allMarkers: L.Marker[] = [];
 
   private markerClusterGroup: L.MarkerClusterGroup | null = null;
   private subscriptions = new Subscription();
@@ -162,6 +163,14 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     this.map.pm.disableDraw();
     this.drawing = false;
     this.map.closePopup();
+
+    this.mapService.setSelectedIds([]);
+
+    const featureCollection: FeatureCollection = {
+      type: 'FeatureCollection',
+      features: this.allMarkers.map(marker => (marker as any).toGeoJSON())
+    };
+    this.mapService.setSelectedGeoJson(featureCollection);
   }
 
   private selectPointsInPolygon(polygon: L.Polygon) {
@@ -170,21 +179,22 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     const polyGeo = polygon.toGeoJSON() as Feature<Polygon>;
 
     // 1. Sacamos TODOS los marcadores del cluster
-    const allMarkers = this.markerClusterGroup.getAllChildMarkers
+    this.allMarkers = this.markerClusterGroup.getAllChildMarkers
       ? this.markerClusterGroup.getAllChildMarkers()
       : this.markerClusterGroup.getLayers().flatMap(layer => {
         const sub = layer as any;
         return sub.getAllChildMarkers ? sub.getAllChildMarkers() : (layer instanceof L.Marker ? [layer] : []);
       });
 
+      console.log('todos los geoJson: ', this.allMarkers)
+
     // 2. Filtramos sólo los que están dentro del polígono
-    const insideMarkers = allMarkers.filter(marker => {
+    const insideMarkers = this.allMarkers.filter(marker => {
       const { lat, lng } = marker.getLatLng();
       const pt = turf.point([lng, lat]);
       return turf.booleanPointInPolygon(pt, polyGeo);
     });
 
-    console.log('dentro poli', insideMarkers)
     // 3. Extraemos únicamente la Direccion_Id de cada marker.feature.properties
     const ids = insideMarkers
       .map(m => (m as any).feature?.properties?.Direccion_Id)
@@ -194,6 +204,12 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
     // 4. Enviamos al servicio
     this.mapService.setSelectedIds(ids);
+
+    const featureCollection: FeatureCollection = {
+      type: 'FeatureCollection',
+      features: insideMarkers.map(marker => (marker as any).toGeoJSON())
+    };
+    this.mapService.setSelectedGeoJson(featureCollection);
 
   }
 
