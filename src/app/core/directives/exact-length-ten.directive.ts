@@ -5,9 +5,7 @@ import { Directive, ElementRef, HostListener, Renderer2 } from '@angular/core';
 })
 export class ExactLengthTenDirective {
 
-  private editRegex = /^[0-9]{0,10}$/;
-  // Al perder foco exige exactamente 10 dígitos
-  private exactRegex = /^[0-9]{10}$/;
+  private exactRegex = /^[0-9]{7,10}$/;
 
   constructor(
     private el: ElementRef<HTMLInputElement>,
@@ -18,10 +16,16 @@ export class ExactLengthTenDirective {
   onInput() {
     const input = this.el.nativeElement;
     let sanitized = input.value.replace(/[^0-9]/g, '').slice(0, 10);
+
     if (sanitized !== input.value) {
       input.value = sanitized;
-      const pos = sanitized.length;
-      input.setSelectionRange(pos, pos);
+      input.setSelectionRange(sanitized.length, sanitized.length);
+    }
+
+    if (sanitized.length > 0 && sanitized.length < 7) {
+      this.renderer.addClass(input, 'exact-length-error');
+    } else {
+      this.renderer.removeClass(input, 'exact-length-error');
     }
   }
 

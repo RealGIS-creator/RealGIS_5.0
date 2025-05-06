@@ -504,7 +504,7 @@
         </div>
     </ng-container>
 
-    <div class="card-footer d-flex justify-content-center align-items-center" (click)="save()">
+    <div class="card-footer d-flex justify-content-center align-items-center" (click)="save()" *ngIf="isSaveaAvailable">
         {{ isSaveaAvailable ? 'Guardar' : 'Cargando...' }}
     </div>
 </app-movable-card>
@@ -537,7 +537,7 @@
             </div>
 
             <div class="col g-0">
-                <input type="text" name="numberTel" id="numberTel" pattern="^[0-9]{10}$"
+                <input type="text" name="numberTel" id="numberTel" pattern="^[0-9]{7,10}$"
                     class="form-control bg-property-input" #telModel="ngModel" maxlength="10" ExactLengthTen
                     placeholder="Número" [(ngModel)]="nuevoTelefono" autocomplete="off">
             </div>
@@ -567,14 +567,14 @@
 
                 <div class="text-danger" *ngIf="telModel.invalid && (telModel.dirty || telModel.touched)">
                     <div *ngIf="telModel.errors?.['pattern']">
-                        Numero: Debe contener sólo dígitos y exactamente 10 caracteres.
+                        Numero: Debe contener sólo dígitos y mínimo 7 caracteres.
                     </div>
                     <div *ngIf="telModel.errors?.['maxlength']">
                         Numero: Máximo 10 caracteres permitidos.
                     </div>
                     <!-- Error de la directiva -->
                     <div *ngIf="telModel.valid && telModel.touched && telModel.viewModel.length !== 10">
-                        <em>Numero: El número debe tener exactamente 10 dígitos.</em>
+                        <em>Numero: El número debe tener mínimo 7 dígitos.</em>
                     </div>
                 </div>
             </div>
