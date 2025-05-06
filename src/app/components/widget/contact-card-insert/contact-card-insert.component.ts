@@ -50,6 +50,7 @@ export class ContactCardInsertComponent {
   isSave = false;
   isMainMenu = true;
   isSaveaAvailable = true;
+  isVisibleTD = false;
   errorSave = false;
 
   infoUserCard!: InformationCard;
@@ -88,8 +89,9 @@ export class ContactCardInsertComponent {
 
   isVisible: boolean = false;
   readonly DEFAULT_LABEL = 'Selecciona';
+  readonly DEFAULT_TYPE_DOCUMENT_LABEL = 'Tipo Documento';
   selectedOption: string = this.DEFAULT_LABEL;
-  selectedOptionTypeDocument: string = this.DEFAULT_LABEL;
+  selectedOptionTypeDocument: string = this.DEFAULT_TYPE_DOCUMENT_LABEL;
 
   dataObject: InformationCard = {} as InformationCard;
 
@@ -130,6 +132,10 @@ export class ContactCardInsertComponent {
 
   get displayIcon() {
     return this.isVisible ? 'display_white_down.svg' : 'display_white_up.svg';
+  }
+
+  get displayIconTD() {
+    return this.isVisibleTD ? 'display_white_down.svg' : 'display_white_up.svg';
   }
 
   onEstrategia(nameEstrategia: string, idEstategia: string): void {

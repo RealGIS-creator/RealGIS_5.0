@@ -25,15 +25,15 @@
             </div>
 
             <!-- Identificación -->
-            <div class="row align-items-center mb-1 field-group">
-                <div class="col-6">
+            <div class="d-flex align-items-center mb-1 field-group">
+                <!-- <div class="col-6"> -->
                     <div class="d-flex align-items-center gap-2 custom-field-group">
-                        <label for="identificacion" class="mb-0 label-sm">Identificación:</label>
+                        <label for="identificacion" class="me-2 mb-0 label-sm">Identificación:</label>
                         <input id="identificacion" name="identificacion" id="identificacion" type="text"
-                            class="form-control bg-none-input input-sm flex-shrink-0" OnlyAlphanumericDash
+                            class="form-control bg-none-input input-sm" OnlyAlphanumericDash
                             [(ngModel)]="identificacion" autocomplete="off">
 
-                        <div class="content-select flex-shrink-0">
+                        <!-- <div class="content-select flex-shrink-0">
                             <div class="search-container-option">
                                 <div class="select-option" (click)="clickSearcherTypeDocument()">
                                     {{ selectedOptionTypeDocument }}
@@ -69,6 +69,47 @@
                                             </p>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                        </div> -->
+                    </div>
+                <!-- </div> -->
+            </div>
+
+            <!-- Tipo Identificacion -->
+            <div class="d-flex align-items-center mb-1 field-group">
+                <div class="content-select flex-shrink-0">
+                    <div class="search-container-option">
+                        <div class="select-option" (click)="clickSearcherTypeDocument()">
+                            {{ selectedOptionTypeDocument }}
+                            <img class="search-icon" [src]="'assets/icon/' + displayIconTD" alt="icono desplegar">
+                        </div>
+                    </div>
+                    <div class="form-select-option content-select-type-doc" *ngIf="isVisibleTypeDocument">
+                        <div class="search-container-option">
+                            <div class="form-select-option" *ngIf="isVisibleTypeDocument">
+                                <div class="search-container-option">
+                                    <p class="option option-hover" (click)="selectTipoIdentificacion('CC','1')">
+                                        CC
+                                    </p>
+                                    <p class="option option-hover" (click)="selectTipoIdentificacion('Nit','2')">
+                                        Nit
+                                    </p>
+                                    <p class="option option-hover" (click)="selectTipoIdentificacion('E','4')">
+                                        E
+                                    </p>
+                                    <p class="option option-hover" (click)="selectTipoIdentificacion('N','5')">
+                                        N
+                                    </p>
+                                    <p class="option option-hover" (click)="selectTipoIdentificacion('PE','6')">
+                                        PE
+                                    </p>
+                                    <p class="option option-hover" (click)="selectTipoIdentificacion('PA','7')">
+                                        PA
+                                    </p>
+                                    <p class="option option-hover" (click)="selectTipoIdentificacion('Otro','3')">
+                                        Otro
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -349,7 +390,8 @@
 
             <div class="d-flex align-items-center mt-2">
                 <div><b>Email de contacto</b>:</div>
-                <div class="pointer badge bg-property" [ngClass]="{'bg-active': isAddEmail == true}" (click)="AddEmail()">
+                <div class="pointer badge bg-property" [ngClass]="{'bg-active': isAddEmail == true}"
+                    (click)="AddEmail()">
                     <b>Añadir</b>
                 </div>
             </div>
@@ -401,7 +443,8 @@
                         <div class="badge bg-property">NN</div>
                     </ng-container>
                     <ng-container *ngIf="dataObject.FincaDireccion != ''">
-                        <textarea class="form-control bg-property" rows="1" [(ngModel)]="dataObject.FincaDireccion" disabled>
+                        <textarea class="form-control bg-property" rows="1" [(ngModel)]="dataObject.FincaDireccion"
+                            disabled>
                         </textarea>
                     </ng-container>
                 </div>
@@ -622,11 +665,14 @@
 
         <div class="row mt-1">
             <div class="col">
-                <span class="pointer badge bg-property" [ngClass]="{'bg-active': dataObject.TipoPredioNom == 'Residencial'}"
+                <span class="pointer badge bg-property"
+                    [ngClass]="{'bg-active': dataObject.TipoPredioNom == 'Residencial'}"
                     (click)="onPredio('Residencial', '1')">Residencial</span>
-                <span class="pointer badge bg-property" [ngClass]="{'bg-active': dataObject.TipoPredioNom == 'Comercial'}"
+                <span class="pointer badge bg-property"
+                    [ngClass]="{'bg-active': dataObject.TipoPredioNom == 'Comercial'}"
                     (click)="onPredio('Comercial', '2')">Comercial</span>
-                <span class="pointer badge bg-property" [ngClass]="{'bg-active': dataObject.TipoPredioNom == 'Industrial'}"
+                <span class="pointer badge bg-property"
+                    [ngClass]="{'bg-active': dataObject.TipoPredioNom == 'Industrial'}"
                     (click)="onPredio('Industrial', '3')">Industrial</span>
             </div>
         </div>

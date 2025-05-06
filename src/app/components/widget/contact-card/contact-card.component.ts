@@ -10,10 +10,11 @@ import { InformationCardService } from '../../../core/services/widget/informatio
 import { BehaviorSubject } from 'rxjs';
 import { LocationService } from '../../../core/services/home/map/location.service';
 import { ContactCardAdminComponent } from '../contact-card-admin/contact-card-admin.component';
+import { VerifiedAccountPipe } from '../../../core/pipes/verified-account.pipe';
 
 @Component({
   selector: 'app-contact-card',
-  imports: [MovableCardComponent, CommonModule],
+  imports: [MovableCardComponent, CommonModule, VerifiedAccountPipe],
   templateUrl: './contact-card.component.html',
   styleUrl: './contact-card.component.less',
 })

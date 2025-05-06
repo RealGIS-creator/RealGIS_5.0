@@ -84,6 +84,7 @@ export interface InformationCard {
     TipoProductoEst: string;
     TipoProductoNom: string;
     TipoProducto_Id: string;
+    TipoVerificado_Id: string;
 }
 
 export interface InformationCardObject {
