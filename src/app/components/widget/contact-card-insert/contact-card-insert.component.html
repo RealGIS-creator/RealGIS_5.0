@@ -1,6 +1,6 @@
 <!-- <ng-container *ngIf="dataObject; else loading">  -->
 
-<app-movable-card *ngIf="isMainMenu" [initialX]="10" [initialY]="10" [paramWidth]="30"
+<app-movable-card *ngIf="isMainMenu" [initialX]="10" [initialY]="10" [paramWidth]="25"
     [headerClass]="'card-header text-white'" [showFooter]="true">
     <div class="card-title">
         <div class="d-flex justify-content-between align-items-center">
@@ -436,7 +436,7 @@
                 </div>
             </div>
 
-            <span class="mx-1">–</span>
+            <span class="mx-1">/</span>
 
             <!-- Latitud -->
             <div>
@@ -653,7 +653,7 @@
     </div>
 </app-movable-card>
 
-<app-movable-card *ngIf="isSave" [initialX]="10" [initialY]="10" [paramWidth]="30" [showHeader]="true">
+<app-movable-card *ngIf="isSave" [initialX]="10" [initialY]="10" [paramWidth]="25" [showHeader]="true">
     <div class="card-title">
         <div class="d-flex justify-content-between align-items-center">
             <img class="icon button-header" src="assets/icon/company_white.svg" alt="">
@@ -663,7 +663,9 @@
     <div>
         {{ message }}
 
-        <button class="pointer btn badge bg-active" (click)="goTC()">Ir a la TC</button>
+        <div *ngIf="!errorSave">
+            <button class="pointer btn badge bg-active" (click)="goTC()">Ir a la TC</button>
+        </div>
     </div>
 </app-movable-card>
 

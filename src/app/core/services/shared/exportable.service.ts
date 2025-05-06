@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
-import { FeatureCollection } from 'geojson';
 import * as shpwrite from '@mapbox/shp-write';
 import JSZip from 'jszip';
+import { FeatureCollection, Feature, Point } from 'geojson';
 import { DownloadOptions, ZipOptions, Compression, OutputType } from '@mapbox/shp-write';
 
 @Injectable({
@@ -112,27 +112,54 @@ export class ExportableService {
 
   // EXPORTAR SHAPEFILE
 
-  public exportToShapefile(geojson: FeatureCollection, filename: string): void {
+  // public exportToShapefile(geojson: FeatureCollection, filename: string): void {
+  //   const options: DownloadOptions & ZipOptions = {
+  //     folder: filename,
+  //     types: {
+  //       point: filename,
+  //       polygon: filename,
+  //       line: filename
+  //     },
+  //     compression: 'DEFLATE' as Compression,   
+  //     outputType: 'blob' as OutputType         
+  //   };
+  //   shpwrite.download(geojson, options);  
+  // }
+
+  // public exportToShapefileAsZip(
+  //   geojson: FeatureCollection,
+  //   filename: string
+  // ): void {
+  //   // @ts-ignore: zip no está tipado
+  //   const buffer: ArrayBuffer = shpwrite.zip(geojson);
+  //   const blob = new Blob([buffer], { type: 'application/zip' });
+  //   saveAs(blob, `${filename}.zip`);
+  // }
+
+  public exportToShapefile(geoJsonPuntos: FeatureCollection, name: string ): void {
+
+    const filename = name;
     const options: DownloadOptions & ZipOptions = {
       folder: filename,
       types: {
         point: filename,
-        polygon: filename,
-        line: filename
       },
-      compression: 'DEFLATE' as Compression,   
-      outputType: 'blob' as OutputType         
+      compression: 'DEFLATE' as Compression,
+      outputType: 'blob' as OutputType,
     };
-    shpwrite.download(geojson, options);  
+
+    shpwrite.download(geoJsonPuntos, options);
   }
 
-  public exportToShapefileAsZip(
-    geojson: FeatureCollection,
-    filename: string
-  ): void {
-    // @ts-ignore: zip no está tipado
-    const buffer: ArrayBuffer = shpwrite.zip(geojson);
+  public exportMultiplePointsAsZip(geoJsonPuntos: FeatureCollection): void {
+
+    const filename = 'puntos_exportados';
+    // @ts-ignore: zip no está tipado completamente
+    const buffer: ArrayBuffer = shpwrite.zip(geoJsonPuntos, {
+      types: { point: filename },
+    });
     const blob = new Blob([buffer], { type: 'application/zip' });
     saveAs(blob, `${filename}.zip`);
   }
+
 }

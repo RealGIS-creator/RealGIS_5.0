@@ -5,8 +5,8 @@ import { sessionIdGuard } from './core/guards/session-id.guard';
 
 export const routes: Routes = [
 
-    // { path: '', component:  MapComponent, canActivate: [sessionIdGuard]}, //produccion
-    { path: '', component:  MapComponent}, //pruebas
+    { path: '', component:  MapComponent, canActivate: [sessionIdGuard]}, //produccion
+    // { path: '', component:  MapComponent}, //pruebas
     { path: 'error', component:  IdParamsErrorComponent},
 
 ];

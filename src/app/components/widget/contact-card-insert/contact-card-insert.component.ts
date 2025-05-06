@@ -50,6 +50,7 @@ export class ContactCardInsertComponent {
   isSave = false;
   isMainMenu = true;
   isSaveaAvailable = true;
+  errorSave = false;
 
   infoUserCard!: InformationCard;
   nuevoTelefonoPre: string = '';
@@ -337,9 +338,15 @@ export class ContactCardInsertComponent {
         this.isMainMenu = false;
         if (res) {
           this.saveData = res.WS_TarjetaContacto1[0];
-          console.log('info guardada: ', this.saveData)
-          this.message = 'Tarjeta de contacto creada con exito';
-          this.isSave = true;
+          if (this.saveData) {
+            console.log('info guardada: ', this.saveData)
+            this.message = 'Tarjeta de contacto creada con exito';
+            this.isSave = true;
+          } else {
+            this.message = 'Error al crear Tarjeta de contacto';
+            this.isSave = true;
+            this.errorSave = true;
+          }
         } else {
           this.message = 'Error al crear la tarjeta de contacto';
           this.isSave = true;
