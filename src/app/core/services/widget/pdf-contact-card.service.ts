@@ -178,7 +178,12 @@ export class PdfContactCardService {
     pdf.text('Tipo de Predio:', marginX, posY);
     posY += 5;
     pdf.setFont('Helvetica', 'normal');
-    pdf.text(`${contactoData.TipoPredioNom}`, marginX, posY);
+    if (contactoData.TipoDireccion_Id == '1') {
+      pdf.text(`Residencial`, marginX, posY);
+    }
+    if (contactoData.TipoDireccion_Id == '2' || contactoData.TipoDireccion_Id == '3') {
+      pdf.text(`Comercial`, marginX, posY);
+    }
 
     // --- saldo ---
     posY += 10;
@@ -196,7 +201,7 @@ export class PdfContactCardService {
     pdf.text("Información Laboral", marginX, posY);
     posY += 1;
     pdf.setFont('Helvetica', 'normal');
-    if (contactoData.TipoDireccionCod === '2' || contactoData.TipoDireccionCod === '2') {
+    if (contactoData.TipoDireccion_Id === '2' || contactoData.TipoDireccion_Id === '2') {
       // posY += 7;
       // pdf.text(`Nombre: ${contactoData.Direccion}`, marginX, posY);
 
@@ -236,7 +241,7 @@ export class PdfContactCardService {
     //   posY += 7;
     //   pdf.text(`Dirección Laboral: ${direcciones}`, marginX, posY);
     // }
-    if (contactoData.TipoDireccionCod === '2' || contactoData.TipoDireccionCod === '2') {
+    if (contactoData.TipoDireccion_Id === '2' || contactoData.TipoDireccion_Id === '2') {
       // posY += 7;
       // pdf.text(`Dirección Laboral: ${contactoData.DireccionesLugTra}`, marginX, posY);
 
@@ -269,7 +274,7 @@ export class PdfContactCardService {
     //   posY += 7;
     //   pdf.text(`Dirección Residencial: ${direccionesResidenciales}`, marginX, posY);
     // }
-    if (contactoData.TipoDireccionCod === '1') {
+    if (contactoData.TipoDireccion_Id === '1') {
       // posY += 7;
       // pdf.text(`Dirección Residencial: ${contactoData.Direccion}`, marginX, posY);
 

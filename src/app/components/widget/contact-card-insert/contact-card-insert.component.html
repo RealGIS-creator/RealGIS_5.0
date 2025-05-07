@@ -7,9 +7,9 @@
             <b>Editar Tarjeta de Contacto</b>
             <div>
                 <img class="icon button-header" src="assets/icon/company_white.svg" alt="">
-                <img class="icon-header button-header" src="assets/icon/contact_card_minimize.svg" alt=""
+                <img class="icon icon-header button-header" src="assets/icon/contact_card_minimize.svg" alt=""
                     (click)="minimize()">
-                <img class="icon-header button-header" src="assets/icon/contact_card_close.svg" alt=""
+                <img class="icon icon-header button-header" src="assets/icon/contact_card_close.svg" alt=""
                     (click)="close()">
             </div>
         </div>
@@ -89,23 +89,23 @@
                         <div class="search-container-option">
                             <div class="form-select-option" *ngIf="isVisibleTypeDocument">
                                 <div class="search-container-option">
-                                    <p class="option option-hover" (click)="selectTipoIdentificacion('CC','1')">
-                                        CC
+                                    <p class="option option-hover" (click)="selectTipoIdentificacion('Cédula Ciudadanía','1')">
+                                        Cédula Ciudadanía
                                     </p>
                                     <p class="option option-hover" (click)="selectTipoIdentificacion('Nit','2')">
                                         Nit
                                     </p>
-                                    <p class="option option-hover" (click)="selectTipoIdentificacion('E','4')">
-                                        E
+                                    <p class="option option-hover" (click)="selectTipoIdentificacion('Extranjeros Residentes','4')">
+                                        Extranjeros Residentes
                                     </p>
-                                    <p class="option option-hover" (click)="selectTipoIdentificacion('N','5')">
-                                        N
+                                    <p class="option option-hover" (click)="selectTipoIdentificacion('Cédula Naturalización','5')">
+                                        Cédula Naturalización
                                     </p>
-                                    <p class="option option-hover" (click)="selectTipoIdentificacion('PE','6')">
-                                        PE
+                                    <p class="option option-hover" (click)="selectTipoIdentificacion('Residencia Permanente','6')">
+                                        Residencia Permanente
                                     </p>
-                                    <p class="option option-hover" (click)="selectTipoIdentificacion('PA','7')">
-                                        PA
+                                    <p class="option option-hover" (click)="selectTipoIdentificacion('Pasaporte','7')">
+                                        Pasaporte
                                     </p>
                                     <p class="option option-hover" (click)="selectTipoIdentificacion('Otro','3')">
                                         Otro
@@ -262,7 +262,7 @@
 
                         <input type="text" name="telModelLab" id="telModelLab"
                             class="form-control bg-none-input bg-none-input-sm" #telModelLab="ngModel"
-                            pattern="^[0-9]{10}$" maxlength="10" [disabled]="!isVisibleInformacionEmployment"
+                            pattern="^[0-9]{7,10}$" maxlength="10" [disabled]="!isVisibleInformacionEmployment"
                             ExactLengthTen [(ngModel)]="telefonoNumLaboral" autocomplete="off">
 
                         <!-- Mensaje de errores -->
@@ -286,7 +286,7 @@
                                 <div class="text-danger"
                                     *ngIf="telModelLab.invalid && (telModelLab.dirty || telModelLab.touched)">
                                     <div *ngIf="telModelLab.errors?.['pattern']">
-                                        Numero: Debe contener sólo dígitos y exactamente 10 caracteres.
+                                        Numero: Debe contener sólo dígitos mínimo 7 caracteres.
                                     </div>
                                     <div *ngIf="telModelLab.errors?.['maxlength']">
                                         Numero: Máximo 10 caracteres permitidos.
@@ -294,7 +294,7 @@
                                     <!-- Error de la directiva -->
                                     <div
                                         *ngIf="telModelLab.valid && telModelLab.touched && telModelLab.viewModel.length !== 10">
-                                        <em>Numero: El número debe tener exactamente 10 dígitos.</em>
+                                        <em>Numero: El número debe tener entre 7 y 10 dígitos.</em>
                                     </div>
                                 </div>
                             </div>
@@ -320,6 +320,9 @@
     <div class="pointer-defaul">
         <div class="bg-info mt-3 d-flex justify-content-between align-items-center" (click)="editInformacionPersonal()">
             <div class="title">Información Personal</div>
+            <div class="badge bg-property">
+                <b>Añadir</b>
+            </div>
         </div>
         <div *ngIf="isVisibleInformacionPersonal">
             <div class="row">
@@ -691,7 +694,7 @@
     <div class="card-title">
         <div class="d-flex justify-content-between align-items-center">
             <img class="icon button-header" src="assets/icon/company_white.svg" alt="">
-            <img class="icon-header button-header" src="assets/icon/contact_card_close.svg" alt="" (click)="close()">
+            <img class="icon icon-header button-header" src="assets/icon/contact_card_close.svg" alt="" (click)="close()">
         </div>
     </div>
     <div>
@@ -699,11 +702,23 @@
     </div>
 </app-movable-card>
 
+<app-movable-card *ngIf="!isSaveaAvailable" [initialX]="500" [initialY]="240" [paramWidth]="20" [showHeader]="true">
+    <!-- <div class="card-title">
+        <div class="d-flex justify-content-between align-items-center">
+            <img class="icon button-header" src="assets/icon/company_white.svg" alt="">
+            <img class="icon icon-header button-header" src="assets/icon/contact_card_close.svg" alt="" (click)="close()">
+        </div>
+    </div> -->
+    <div>
+        <p class="alerta-carga">Cargando ...</p>
+    </div>
+</app-movable-card>
+
 <app-movable-card *ngIf="isSave" [initialX]="10" [initialY]="10" [paramWidth]="25" [showHeader]="true">
     <div class="card-title">
         <div class="d-flex justify-content-between align-items-center">
             <img class="icon button-header" src="assets/icon/company_white.svg" alt="">
-            <img class="icon-header button-header" src="assets/icon/contact_card_close.svg" alt="" (click)="close()">
+            <img class="icon icon-header button-header" src="assets/icon/contact_card_close.svg" alt="" (click)="close()">
         </div>
     </div>
     <div>

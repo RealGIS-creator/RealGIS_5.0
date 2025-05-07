@@ -93,4 +93,6 @@ export interface InformationCardObject {
 
 export interface InformationCardObject2 {
     WS_TarjetaContacto1: InformationCard[];
+    mensajeSalida: string;
+    verificarSalida: boolean;
 }

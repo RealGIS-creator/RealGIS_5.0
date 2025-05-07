@@ -24,9 +24,13 @@
                 <div class="title pointer-defaul">CIS : {{ infoUserCard.CuentasCis }}</div>
             </div>
 
-            <div class="icon-wrapper">
+            <div class="icon-wrapper" *ngIf="infoUserCard.TipoVerificado_Id != '0'">
                 <img class="icon-user" src="assets/icon/contact_card_user.svg" alt="usuario">
                 <img class="icon-user icon-edit" [src]="infoUserCard.TipoVerificado_Id | verifiedAccount" alt="editar">
+            </div>
+
+            <div class="icon-wrapper" *ngIf="infoUserCard.TipoVerificado_Id == '0'">
+                <img class="icon-user" src="assets/icon/contact_card_user.svg" alt="usuario">
             </div>
         </div>
 
@@ -183,5 +187,8 @@
 
 </ng-container>
 <ng-template #loading>
-    <p>Cargando información...</p>
+    <app-movable-card [initialX]="10" [initialY]="10" [paramWidth]="30" [headerClass]="'card-header text-white'"
+    [showFooter]="true">
+        <p>Cargando información...</p>
+    </app-movable-card>
 </ng-template>

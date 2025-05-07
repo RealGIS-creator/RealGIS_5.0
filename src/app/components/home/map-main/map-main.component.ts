@@ -113,10 +113,11 @@ export class MapMainComponent implements OnInit, AfterViewInit, OnDestroy {
                   target.setStyle(highlightOpts);
                 }
             
-                const { lat: tLat, lng: tLng } = target.getLatLng();
+                // const { lat: tLat, lng: tLng } = target.getLatLng();
                 target
                   .bindPopup(
-                    `Lat: ${tLat.toFixed(6)}, Lng: ${tLng.toFixed(6)}`,
+                    // `Lng: ${tLng.toFixed(6)}, Lat: ${tLat.toFixed(6)}`,
+                    `Lng: ${lng}, Lat: ${lat}`,
                     { closeButton: true, autoClose: true }
                   )
                   .openPopup();
@@ -439,7 +440,8 @@ export class MapMainComponent implements OnInit, AfterViewInit, OnDestroy {
       fillColor: 'blue',
     })
       .addTo(this.map)
-      .bindPopup(`Lat: ${e.latlng.lat.toFixed(6)}, Lng: ${e.latlng.lng.toFixed(6)}`)
+      // .bindPopup(`Lat: ${e.latlng.lat.toFixed(6)}, Lng: ${e.latlng.lng.toFixed(6)}`)
+      .bindPopup(`Lng: ${e.latlng.lng.toFixed(6)},Lat: ${e.latlng.lat.toFixed(6)}`)
       .openPopup();
   }
 
@@ -504,7 +506,8 @@ export class MapMainComponent implements OnInit, AfterViewInit, OnDestroy {
       });
       L.marker(latlng, { icon: myIcon })
         .addTo(this.map)
-        .bindPopup(`Latitud: ${latlng.lat.toFixed(6)}<br>Longitud: ${latlng.lng.toFixed(6)}<br>Precisión: ${e.accuracy.toFixed(2)} metros`)
+        // .bindPopup(`Latitud: ${latlng.lat.toFixed(6)}<br>Longitud: ${latlng.lng.toFixed(6)}<br>Precisión: ${e.accuracy.toFixed(2)} metros`)
+        .bindPopup(`Longitud: ${latlng.lng.toFixed(6)}<br>Latitud: ${latlng.lat.toFixed(6)}<br>Precisión: ${e.accuracy.toFixed(2)} metros`)
         .openPopup(); 
     })
     .on('locationerror', e => alert(e.message));

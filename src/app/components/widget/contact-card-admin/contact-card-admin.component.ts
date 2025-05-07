@@ -15,6 +15,7 @@ import { ExactLengthTenDirective } from '../../../core/directives/exact-length-t
 import { ExactLengthThreeDirective } from '../../../core/directives/exact-length-three.directive';
 import { EmailFormatDirective } from '../../../core/directives/email-format.directive';
 import { NoQuotesDirective } from '../../../core/directives/no-quotes.directive';
+import { VerifiedAccountPipe } from '../../../core/pipes/verified-account.pipe';
 
 @Component({
   selector: 'app-contact-card-admin',
@@ -26,7 +27,8 @@ import { NoQuotesDirective } from '../../../core/directives/no-quotes.directive'
     ExactLengthTenDirective,
     ExactLengthThreeDirective,
     EmailFormatDirective,
-    NoQuotesDirective],
+    NoQuotesDirective,
+    VerifiedAccountPipe],
   templateUrl: './contact-card-admin.component.html',
   styleUrl: './contact-card-admin.component.less'
 })
@@ -59,6 +61,7 @@ export class ContactCardAdminComponent {
   telefonoPreLaboral: string = '';
   telefonoLaboral: string = '';
   mensajeAlerta: string = '';
+  saveData!: InformationCard;
 
   dialogRef!: ComponentRef<any>;
 
@@ -289,6 +292,7 @@ export class ContactCardAdminComponent {
     console.log('data final: ', this.data)
     if (this.validateData()) {
       this.contactCardAdminService.updateContactCard([this.data]).subscribe((res) => {
+        this.saveData = res.WS_TarjetaContacto1[0];
         this.isSave = true;
         this.isMainMenu = false;
         this.download();
@@ -315,7 +319,15 @@ export class ContactCardAdminComponent {
         return false;
       }
 
-      if (this.telefonoLaboral.length < 10) {
+      if (this.telefonoLaboral.length < 7) {
+        this.isMensajeAlerta = true;
+        this.mensajeAlerta = 'Numero laboral demasiado corto';
+        this.resetMensajeAlerta();
+        this.isSaveaAvailable = true;
+        return false;
+      }
+
+      if (this.telefonoLaboral.length > 7) {
         this.isMensajeAlerta = true;
         this.mensajeAlerta = 'Numero laboral demasiado corto';
         this.resetMensajeAlerta();
@@ -372,8 +384,8 @@ export class ContactCardAdminComponent {
   goTC(): void {
     const data = {
       filterName: 'AcreditadoNumCuen',
-      filterValue: this.data.AcreditadoNumCuen,
-      idAdress: this.data.Direccion_Id
+      filterValue: this.saveData.AcreditadoNumCuen,
+      idAdress: this.saveData.Direccion_Id
     }
     this.close();
     this.dialogService.open({ component: ContactCardComponent, data: data });

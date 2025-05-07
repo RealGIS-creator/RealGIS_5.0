@@ -22,7 +22,14 @@
                 <div class="pointer">No. Acreditado : {{ data.AcreditadoNum }}</div>
                 <div class="pointer title">CIS : {{ data.CuentasCis }}</div>
             </div>
-            <img class="icon-user" src="assets/icon/contact_card_user.svg" alt="icono desplegar">
+            <div class="icon-wrapper" *ngIf="data.TipoVerificado_Id != '0'">
+                <img class="icon-user" src="assets/icon/contact_card_user.svg" alt="usuario">
+                <img class="icon-user icon-edit" [src]="data.TipoVerificado_Id | verifiedAccount" alt="editar">
+            </div>
+
+            <div class="icon-wrapper" *ngIf="data.TipoVerificado_Id == '0'">
+                <img class="icon-user" src="assets/icon/contact_card_user.svg" alt="usuario">
+            </div>
         </div>
 
         <div class="col">
@@ -132,7 +139,7 @@
                     <b>Teléfono:</b>
                     <ul class="list-unstyled">
                         <ng-container *ngIf="hasLaboralTipo4; else telLaboral">
-                            <li *ngFor="let laboral of data.Telefonos" class="d-flex mb-2">
+                            <li *ngFor="let laboral of data.Telefonos" class="mb-2">
                                 <ng-container *ngIf="laboral.TipoTelefono_Id == '4'">
                                     <!-- Prefijo -->
                                     <input type="text" name="telPreModelLab" id="telPreModelLab" pattern="^[0-9]{1,3}$"
@@ -185,13 +192,13 @@
                             <li *ngIf="data.TipoDireccion_Id == '2' || data.TipoDireccion_Id == '3'"
                                 class="d-flex mb-2">
                                 <!-- Prefijo alternativo -->
-                                <input type="text" name="telLaboralPreAlt" pattern="^[0-9]{1,3}$" onlyNumber
+                                <input type="text" name="telLaboralPreAlt" pattern="^[0-9]{1,3}$" ExactLengthThree
                                     class="form-control bg-property-input me-1" placeholder="Prefijo" maxlength="3"
                                     [ngClass]="{ 'bg-active': isVisibleInformacionEmployment }" autocomplete="off"
                                     #telPreLab="ngModel" [disabled]="!isVisibleInformacionEmployment"
                                     [(ngModel)]="telefonoPreLaboral" />
                                 <!-- Número alternativo -->
-                                <input type="text" name="telLaboralAlt" pattern="^[0-9]{10}$" onlyNumber maxlength="10"
+                                <input type="text" name="telLaboralAlt" pattern="^[0-9]{7,10}$" ExactLengthTen maxlength="10"
                                     class="form-control bg-property-input" placeholder="Número" autocomplete="off"
                                     [ngClass]="{ 'bg-active': isVisibleInformacionEmployment }" #telLab="ngModel"
                                     [disabled]="!isVisibleInformacionEmployment" [(ngModel)]="telefonoLaboral" />
@@ -216,7 +223,7 @@
                                         <div class="text-danger"
                                             *ngIf="telLab.invalid && (telLab.dirty || telLab.touched)">
                                             <div *ngIf="telLab.errors?.['pattern']">
-                                                Numero: Debe contener sólo dígitos y exactamente 10 caracteres.
+                                                Numero: Debe contener sólo dígitos máximo 10 caracteres.
                                             </div>
                                             <div *ngIf="telLab.errors?.['maxlength']">
                                                 Numero: Máximo 10 caracteres permitidos.
@@ -224,7 +231,7 @@
                                             <!-- Error de la directiva -->
                                             <div
                                                 *ngIf="telLab.valid && telLab.touched && telLab.viewModel.length !== 10">
-                                                <em>Numero: El número debe tener exactamente 10 dígitos.</em>
+                                                <em>Numero: El número debe tener entre 7 y 10 dígitos.</em>
                                             </div>
                                         </div>
                                     </div>
@@ -270,6 +277,7 @@
                                 [ngClass]="{'bg-active': isVisibleInformacionPersonal == true}" NoQuotes
                                 [disabled]="isVisibleInformacionEmployment" [(ngModel)]="data.Direccion">
                             </textarea>
+                            <small *ngIf="isVisibleInformacionEmployment">Desactiva la edición de información laboral para cambiar la direccion residencial</small>
                         </li>
                     </ul>
                 </div>
@@ -436,7 +444,7 @@
                 </div>
 
                 <div class="col g-0">
-                    <input type="text" name="numberTel" id="numberTel" pattern="^[0-9]{10}$"
+                    <input type="text" name="numberTel" id="numberTel" pattern="^[0-9]{7,10}$"
                         class="form-control bg-property-input" #telModel="ngModel" maxlength="10" ExactLengthTen
                         placeholder="Número" [(ngModel)]="nuevoTelefono" autocomplete="off">
                 </div>
@@ -466,14 +474,14 @@
 
                     <div class="text-danger" *ngIf="telModel.invalid && (telModel.dirty || telModel.touched)">
                         <div *ngIf="telModel.errors?.['pattern']">
-                            Numero: Debe contener sólo dígitos y exactamente 10 caracteres.
+                            Numero: Debe contener sólo dígitos y máximo 10 caracteres.
                         </div>
                         <div *ngIf="telModel.errors?.['maxlength']">
                             Numero: Máximo 10 caracteres permitidos.
                         </div>
                         <!-- Error de la directiva -->
                         <div *ngIf="telModel.valid && telModel.touched && telModel.viewModel.length !== 10">
-                            <em>Numero: El número debe tener exactamente 10 dígitos.</em>
+                            <em>Numero: El número debe tener entre 7 y 10 dígitos.</em>
                         </div>
                     </div>
                 </div>

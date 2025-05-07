@@ -336,26 +336,40 @@ export class ContactCardInsertComponent {
     }, 1000);
   }
 
+  resetMensajeAlertaError(): void {
+    setTimeout(() => {
+      this.isMensajeAlerta = false;
+      this.mensajeAlerta = '';
+    }, 2000);
+  }
+
   save(): void {
     console.log('dataObject final: ', this.dataObject)
     if (this.validateData()) {
       this.contactCardAdminService.insertContactCard([this.dataObject]).subscribe((res) => {
         console.log('espuesta: ', res);
-        this.isMainMenu = false;
-        if (res) {
+        this.isSaveaAvailable = true;
+        if (res.verificarSalida) {
           this.saveData = res.WS_TarjetaContacto1[0];
           if (this.saveData) {
+            this.isMainMenu = false;
             console.log('info guardada: ', this.saveData)
-            this.message = 'Tarjeta de contacto creada con exito';
+            this.message = res.mensajeSalida;
             this.isSave = true;
           } else {
-            this.message = 'Error al crear Tarjeta de contacto';
-            this.isSave = true;
+            this.mensajeAlerta = 'Error al crear Tarjeta de contacto';
+            this.isSave = false;
+            this.isMensajeAlerta = true
             this.errorSave = true;
+            this.isMainMenu = true;
+            this.resetMensajeAlertaError()
           }
         } else {
-          this.message = 'Error al crear la tarjeta de contacto';
-          this.isSave = true;
+          this.isMensajeAlerta = true
+          this.mensajeAlerta = res.mensajeSalida;
+          this.isSave = false;
+          this.isMainMenu = true;
+          this.resetMensajeAlertaError()
         }
       })
     }
@@ -477,9 +491,17 @@ export class ContactCardInsertComponent {
         return false;
       }
 
-      if (this.telefonoNumLaboral.length < 10) {
+      if (this.telefonoNumLaboral.length < 7) {
         this.isMensajeAlerta = true;
         this.mensajeAlerta = 'Numero laboral demasiado corto';
+        this.resetMensajeAlerta();
+       this.isSaveaAvailable = true;
+        return false;
+      }
+
+      if (this.telefonoNumLaboral.length > 10) {
+        this.isMensajeAlerta = true;
+        this.mensajeAlerta = 'Numero laboral demasiado largo';
         this.resetMensajeAlerta();
        this.isSaveaAvailable = true;
         return false;
