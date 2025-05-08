@@ -51,8 +51,8 @@ export class ContactCardAdminComponent {
   isSaveaAvailable = true;
 
   infoUserCard!: InformationCard;
-  nuevoTelefonoPre?: number | null;
-  nuevoTelefono?: number | null;
+  nuevoTelefonoPre?: string | null;
+  nuevoTelefono?: string | null;
   nuevoEmail: string = '';
   nuevaFinca: string = '';
   nuevaFincaDireccion: string = '';
@@ -78,6 +78,13 @@ export class ContactCardAdminComponent {
     this.data = this.data$.value._value;
     this.selectedOption = this.data.TipoProductoNom
     console.log(this.data);
+    this.data.Telefonos.forEach((t: any) => {
+      if (t.TipoTelefono_Id == '4') {
+        this.telefonoLaboral = t.TelefonoNum;
+        this.telefonoPreLaboral = t.TelefonoPre;
+      }
+    });
+    console.log(this.data.Telefonos)
     console.log(this.data.AcreditadoIdenti);
   }
 
@@ -181,7 +188,7 @@ export class ContactCardAdminComponent {
   }
 
   newTelefono(): void {
-    if (this.nuevoTelefonoPre == 0 || this.nuevoTelefono == 0 || this.typeTelefono == 0) {
+    if (this.nuevoTelefonoPre == '' || this.nuevoTelefono == '' || this.typeTelefono == 0) {
       return;
     }
 
@@ -289,9 +296,10 @@ export class ContactCardAdminComponent {
   }
 
   save(): void {
-    console.log('data final: ', this.data)
     if (this.validateData()) {
+      console.log('data final: ', this.data)
       this.contactCardAdminService.updateContactCard([this.data]).subscribe((res) => {
+        this.isSaveaAvailable = true;
         this.saveData = res.WS_TarjetaContacto1[0];
         this.isSave = true;
         this.isMainMenu = false;
@@ -310,38 +318,46 @@ export class ContactCardAdminComponent {
   validateData(): boolean {
     this.isSaveaAvailable = false;
 
-    if (this.telefonoLaboral != '' || this.telefonoPreLaboral != '') {
-      if (this.telefonoPreLaboral.length < 1 && this.telefonoPreLaboral.length > 3) {
-        this.isMensajeAlerta = true;
-        this.mensajeAlerta = 'Prefijo laboral debe estar entre 1 y 3 caracteres';
-        this.resetMensajeAlerta();
-        this.isSaveaAvailable = true;
-        return false;
-      }
+    let isPhone = false
+    this.data.Telefonos.forEach((t: any) => {
 
-      if (this.telefonoLaboral.length < 7) {
-        this.isMensajeAlerta = true;
-        this.mensajeAlerta = 'Numero laboral demasiado corto';
-        this.resetMensajeAlerta();
-        this.isSaveaAvailable = true;
-        return false;
-      }
+      if (t.TipoTelefono_Id == '4') {
+        if (this.telefonoLaboral != t.TelefonoNum || this.telefonoPreLaboral != t.telefonoPreLaboral) {
+          if (this.telefonoLaboral != '' || this.telefonoPreLaboral != '') {
 
-      if (this.telefonoLaboral.length > 7) {
-        this.isMensajeAlerta = true;
-        this.mensajeAlerta = 'Numero laboral demasiado corto';
-        this.resetMensajeAlerta();
-        this.isSaveaAvailable = true;
-        return false;
+            if (this.telefonoPreLaboral.length < 1 || this.telefonoPreLaboral.length > 3) {
+              this.isMensajeAlerta = true;
+              this.mensajeAlerta = 'Prefijo laboral debe estar entre 1 y 3 dígitos';
+              this.resetMensajeAlerta();
+              this.isSaveaAvailable = true;
+              isPhone = true;
+            }
+      
+            if (this.telefonoLaboral.length < 7 || this.telefonoLaboral.length > 10) {
+              this.isMensajeAlerta = true;
+              this.mensajeAlerta = 'Numero laboral debe estar entre 1 y 4 dígitos';
+              this.resetMensajeAlerta();
+              this.isSaveaAvailable = true;
+              isPhone = true;
+            }
+      
+            if (!isPhone) {
+              this.data.Telefonos.push({
+                TipoTelefono_Id: 4,
+                TelefonoNum: this.telefonoLaboral,
+                TelefonoPre: this.telefonoPreLaboral,
+                Telefono_Nuevo: '1',
+                TelefonoEst: 'A',
+              });
+              t.TelefonoEst = 'I'
+            }
+          }
+        }
       }
+    });
 
-      this.data.Telefonos.push({
-        TipoTelefono_Id: 4,
-        TelefonoNum: this.telefonoLaboral,
-        TelefonoPre: this.telefonoPreLaboral,
-        Telefono_Nuevo: '1',
-        TelefonoEst: 'A',
-      })
+    if (isPhone) {
+      return false;
     }
 
     if (this.data.TipoEstrategiaNom == '' || this.data.TipoEstrategia_Id == '') {
@@ -361,18 +377,16 @@ export class ContactCardAdminComponent {
     }
 
     if (this.data.Direccion == '' && this.data.DireccionesLugTra == '' && this.data.TipoDireccion_Id == '') {
-      console.log('Direccion no puede estar vacio');
       this.isMensajeAlerta = true;
-      this.mensajeAlerta = 'Direccion no puede estar vacio';
+      this.mensajeAlerta = 'Dirección no puede estar vacío';
       this.resetMensajeAlerta();
       this.isSaveaAvailable = true;
       return false;
     }
 
     if (this.data.GeoDomicilioLati == '' && this.data.GeoDomicilioLongi == '') {
-      console.log('Latitud y Longitud no puede estar vacio');
       this.isMensajeAlerta = true;
-      this.mensajeAlerta = 'Latitud y Longitud no pueden estar vacios';
+      this.mensajeAlerta = 'Latitud y Longitud no pueden estar vacíos';
       this.resetMensajeAlerta();
       this.isSaveaAvailable = true;
       return false;
@@ -384,8 +398,8 @@ export class ContactCardAdminComponent {
   goTC(): void {
     const data = {
       filterName: 'AcreditadoNumCuen',
-      filterValue: this.saveData.AcreditadoNumCuen,
-      idAdress: this.saveData.Direccion_Id
+      filterValue: this.saveData ? this.saveData.AcreditadoNumCuen : this.data.AcreditadoNumCuen,
+      idAdress: this.saveData ? this.saveData.Direccion_Id : this.data.Direccion_Id
     }
     this.close();
     this.dialogService.open({ component: ContactCardComponent, data: data });

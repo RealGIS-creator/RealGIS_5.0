@@ -3,4 +3,5 @@ export interface SideBar {
     image: string;
     type: string;
     label: string;
+    allow: string[]
 }

@@ -34,6 +34,7 @@ export class NoQuotesDirective implements Validator {
 
   @HostListener('beforeinput', ['$event'])
   onBeforeInput(event: InputEvent) {
+    // bloquea comillas
     if (event.data && /['"]/.test(event.data)) {
       event.preventDefault();
       this.renderer.addClass(this.el.nativeElement, this.ERROR_CLASS);
@@ -43,11 +44,22 @@ export class NoQuotesDirective implements Validator {
   @HostListener('input')
   onInput() {
     const inputEl = this.el.nativeElement;
-    const original = inputEl.value;
-    const sanitized = original.replace(/['"]/g, '');
-    if (original !== sanitized) {
-      this.renderer.setProperty(inputEl, 'value', sanitized);
+    let value: string = inputEl.value;
+
+    // 1) Eliminar comillas
+    value = value.replace(/['"]/g, '');
+
+    // 2) Convertir a mayúsculas
+    const upper = value.toUpperCase();
+
+    // 3) Si cambió, actualizar el input y re-disparar evento
+    if (inputEl.value !== upper) {
+      this.renderer.setProperty(inputEl, 'value', upper);
       inputEl.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+
+    // 4) Gestionar la clase de error
+    if (/['"]/.test(upper)) {
       this.renderer.addClass(inputEl, this.ERROR_CLASS);
     } else {
       this.renderer.removeClass(inputEl, this.ERROR_CLASS);

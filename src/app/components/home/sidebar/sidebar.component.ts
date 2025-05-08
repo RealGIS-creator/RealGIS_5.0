@@ -10,6 +10,8 @@ import { DownloadComponent } from '../../widget/download/download.component';
 import { ContactCardInsertComponent } from '../../widget/contact-card-insert/contact-card-insert.component';
 import { StatisticsComponent } from '../../widget/statistics/statistics.component';
 import { StatsToggleService } from '../../../core/services/widget/stats-toggle.service';
+import { Params } from '@angular/router';
+import { GlobalUserParamService } from '../../../core/services/global-user-param.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -25,11 +27,13 @@ export class SidebarComponent {
   dialog: ComponentRef<GenericDialogComponent> | null | any = null;
 
   private dialogSub!: Subscription;
+  paramsUser: string = '';
 
   constructor(
     private sidebarService: SidebarService,
     private dialogService: DialogService,
-    private statsToggleService: StatsToggleService
+    private statsToggleService: StatsToggleService,
+    private globalUserParamService: GlobalUserParamService
     // private sidebarShowDataService: SidebarShowDataService
   ) {}
 
@@ -41,6 +45,10 @@ export class SidebarComponent {
         console.log('No hay diálogo activo');
         this.resetImagesToDark();
       }
+    });
+
+    this.globalUserParamService.params$.subscribe(p => {
+      this.paramsUser = p?.['user'];
     });
   }
 

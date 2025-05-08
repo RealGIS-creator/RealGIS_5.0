@@ -11,6 +11,7 @@ import { BehaviorSubject } from 'rxjs';
 import { LocationService } from '../../../core/services/home/map/location.service';
 import { ContactCardAdminComponent } from '../contact-card-admin/contact-card-admin.component';
 import { VerifiedAccountPipe } from '../../../core/pipes/verified-account.pipe';
+import { GlobalUserParamService } from '../../../core/services/global-user-param.service';
 
 @Component({
   selector: 'app-contact-card',
@@ -23,6 +24,7 @@ export class ContactCardComponent {
   isVisibleInformacionEmployment = false;
   isVisibleFarmsContactCard = false;
   infoUserCard!: InformationCard;
+  paramsUser: string = '';
   
   @ViewChild('pdfContent', { static: false }) pdfContent!: ElementRef;
   @Input() data$: BehaviorSubject<any> = new BehaviorSubject(null);
@@ -38,12 +40,17 @@ export class ContactCardComponent {
     private informationCardService: InformationCardService, 
     private cdRef: ChangeDetectorRef,
     private locationService: LocationService,
+    private globalUserParamService: GlobalUserParamService
   )
   {}
 
   ngOnInit(): void {
     this.data = this.data$.value._value;
     this.getInformationCard();
+
+    this.globalUserParamService.params$.subscribe(p => {
+      this.paramsUser = p?.['user'];
+    });
   }
 
   selectAddress() {

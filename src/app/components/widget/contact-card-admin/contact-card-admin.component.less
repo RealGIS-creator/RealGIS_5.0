@@ -41,6 +41,14 @@ div {
     min-width: 2rem !important;
 }
 
+.textarea-text {
+    white-space: pre-wrap;
+    word-break: break-all;
+    overflow-wrap: break-word;
+    resize: vertical;
+    overflow-x: hidden
+}
+
 .bg-none-input {
     background-color: transparent;
     margin-right: 5px;
@@ -101,11 +109,11 @@ div {
 .icon-header {
     height: 1rem;
     align-items: center;
-    cursor: pointer!important;
+    cursor: pointer !important;
 }
 
 .card-footer {
-    color: #fff!important;
+    color: #fff !important;
     font-size: 15px;
     font-weight: bold;
 }
@@ -215,9 +223,9 @@ textarea::placeholder {
 }
 
 .textarea.auto-resize {
-    overflow: hidden;   
-    resize: none;       
-}  
+    overflow: hidden;
+    resize: none;
+}
 
 .alerta {
     font-size: 15px;
@@ -231,4 +239,14 @@ textarea::placeholder {
 
 .pointer-defaul {
     cursor: context-menu;
+}
+
+small {
+    color: rgb(127, 6, 6);
+}
+
+.alerta-carga {
+    font-size: 15px;
+    color: rgb(6, 58, 127);
+    font-weight: bold;
 }

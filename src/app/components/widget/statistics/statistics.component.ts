@@ -7,7 +7,7 @@ import { MapService } from '../../../core/services/home/map/map.service';
 @Component({
   standalone: true,
   selector: 'app-statistics',
-  imports: [BaseChartDirective],
+ // imports: [BaseChartDirective],
   templateUrl: './statistics.component.html',
   styleUrl: './statistics.component.less'
 })

@@ -380,7 +380,7 @@ export class ContactCardInsertComponent {
 
     if (this.idCredito == '') {
       this.isMensajeAlerta = true;
-      this.mensajeAlerta = 'Id Credito obligatorio';
+      this.mensajeAlerta = 'Id Crédito obligatorio';
       this.resetMensajeAlerta();
      this.isSaveaAvailable = true;
       return false;
@@ -444,7 +444,7 @@ export class ContactCardInsertComponent {
 
     if (this.direccionNombrePersonal == '' && this.direccionLugarNombreLaboral == '' && this.direccionNombreLaboral == '') {
       this.isMensajeAlerta = true;
-      this.mensajeAlerta = 'Direccion no puede estar vacio';
+      this.mensajeAlerta = 'Dirección no puede estar vacío';
       this.resetMensajeAlerta();
      this.isSaveaAvailable = true;
       return false;
@@ -452,7 +452,7 @@ export class ContactCardInsertComponent {
 
     if (this.geoDomicilioLati == '' && this.geoDomicilioLati == '') {
       this.isMensajeAlerta = true;
-      this.mensajeAlerta = 'Latitud y Longitud no pueden estar vacios';
+      this.mensajeAlerta = 'Latitud y Longitud no pueden estar vacíos';
       this.resetMensajeAlerta();
      this.isSaveaAvailable = true;
       return false;
@@ -485,23 +485,15 @@ export class ContactCardInsertComponent {
     if (this.telefonoPreLaboral != '' || this.telefonoNumLaboral != '') {
       if (this.telefonoPreLaboral.length < 1 && this.telefonoPreLaboral.length > 3) {
         this.isMensajeAlerta = true;
-        this.mensajeAlerta = 'Prefijo laboral debe estar entre 1 y 3 caracteres';
+        this.mensajeAlerta = 'Prefijo laboral debe estar entre 1 y 3 dígitos';
         this.resetMensajeAlerta();
        this.isSaveaAvailable = true;
         return false;
       }
 
-      if (this.telefonoNumLaboral.length < 7) {
+      if (this.telefonoNumLaboral.length < 7 && this.telefonoNumLaboral.length > 10) {
         this.isMensajeAlerta = true;
-        this.mensajeAlerta = 'Numero laboral demasiado corto';
-        this.resetMensajeAlerta();
-       this.isSaveaAvailable = true;
-        return false;
-      }
-
-      if (this.telefonoNumLaboral.length > 10) {
-        this.isMensajeAlerta = true;
-        this.mensajeAlerta = 'Numero laboral demasiado largo';
+        this.mensajeAlerta = 'Número laboral debe estar entre 7 y 10 dígitos';
         this.resetMensajeAlerta();
        this.isSaveaAvailable = true;
         return false;

@@ -171,7 +171,7 @@
             {{ infoUserCard.GeoDomicilioLongi }} / {{ infoUserCard.GeoDomicilioLati }}
         </div>
 
-        <div class="d-flex justify-content-center align-items-center mt-3">
+        <div class="d-flex justify-content-center align-items-center mt-3" *ngIf="paramsUser == 'admin'">
             <div class="pointer badge bg-days" (click)="updateContactCard()">EDITAR TC</div>
         </div>
 

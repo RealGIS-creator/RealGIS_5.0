@@ -62,6 +62,12 @@ export class PdfContactCardService {
     const headerSVG = await this.loadSVG('assets/icon/watermark_header.svg');
     const footerSVG = await this.loadSVG('assets/icon/watermark_footer.svg');
     const watermarkImage = await this.convertSVGToPNG(await this.loadSVG('assets/icon/watermark.svg'));
+
+    const sin_verificar = await this.convertSVGToPNG(await this.loadSVG('assets/icon/sin_verificar.svg'));
+    const verificado = await this.convertSVGToPNG(await this.loadSVG('assets/icon/verificado.svg'));
+    const verificado_complementado = await this.convertSVGToPNG(await this.loadSVG('assets/icon/verificado_complementado.svg'));
+    const verificado_db_externas = await this.convertSVGToPNG(await this.loadSVG('assets/icon/verificado_db_externas.svg'));
+
     // Mejor calidad para header/footer
     const headerImage = await this.convertSVGToPNG(headerSVG, 3);
     const footerImage = await this.convertSVGToPNG(footerSVG, 3);
@@ -110,7 +116,29 @@ export class PdfContactCardService {
     pdf.text(`CIS: ${contactoData.CuentasCis}`, marginX, posY);
 
     // Imagen de usuario (posición fija, ajusta según sea necesario)
-    pdf.addImage(userPNG, 'PNG', 140, 42, 36, 40);
+    const avatarX = 140, avatarY = 42, avatarW = 36, avatarH = 40;
+    pdf.addImage(userPNG, 'PNG', avatarX, avatarY, avatarW, avatarH);
+
+    const mmPerPx = 0.264583; // 1px ≈ 0.264583 mm
+    const offsetBottom = 12 * mmPerPx;
+    const offsetRight  = -60 * mmPerPx;
+    const editW        = 45 * mmPerPx;  // 5rem ≈ 80px
+    const editH        = 50 * mmPerPx;  // 3rem ≈ 48px
+  
+    const editX = avatarX + avatarW + offsetRight;
+    const editY = avatarY + avatarH - offsetBottom - editH;
+    if (contactoData.TipoVerificado_Id == 1) {
+      pdf.addImage(sin_verificar, 'PNG', editX, editY, editW, editH);
+    }
+    if (contactoData.TipoVerificado_Id == 2) {
+      pdf.addImage(verificado, 'PNG', editX, editY, editW, editH);
+    }
+    if (contactoData.TipoVerificado_Id == 3) {
+      pdf.addImage(verificado_complementado, 'PNG', editX, editY, editW, editH);
+    }
+    if (contactoData.TipoVerificado_Id == 4) {
+      pdf.addImage(verificado_db_externas, 'PNG', editX, editY, editW, editH);
+    }
 
     // --- Sección Estrategia ---
     checkAddPage(9);
