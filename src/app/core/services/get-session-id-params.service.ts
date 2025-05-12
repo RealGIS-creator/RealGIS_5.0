@@ -19,8 +19,8 @@ export class GetSessionIdParamsService {
       // if (this.id) {
       //   document.cookie = `JSESSIONID=${this.id}; path=/;`;
       // }
-      console.log('ID obtenido (query param):', this.id);
-      console.log('ID obtenido (query param) QUEMADO:', '123456');
+      // console.log('ID obtenido (query param):', this.id);
+      // console.log('ID obtenido (query param) QUEMADO:', '123456');
     });
   }
 

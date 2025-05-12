@@ -1,7 +1,7 @@
 @import '../../../../styles/variables.less';
 
 .navbar {
-    background-color: #fff!important;
+    background-color: #fff !important;
     // min-height: 88px;
     height: 5rem;
 }
@@ -49,3 +49,21 @@
 // input:focus {
 //     border-color: rgb(255, 60, 0);
 // }
+
+@media (min-width: 768px) {
+    .navbar {
+        height: 4rem;
+    }
+    .logo {
+        height: 2.5rem;
+    }
+}
+
+@media (min-width: 1200px) {
+    .navbar {
+        height: 5rem;
+    }
+    .logo {
+        height: 3.5rem;
+    }
+}

@@ -51,12 +51,13 @@ export class GeometryService {
 
   getAllLayersConfig(): WmsParams[] {
     return [
-      { workspace: 'ws_Banistmo', layerName: 'Corregimientos_Pnm', format: 'image/png', opacity: 1 },
-      { workspace: 'ws_Banistmo', layerName: 'Barrios_Pnm', format: 'image/png', opacity: 1 },
-      { workspace: 'ws_Banistmo', layerName: 'Distritos_Pnm', format: 'image/png', opacity: 1 },
-      { workspace: 'ws_Banistmo', layerName: 'Vias_Pnm', format: 'image/png', opacity: 0.8 },
+      { workspace: 'ws_Banistmo', layerName: 'Corregimientos', format: 'image/png', opacity: 1 },
+      { workspace: 'ws_Banistmo', layerName: 'Barrios', format: 'image/png', opacity: 1 },
+      { workspace: 'ws_Banistmo', layerName: 'Distritos', format: 'image/png', opacity: 1 },
+      { workspace: 'ws_Banistmo', layerName: 'Vias', format: 'image/png', opacity: 0.8 },
       { workspace: 'ws_Banistmo', layerName: 'mancha_urbana', format: 'image/png', opacity: 0.8 },
-      { workspace: 'ws_Banistmo', layerName: 'SINAP_Pnm', format: 'image/png', opacity: 0.8 },
+      { workspace: 'ws_Banistmo', layerName: 'SINAP', format: 'image/png', opacity: 0.8 },
+      { workspace: 'ws_Banistmo', layerName: 'Cobertura_del_suelo', format: 'image/png', opacity: 0.8 },
     ];
   }
 
@@ -70,7 +71,7 @@ export class GeometryService {
       attribution: "",
       maxZoom: 18,
       tiled: true,
-      opacity: config.opacity
+      // opacity: config.opacity
     };
 
     return params;

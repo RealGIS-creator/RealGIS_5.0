@@ -346,10 +346,12 @@ export class PdfContactCardService {
     posY += 7;
     checkAddPage(9);
     pdf.text("Email de contacto:", marginX, posY);
-    contactoData.Correos.forEach((element: any, index: number) => {
+    let contador = 0;
+    contactoData.Correos.forEach((element: any) => {
       if (element.CorreoEst == 'A') {
+        contador += 1;
         posY += 7;
-        pdf.text(`${index + 1}. ${element.CorreoElec}`, marginX, posY);
+        pdf.text(`${contador}. ${element.CorreoElec}`, marginX, posY);
       }
     });
 

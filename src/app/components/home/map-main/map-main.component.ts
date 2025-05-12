@@ -46,6 +46,7 @@ export class MapMainComponent implements OnInit, AfterViewInit, OnDestroy {
   private statsRef!: ElementRef<HTMLElement>;
 
   private map!: L.Map;
+  private plainLayer!: L.FeatureGroup<L.CircleMarker>;
   private markerCluster!: L.MarkerClusterGroup;
   private wmsLayers: L.TileLayer.WMS[] = [];
   private destroy$ = new Subject<void>();
@@ -83,53 +84,53 @@ export class MapMainComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subscribeStatsToggle();
 
     this.locationSvc.pointDataParam$
-    .pipe(
-      filter(
-        (pd): pd is [number, number] =>
-          pd != null && Array.isArray(pd) && pd.length === 2
-      ),
-      takeUntil(this.destroy$),
-      tap(([lat, lng]) => {
-        if (this.map && this.markerCluster) {
-          //console.log(lat,lng)
-          const allMarkers = this.markerCluster.getLayers() as L.Marker[];
-          const target = allMarkers.find(m => {
-            const ll = m.getLatLng();
-            return ll.lat === lat && ll.lng === lng;
-          });
-
-          if (target) {
-            this.markerCluster.zoomToShowLayer(target, () => {
-              this.markerCluster.zoomToShowLayer(target, () => {
-                const highlightOpts: L.CircleMarkerOptions = {
-                  radius: 8, // Ajusta el radio si es necesario
-                  fillColor: '#ff0000',
-                  color: '#000',
-                  weight: 1,
-                  opacity: 1,
-                  fillOpacity: 1
-                };
-                if (target instanceof L.CircleMarker) {
-                  target.setStyle(highlightOpts);
-                }
-            
-                // const { lat: tLat, lng: tLng } = target.getLatLng();
-                target
-                  .bindPopup(
-                    // `Lng: ${tLng.toFixed(6)}, Lat: ${tLat.toFixed(6)}`,
-                    `Lng: ${lng}, Lat: ${lat}`,
-                    { closeButton: true, autoClose: true }
-                  )
-                  .openPopup();
-              });
+      .pipe(
+        filter(
+          (pd): pd is [number, number] =>
+            pd != null && Array.isArray(pd) && pd.length === 2
+        ),
+        takeUntil(this.destroy$),
+        tap(([lat, lng]) => {
+          if (this.map && this.markerCluster) {
+            //console.log(lat,lng)
+            const allMarkers = this.markerCluster.getLayers() as L.Marker[];
+            const target = allMarkers.find(m => {
+              const ll = m.getLatLng();
+              return ll.lat === lat && ll.lng === lng;
             });
-          } else {
-            this.map.flyTo([lat, lng], 18, { animate: true });
+
+            if (target) {
+              this.markerCluster.zoomToShowLayer(target, () => {
+                this.markerCluster.zoomToShowLayer(target, () => {
+                  const highlightOpts: L.CircleMarkerOptions = {
+                    radius: 8, // Ajusta el radio si es necesario
+                    fillColor: '#ff0000',
+                    color: '#000',
+                    weight: 1,
+                    opacity: 1,
+                    fillOpacity: 1
+                  };
+                  if (target instanceof L.CircleMarker) {
+                    target.setStyle(highlightOpts);
+                  }
+
+                  // const { lat: tLat, lng: tLng } = target.getLatLng();
+                  target
+                    .bindPopup(
+                      // `Lng: ${tLng.toFixed(6)}, Lat: ${tLat.toFixed(6)}`,
+                      `Lng: ${lng}, Lat: ${lat}`,
+                      { closeButton: true, autoClose: true }
+                    )
+                    .openPopup();
+                });
+              });
+            } else {
+              this.map.flyTo([lat, lng], 18, { animate: true });
+            }
           }
-        }
-      })
-    )
-    .subscribe();
+        })
+      )
+      .subscribe();
   }
 
   ngAfterViewInit(): void {
@@ -183,11 +184,12 @@ export class MapMainComponent implements OnInit, AfterViewInit, OnDestroy {
         this.geometrySvc.getWMSLayersParams(cfg)
       );
       this.wmsLayers.push(layer);
-      layer.addTo(this.map);
+      //layer.addTo(this.map);
     });
   }
 
   private initMarkerCluster(): void {
+    this.plainLayer = L.featureGroup();
     this.markerCluster = L.markerClusterGroup({
       chunkedLoading: true,
       chunkInterval: 200,
@@ -199,16 +201,71 @@ export class MapMainComponent implements OnInit, AfterViewInit, OnDestroy {
     this.debouncedLoadTiles(); // carga inicial
   }
 
-  /** Control de capas: WMS layers + marcador cluster **/
   private addLayerControl(): void {
+    this.wmsLayers.forEach(layer => {
+      if (this.map.hasLayer(layer)) {
+        this.map.removeLayer(layer);
+      }
+    });
+
+    // 3. Añadir solo el marker cluster
+    this.markerCluster = L.markerClusterGroup();
+    this.markerCluster.addTo(this.map);
+
     const overlays: Record<string, L.Layer> = {
-      'Puntos (Cluster)': this.markerCluster,
+      // 'Marcadores individuales': this.plainLayer,
+      'Marcadores agrupados (Cluster)': this.markerCluster,
     };
-    this.wmsLayers.forEach((layer, i) => {
-      // console.log(layer.options.layers)
-      overlays[`${layer.options.layers}`] = layer;
+    this.wmsLayers.forEach(layer => {
+      const raw = (layer.options.layers as string) || '';
+      const label = raw
+        .split(':').pop()!
+        .toLowerCase()
+        .split('_')
+        .map(w => w[0].toUpperCase() + w.slice(1))
+        .join(' ');
+      overlays[label] = layer;
     });
     L.control.layers({}, overlays, { collapsed: false }).addTo(this.map);
+
+    const defaults = ['Distritos'];
+
+    defaults.forEach(name => {
+      const layer = overlays[name];
+      if (layer) {
+        this.map.addLayer(layer);
+      }
+    });
+
+    this.map.on('overlayadd', (e: L.LayerEvent) => {
+      if (e.layer === this.plainLayer) {
+        // Añadir marcadores individuales
+        this.map.addLayer(this.plainLayer);
+        // Quitar cluster si está activo
+        if (this.map.hasLayer(this.markerCluster)) {
+          this.map.removeLayer(this.markerCluster);
+        }
+      }
+      if (e.layer === this.markerCluster) {
+        // Añadir cluster
+        this.map.addLayer(this.markerCluster);
+        // Quitar marcadores individuales
+        if (this.map.hasLayer(this.plainLayer)) {
+          this.map.removeLayer(this.plainLayer);
+        }
+      }
+    });
+
+    this.map.on('overlayremove', (e: L.LayerEvent) => {
+      if (e.layer === this.plainLayer) {
+        // Quitar marcadores individuales
+        this.map.removeLayer(this.plainLayer);
+      }
+      if (e.layer === this.markerCluster) {
+        // Quitar cluster
+        this.map.removeLayer(this.markerCluster);
+      }
+    });
   }
 
   /** Suscribe toggle de estadísticas para reposicionar toolbar **/
@@ -244,6 +301,14 @@ export class MapMainComponent implements OnInit, AfterViewInit, OnDestroy {
           this.mapSvc.updateZoomLevel(this.zoomLevel);
           this.cd.markForCheck();
           this.debouncedLoadTiles();
+
+          if (this.wmsLayers) {
+            this.wmsLayers.forEach(layer => {
+              const currentParams = layer.wmsParams;
+              layer.setParams({ ...currentParams, _cacheBuster: Date.now() } as any);
+            });
+          }
+          
         });
       });
       this.map.on('mousemove', (e: L.LeafletMouseEvent) => {
@@ -366,7 +431,7 @@ export class MapMainComponent implements OnInit, AfterViewInit, OnDestroy {
   //   this.mapSvc.setMarkerClusterGroup(this.markerCluster);
   // }
 
-  
+
   private addCircles(data: any): void {
     const greenOpts: L.CircleMarkerOptions = { radius: 6, fillColor: '#157d35', color: '#000', weight: 1, opacity: 1, fillOpacity: 0.8 };
     const orangeOpts: L.CircleMarkerOptions = { radius: 6, fillColor: '#d75810', color: '#000', weight: 1, opacity: 1, fillOpacity: 0.8 };
@@ -392,6 +457,7 @@ export class MapMainComponent implements OnInit, AfterViewInit, OnDestroy {
             this.showCardUser(acct, id);
           });
           this.markerCluster.addLayer(layer);
+          this.plainLayer.addLayer(layer);
         }
       }
     });
@@ -405,10 +471,10 @@ export class MapMainComponent implements OnInit, AfterViewInit, OnDestroy {
     const color = opts.fillColor as string;
     const stroke = opts.color as string;
     const fillOpacity = opts.fillOpacity ?? 1;
-    const html = `<div style="width:${size}px;height:${size}px;background-color:${color};border:${border}px solid ${stroke};border-radius:50%;opacity:${fillOpacity};"></div>`;
+    const html = `<div style="width:${size}px;height:${size}px;background-color:${color};border-radius:50%;opacity:${fillOpacity};"></div>`;
     return L.divIcon({ className: '', html, iconSize: [size, size], iconAnchor: [size / 2, size / 2] });
   }
- 
+
 
   /** Maneja clic en circleMarker **/
   private onFeatureClick(e: L.LeafletMouseEvent, feat: any): void {
@@ -424,7 +490,26 @@ export class MapMainComponent implements OnInit, AfterViewInit, OnDestroy {
   // ─── Mark Mode ──────────────────────────────────────────────────────────────
 
   toggleMarkMode(): void {
-    this.markMode = !this.markMode;
+    // this.markMode = !this.markMode;
+
+     this.map
+      .locate({ setView: true, maxZoom: 16 })
+      .on('locationfound', e => {
+        const latlng = e.latlng;
+
+        const myIcon = L.icon({
+          iconUrl: 'assets/marker.svg',
+          iconSize: [36, 36],
+          iconAnchor: [18, 36],
+          popupAnchor: [0, -30]
+        });
+        L.marker(latlng, { icon: myIcon })
+          .addTo(this.map)
+          // .bindPopup(`Latitud: ${latlng.lat.toFixed(6)}<br>Longitud: ${latlng.lng.toFixed(6)}<br>Precisión: ${e.accuracy.toFixed(2)} metros`)
+          .bindPopup(`Longitud: ${latlng.lng.toFixed(6)}<br>Latitud: ${latlng.lat.toFixed(6)}<br>Precisión: ${e.accuracy.toFixed(2)} metros`)
+          .openPopup();
+      })
+      .on('locationerror', e => alert(e.message));
   }
 
   private onMapClick(e: L.LeafletMouseEvent): void {
@@ -493,24 +578,24 @@ export class MapMainComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   locateUser(): void {
-    this.map
-    .locate({ setView: true, maxZoom: 16 })
-    .on('locationfound', e => {
-      const latlng = e.latlng;
-  
-      const myIcon = L.icon({
-        iconUrl: 'assets/marker.svg',
-        iconSize: [36, 36],       
-        iconAnchor: [18, 36],     
-        popupAnchor: [0, -30]     
-      });
-      L.marker(latlng, { icon: myIcon })
-        .addTo(this.map)
-        // .bindPopup(`Latitud: ${latlng.lat.toFixed(6)}<br>Longitud: ${latlng.lng.toFixed(6)}<br>Precisión: ${e.accuracy.toFixed(2)} metros`)
-        .bindPopup(`Longitud: ${latlng.lng.toFixed(6)}<br>Latitud: ${latlng.lat.toFixed(6)}<br>Precisión: ${e.accuracy.toFixed(2)} metros`)
-        .openPopup(); 
-    })
-    .on('locationerror', e => alert(e.message));
+    // this.map
+    //   .locate({ setView: true, maxZoom: 16 })
+    //   .on('locationfound', e => {
+    //     const latlng = e.latlng;
+
+    //     const myIcon = L.icon({
+    //       iconUrl: 'assets/marker.svg',
+    //       iconSize: [36, 36],
+    //       iconAnchor: [18, 36],
+    //       popupAnchor: [0, -30]
+    //     });
+    //     L.marker(latlng, { icon: myIcon })
+    //       .addTo(this.map)
+    //       // .bindPopup(`Latitud: ${latlng.lat.toFixed(6)}<br>Longitud: ${latlng.lng.toFixed(6)}<br>Precisión: ${e.accuracy.toFixed(2)} metros`)
+    //       .bindPopup(`Longitud: ${latlng.lng.toFixed(6)}<br>Latitud: ${latlng.lat.toFixed(6)}<br>Precisión: ${e.accuracy.toFixed(2)} metros`)
+    //       .openPopup();
+    //   })
+    //   .on('locationerror', e => alert(e.message));
   }
 
   private showCardUser(account: string, addressId: string): void {

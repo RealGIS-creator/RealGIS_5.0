@@ -17,7 +17,7 @@ export class LocationService {
   constructor() { }
 
   getLocationInitial(): LocationMap {
-    return { location: [ 9.0, -80.0 ], zoom: 8 }
+    return { location: [ 8.6, -80.0 ], zoom: 8 }
   }
 
   updatePointData(data: any) {

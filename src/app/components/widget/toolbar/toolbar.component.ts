@@ -67,7 +67,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
   }
 
   resetMap(): void {
-    this.map.setView([ 9.0, -80.0 ], 8);
+    this.map.setView([ 8.6, -80.0 ], 8);
   }
 
   onChangeImage(id: number, type: string): void {
