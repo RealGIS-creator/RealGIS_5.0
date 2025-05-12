@@ -121,10 +121,10 @@ export class PdfContactCardService {
 
     const mmPerPx = 0.264583; // 1px ≈ 0.264583 mm
     const offsetBottom = 12 * mmPerPx;
-    const offsetRight  = -60 * mmPerPx;
-    const editW        = 45 * mmPerPx;  // 5rem ≈ 80px
-    const editH        = 50 * mmPerPx;  // 3rem ≈ 48px
-  
+    const offsetRight = -60 * mmPerPx;
+    const editW = 45 * mmPerPx;  // 5rem ≈ 80px
+    const editH = 50 * mmPerPx;  // 3rem ≈ 48px
+
     const editX = avatarX + avatarW + offsetRight;
     const editY = avatarY + avatarH - offsetBottom - editH;
     if (contactoData.TipoVerificado_Id == 1) {
@@ -152,7 +152,7 @@ export class PdfContactCardService {
     let posX = marginX;
     checkAddPage(9);
     // const estrategias = ['TDD', 'TDC', 'TOKENIZACIÓN', 'DESCUENTO DIRECTO']
-    const estrategias = [{name:'TDD', id: 3}, {name:'TDC', id:2}, {name:'TOKENIZACIÓN', id:4}, {name:'DESCUENTO DIRECTO', id:1}]
+    const estrategias = [{ name: 'TDD', id: 3 }, { name: 'TDC', id: 2 }, { name: 'TOKENIZACIÓN', id: 4 }, { name: 'DESCUENTO DIRECTO', id: 1 }]
     estrategias.forEach((badge: any) => {
       const textWidth = pdf.getTextWidth(badge.name);
       const dynamicBadgeWidth = textWidth + badgePadding;
@@ -235,7 +235,7 @@ export class PdfContactCardService {
 
       posY += 7;
       checkAddPage(9);
-    
+
       const fullLabDir = `Nombre: ${contactoData.Direccion}`;
       const maxWidth = pageWidth - marginX * 2;
       const labLines = pdf.splitTextToSize(fullLabDir, maxWidth);
@@ -253,9 +253,9 @@ export class PdfContactCardService {
     // const direcciones = laboralDireccionFiltro.map((element: any) => element.Direccion).join(' - ');
 
     const telefonos = contactoData.Telefonos
-    .filter((element: any) => element.TipoTelefonoCod === '4')
-    .map((element: any) => `(${element.TelefonoPre}) ${element.TelefonoNum}`)
-    .join('- ');
+      .filter((element: any) => element.TipoTelefonoCod === '4' && element.TelefonoEst == 'A')
+      .map((element: any) => `(${element.TelefonoPre}) ${element.TelefonoNum}`)
+      .join('- ');
 
     // if (laboralDireccion) {
     //   posY += 7;
@@ -275,7 +275,7 @@ export class PdfContactCardService {
 
       posY += 7;
       checkAddPage(9);
-    
+
       const fullLabDir = `Dirección Laboral: ${contactoData.DireccionesLugTra}`;
       const maxWidth = pageWidth - marginX * 2;
       const labLines = pdf.splitTextToSize(fullLabDir, maxWidth);
@@ -286,7 +286,7 @@ export class PdfContactCardService {
       });
     }
 
-    
+
 
     // --- Información Personal ---
     posY += 10;
@@ -308,7 +308,7 @@ export class PdfContactCardService {
 
       posY += 7;
       checkAddPage(9);
-    
+
       const fullLabDir = `Dirección Residencial: ${contactoData.Direccion}`;
       const maxWidth = pageWidth - marginX * 2;
       const labLines = pdf.splitTextToSize(fullLabDir, maxWidth);
@@ -321,13 +321,13 @@ export class PdfContactCardService {
 
     checkAddPage(9);
     const telefonoMovilFiltro = contactoData.Telefonos
-    .filter((element: any) => element.TipoTelefonoCod === '1').map((element: any) => `(${element.TelefonoPre}) ${element.TelefonoNum}`).join(' - ');
+      .filter((element: any) => element.TipoTelefono_Id === '1' && element.TelefonoEst == 'A').map((element: any) => `(${element.TelefonoPre}) ${element.TelefonoNum}`).join(' - ');
 
     const telefonoResidencialFiltro = contactoData.Telefonos
-    .filter((element: any) => element.TipoTelefonoCod === '2' || element.TipoTelefonoCod === '3').map((element: any) => `(${element.TelefonoPre}) ${element.TelefonoNum}`).join(' - ');
+      .filter((element: any) => (element.TipoTelefono_Id === '2' || element.TipoTelefonoCod === '3') && element.TelefonoEst == 'A').map((element: any) => `(${element.TelefonoPre}) ${element.TelefonoNum}`).join(' - ');
 
     const telefonoOtroFiltro = contactoData.Telefonos
-    .filter((element: any) => element.TipoTelefonoCod === '5').map((element: any) => `(${element.TelefonoPre}) ${element.TelefonoNum}`).join(' - ');
+      .filter((element: any) => element.TipoTelefono_Id === '5' && element.TelefonoEst == 'A').map((element: any) => `(${element.TelefonoPre}) ${element.TelefonoNum}`).join(' - ');
 
     if (telefonoMovilFiltro) {
       posY += 7;
@@ -347,8 +347,10 @@ export class PdfContactCardService {
     checkAddPage(9);
     pdf.text("Email de contacto:", marginX, posY);
     contactoData.Correos.forEach((element: any, index: number) => {
-      posY += 7;
-      pdf.text(`${index + 1}. ${element.CorreoElec}`, marginX, posY);
+      if (element.CorreoEst == 'A') {
+        posY += 7;
+        pdf.text(`${index + 1}. ${element.CorreoElec}`, marginX, posY);
+      }
     });
 
     // --- Fincas Asociadas ---
@@ -359,35 +361,37 @@ export class PdfContactCardService {
 
     contactoData.Fincas.forEach((element: any, index: number) => {
       // Número de finca / folio
-      posY += 7;
-      checkAddPage(9);
-      pdf.setFont('Helvetica', 'normal');
-      pdf.text(
-        `Número de Finca / Folio N.: ${element.FincaFolio}`,
-        marginX,
-        posY
-      );
-    
-      // Dirección con wrap automático
-      posY += 7;
-      checkAddPage(9);
-    
-      // 1. Construimos el texto completo
-      const fullDirText = `Dirección: ${element.FincaDireccion}`;
-    
-      // 2. Definimos el ancho máximo (ancho de página menos márgenes)
-      const maxWidth = pageWidth - marginX * 2;
-    
-      // 3. Dividimos el texto en líneas que quepan en maxWidth
-      const lines = pdf.splitTextToSize(fullDirText, maxWidth);
-    
-      // 4. Dibujamos cada línea y vamos avanzando posY
-      lines.forEach((line: string, i: number) => {
-        // Antes de dibujar, comprobamos si caben las siguientes líneas
-        checkAddPage(9 * (lines.length - i));
-        pdf.text(line, marginX, posY);
+      if ( element.FincaEst == 'A') {
         posY += 7;
-      });
+        checkAddPage(9);
+        pdf.setFont('Helvetica', 'normal');
+        pdf.text(
+          `Número de Finca / Folio N.: ${element.FincaFolio}`,
+          marginX,
+          posY
+        );
+
+        // Dirección con wrap automático
+        posY += 7;
+        checkAddPage(9);
+
+        // 1. Construimos el texto completo
+        const fullDirText = `Dirección: ${element.FincaDireccion}`;
+
+        // 2. Definimos el ancho máximo (ancho de página menos márgenes)
+        const maxWidth = pageWidth - marginX * 2;
+
+        // 3. Dividimos el texto en líneas que quepan en maxWidth
+        const lines = pdf.splitTextToSize(fullDirText, maxWidth);
+
+        // 4. Dibujamos cada línea y vamos avanzando posY
+        lines.forEach((line: string, i: number) => {
+          // Antes de dibujar, comprobamos si caben las siguientes líneas
+          checkAddPage(9 * (lines.length - i));
+          pdf.text(line, marginX, posY);
+          posY += 7;
+        });
+      }
     });
 
     // --- Ubicación ---

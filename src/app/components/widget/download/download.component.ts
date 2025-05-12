@@ -95,7 +95,7 @@ export class DownloadComponent {
           .subscribe({
             next: (response) => {
               const infoClient = response.SDT_BaseCliente;
-              console.log('excel: ', infoClient)
+              //console.log('excel: ', infoClient)
               this.exportableService.exportLargeDataToExcelZip(infoClient, 'BaseClienteXLSX');
             },
             error: (err) => {
@@ -115,7 +115,7 @@ export class DownloadComponent {
           .subscribe({
             next: (response) => {
               this.geojson = response.SDT_BaseClienteGeoJson;
-              console.log('shapeFile: ', this.geojson)             
+              //console.log('shapeFile: ', this.geojson)             
               this.exportableService.exportToShapefile(this.geojson, 'BaseClienteShapeFile');
               this.isLoading = false;
             },

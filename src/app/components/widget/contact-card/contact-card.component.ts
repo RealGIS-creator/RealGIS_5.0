@@ -49,7 +49,7 @@ export class ContactCardComponent {
     this.getInformationCard();
 
     this.globalUserParamService.params$.subscribe(p => {
-      this.paramsUser = p?.['user'];
+      this.paramsUser = p?.['role'];
     });
   }
 

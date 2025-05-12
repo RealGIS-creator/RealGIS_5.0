@@ -41,9 +41,9 @@
             <span class="pointer-defaul badge bg-strategy"
                 [ngClass]="{'bg-product': infoUserCard.TipoEstrategia_Id == '2'}">TDC</span>
             <span class="pointer-defaul badge bg-strategy"
-                [ngClass]="{'bg-product': infoUserCard.TipoEstrategia_Id == '1'}">TOKENIZACIÓN</span>
+                [ngClass]="{'bg-product': infoUserCard.TipoEstrategia_Id == '4'}">TOKENIZACIÓN</span>
             <span class="pointer-defaul badge bg-strategy"
-                [ngClass]="{'bg-product': infoUserCard.TipoEstrategia_Id == '4'}">DESCUENTO
+                [ngClass]="{'bg-product': infoUserCard.TipoEstrategia_Id == '1'}">DESCUENTO
                 DIRECTO</span>
         </div>
 
@@ -171,7 +171,7 @@
             {{ infoUserCard.GeoDomicilioLongi }} / {{ infoUserCard.GeoDomicilioLati }}
         </div>
 
-        <div class="d-flex justify-content-center align-items-center mt-3" *ngIf="paramsUser == 'admin'">
+        <div class="d-flex justify-content-center align-items-center mt-3" *ngIf="paramsUser != 'Consulta'">
             <div class="pointer badge bg-days" (click)="updateContactCard()">EDITAR TC</div>
         </div>
 

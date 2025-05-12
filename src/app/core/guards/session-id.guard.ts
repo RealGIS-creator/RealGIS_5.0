@@ -9,10 +9,10 @@ export const sessionIdGuard: CanActivateFn = (route: ActivatedRouteSnapshot, sta
 
   const id = route.queryParamMap.get('id');
   // const user = route.queryParamMap.get('usuario');
-  const user = 'admin';
+  // const user = 'admin';
 
-  if (id && user) {
-    globalParams.setParams({ user });
+  if (id) {
+    // globalParams.setParams({ user });
     return true;
   } else {
     return router.createUrlTree(['/error']);

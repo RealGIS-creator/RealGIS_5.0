@@ -91,7 +91,7 @@ export class MapMainComponent implements OnInit, AfterViewInit, OnDestroy {
       takeUntil(this.destroy$),
       tap(([lat, lng]) => {
         if (this.map && this.markerCluster) {
-          console.log(lat,lng)
+          //console.log(lat,lng)
           const allMarkers = this.markerCluster.getLayers() as L.Marker[];
           const target = allMarkers.find(m => {
             const ll = m.getLatLng();

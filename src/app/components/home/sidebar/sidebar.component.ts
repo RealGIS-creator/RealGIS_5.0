@@ -42,13 +42,15 @@ export class SidebarComponent {
 
     this.dialogSub = this.dialogService.activeDialog$.subscribe(dialogRef => {
       if (!dialogRef) {
-        console.log('No hay diálogo activo');
+        //console.log('No hay diálogo activo');
         this.resetImagesToDark();
       }
     });
 
     this.globalUserParamService.params$.subscribe(p => {
-      this.paramsUser = p?.['user'];
+      this.paramsUser = p?.['role'];
+      // console.log('rol sidebar:', this.paramsUser)
+      // console.log('rol sidebar:', p)
     });
   }
 
@@ -58,7 +60,7 @@ export class SidebarComponent {
 
   onChangeImage(id: number, type: string): void {
     this.dialogService.closeAll();
-    console.log('id: ', id)
+    //console.log('id: ', id)
     this.activeIndex = this.activeIndex === id ? null : id;
 
     this.imagesDefault.forEach((element) => {

@@ -52,7 +52,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.mapService.markerClusterGroup$.subscribe(group => {
         this.markerClusterGroup = group
-        console.log('llega info', this.markerClusterGroup)
+        //console.log('llega info', this.markerClusterGroup)
       })
     );
   }
@@ -186,7 +186,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         return sub.getAllChildMarkers ? sub.getAllChildMarkers() : (layer instanceof L.Marker ? [layer] : []);
       });
 
-      console.log('todos los geoJson: ', this.allMarkers)
+      //console.log('todos los geoJson: ', this.allMarkers)
 
     // 2. Filtramos sólo los que están dentro del polígono
     const insideMarkers = this.allMarkers.filter(marker => {
@@ -200,7 +200,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
       .map(m => (m as any).feature?.properties?.Direccion_Id)
       .filter((id): id is string => typeof id === 'string');
 
-    console.log('IDs dentro del polígono:', ids);
+    //console.log('IDs dentro del polígono:', ids);
 
     // 4. Enviamos al servicio
     this.mapService.setSelectedIds(ids);

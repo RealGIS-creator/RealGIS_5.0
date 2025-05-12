@@ -15,11 +15,11 @@ export class ExportableService {
 
   // EXPORTAR CSV
   public exportToCSV(data: any[], filename: string): void {
-    console.log('entra 1');
+    //console.log('entra 1');
     if (!data || !data.length) {
       return;
     }
-    console.log('entra 2');
+    //console.log('entra 2');
 
     const separator = ',';
     const keys = Object.keys(data[0]);

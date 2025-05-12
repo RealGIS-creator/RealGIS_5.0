@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../../environment/environment';
 import { firstValueFrom, Observable, tap } from 'rxjs';
 import { Token } from '../../../interfaces/token';
+import { GlobalUserParamService } from '../global-user-param.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,9 @@ export class TokenService {
   private apiUrl = environment.backendGN;
   private token: string | null = null;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,
+    private globalParams :GlobalUserParamService
+  ) { }
 
   async genexusToken(): Promise<void> {
     console.log('primero el servicio')
@@ -23,10 +26,12 @@ export class TokenService {
       "Gx_mode": "DSP"
     };
     try {
-      // document.cookie = "JSESSIONID=NuevoValor; path=/;";
       const response = await firstValueFrom(this.http.post<Token>(`${this.apiUrl}/WS_Session`, gn, { headers }));
       this.token = response.User_Token;
-      console.log('token: ', this.token)
+      const role = response.Role;
+      // console.log('token: ', this.token)
+      // console.log('Rol: ', role)
+      this.globalParams.setParams({ role });
     } catch (error) {
       console.error('Error al obtener el token:', error);
       throw error; 

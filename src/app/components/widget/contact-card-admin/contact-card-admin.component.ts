@@ -77,15 +77,15 @@ export class ContactCardAdminComponent {
   ngOnInit(): void {
     this.data = this.data$.value._value;
     this.selectedOption = this.data.TipoProductoNom
-    console.log(this.data);
+    //console.log(this.data);
     this.data.Telefonos.forEach((t: any) => {
       if (t.TipoTelefono_Id == '4') {
         this.telefonoLaboral = t.TelefonoNum;
         this.telefonoPreLaboral = t.TelefonoPre;
       }
     });
-    console.log(this.data.Telefonos)
-    console.log(this.data.AcreditadoIdenti);
+    //console.log(this.data.Telefonos)
+    //console.log(this.data.AcreditadoIdenti);
   }
 
   constructor(
@@ -211,7 +211,7 @@ export class ContactCardAdminComponent {
         : t
     );
 
-    console.log(this.data);
+    //console.log(this.data);
   }
 
   closeTelefono(): void {
@@ -262,8 +262,6 @@ export class ContactCardAdminComponent {
         ? { ...c, CorreoEst: 'I' }
         : c
     );
-
-    console.log(this.data);
   }
 
   // ------ fincas
@@ -297,7 +295,7 @@ export class ContactCardAdminComponent {
 
   save(): void {
     if (this.validateData()) {
-      console.log('data final: ', this.data)
+      //console.log('data final: ', this.data)
       this.contactCardAdminService.updateContactCard([this.data]).subscribe((res) => {
         this.isSaveaAvailable = true;
         this.saveData = res.WS_TarjetaContacto1[0];

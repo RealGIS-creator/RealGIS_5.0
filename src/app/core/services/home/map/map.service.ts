@@ -31,7 +31,7 @@ export class MapService {
   }
 
   setMarkerClusterGroup(markerClusterGroup: L.MarkerClusterGroup) {
-    console.log('info funcion', markerClusterGroup)
+    //console.log('info funcion', markerClusterGroup)
     this.markerClusterGroupSubject.next(markerClusterGroup);
   }
 
@@ -41,12 +41,12 @@ export class MapService {
   }  
 
   setSelectedIds(ids: string[]) {
-    console.log('cambia ids: ', ids)
+    //console.log('cambia ids: ', ids)
     this.selectedIdsSubject.next(ids);
   }
 
   setSelectedGeoJson(data: FeatureCollection) {
-    console.log('cambia geoJson: ', data)
+    //console.log('cambia geoJson: ', data)
     this._selectedGeoJson.next(data);
   }
 

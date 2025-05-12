@@ -11,7 +11,7 @@ export const sessionIdInterceptorInterceptor: HttpInterceptorFn = (req, next) =>
     const tokenService = inject(TokenService);
     const token = tokenService.getToken();
     if (token) {
-      console.log('token: ', token)
+      // console.log('token: ', token)
       const cloned = req.clone({
         withCredentials: true,  // Esto indica que se envíen credenciales (cookies, etc.)
         setHeaders: token ? { 
@@ -23,6 +23,6 @@ export const sessionIdInterceptorInterceptor: HttpInterceptorFn = (req, next) =>
       return next(req);
     }
   }
-  console.log('pasa por interceptor');
+  //console.log('pasa por interceptor');
   return next(req);
 }; 

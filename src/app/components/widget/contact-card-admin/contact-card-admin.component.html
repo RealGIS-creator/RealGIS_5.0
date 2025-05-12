@@ -74,7 +74,7 @@
                             <p class="option option-hover" (click)="selectTipoProducto('PRESTAMO AUTO', 5)">
                                 PRESTAMO AUTO
                             </p>
-                            <p class="option option-hover" (click)="selectTipoProducto('TARJETA DEBITO', 5)">
+                            <p class="option option-hover" (click)="selectTipoProducto('TARJETA DEBITO', 6)">
                                 TARJETA DEBITO
                             </p>
                         </div>
@@ -344,11 +344,11 @@
                     </div>
                 </div>
                 <div class="row g-1" *ngFor="let personal of data.Correos; let i = index">
-                    <div class="col-auto mt-2">
+                    <div class="col-auto mt-2" *ngIf="personal.CorreoEst == 'A'">
                         <div class="d-flex align-items-center">
                             <div class="badge bg-property"><b>{{ i + 1 }}. {{ personal.CorreoElec }}</b></div>
                             <img class="pointer icon button-header" src="assets/icon/delete.svg" alt="icono desplegar"
-                                (click)="deleteEmail(personal.CorreoElec_Id)">
+                                (click)="deleteEmail(personal.Correo_Id)">
                         </div>
                     </div>
                 </div>

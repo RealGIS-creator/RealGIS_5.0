@@ -235,7 +235,7 @@ export class ContactCardInsertComponent {
 
     this.dataObject.Telefonos = arr as unknown as typeof this.dataObject.Telefonos;
 
-    console.log(this.dataObject);
+    //console.log(this.dataObject);
   }
 
   closeTelefono(): void {
@@ -273,7 +273,7 @@ export class ContactCardInsertComponent {
 
     this.typeEmail = 0;
     this.nuevoEmail = '';
-    console.log(this.dataObject);
+    //console.log(this.dataObject);
   }
 
   closeEmail(): void {
@@ -289,7 +289,7 @@ export class ContactCardInsertComponent {
     }
 
     this.dataObject.Correos = arr as unknown as typeof this.dataObject.Correos;
-    console.log(this.dataObject);
+    //console.log(this.dataObject);
   }
 
   //fincas
@@ -314,7 +314,7 @@ export class ContactCardInsertComponent {
     this.dataObject.TipoPredio_Id = '';
     this.nuevaFinca = '';
     this.nuevaFincaDireccion = '';
-    console.log(this.dataObject);
+    //console.log(this.dataObject);
   }
 
   deleteFinca(id: string): void {
@@ -326,7 +326,7 @@ export class ContactCardInsertComponent {
     }
 
     this.dataObject.Fincas = arr as unknown as typeof this.dataObject.Fincas;
-    console.log(this.dataObject);
+    //console.log(this.dataObject);
   }
 
   resetMensajeAlerta(): void {
@@ -344,16 +344,16 @@ export class ContactCardInsertComponent {
   }
 
   save(): void {
-    console.log('dataObject final: ', this.dataObject)
+    //console.log('dataObject final: ', this.dataObject)
     if (this.validateData()) {
       this.contactCardAdminService.insertContactCard([this.dataObject]).subscribe((res) => {
-        console.log('espuesta: ', res);
+        //console.log('espuesta: ', res);
         this.isSaveaAvailable = true;
         if (res.verificarSalida) {
           this.saveData = res.WS_TarjetaContacto1[0];
           if (this.saveData) {
             this.isMainMenu = false;
-            console.log('info guardada: ', this.saveData)
+            //console.log('info guardada: ', this.saveData)
             this.message = res.mensajeSalida;
             this.isSave = true;
           } else {
