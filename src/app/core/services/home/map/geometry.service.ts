@@ -58,6 +58,8 @@ export class GeometryService {
       { workspace: 'ws_Banistmo', layerName: 'mancha_urbana', format: 'image/png', opacity: 0.8 },
       { workspace: 'ws_Banistmo', layerName: 'SINAP', format: 'image/png', opacity: 0.8 },
       { workspace: 'ws_Banistmo', layerName: 'Cobertura_del_suelo', format: 'image/png', opacity: 0.8 },
+      { workspace: 'ws_Banistmo', layerName: 'sucursales', format: 'image/png', opacity: 0.8 },
+      { workspace: 'ws_Banistmo', layerName: 'buffer_sucursales', format: 'image/png', opacity: 0.8 },
     ];
   }
 
