@@ -55,11 +55,14 @@ export class GeometryService {
       { workspace: 'ws_Banistmo', layerName: 'Barrios', format: 'image/png', opacity: 1 },
       { workspace: 'ws_Banistmo', layerName: 'Distritos', format: 'image/png', opacity: 1 },
       { workspace: 'ws_Banistmo', layerName: 'Vias', format: 'image/png', opacity: 0.8 },
-      { workspace: 'ws_Banistmo', layerName: 'mancha_urbana', format: 'image/png', opacity: 0.8 },
       { workspace: 'ws_Banistmo', layerName: 'SINAP', format: 'image/png', opacity: 0.8 },
       { workspace: 'ws_Banistmo', layerName: 'Cobertura_del_suelo', format: 'image/png', opacity: 0.8 },
       { workspace: 'ws_Banistmo', layerName: 'sucursales', format: 'image/png', opacity: 0.8 },
       { workspace: 'ws_Banistmo', layerName: 'buffer_sucursales', format: 'image/png', opacity: 0.8 },
+      { workspace: 'ws_Banistmo', layerName: 'corregimiento_centro', format: 'image/png', opacity: 0.8 },
+      { workspace: 'ws_Banistmo', layerName: 'distrito_centro', format: 'image/png', opacity: 0.8 },
+      { workspace: 'ws_Banistmo', layerName: 'mancha_urbana_centro', format: 'image/png', opacity: 0.8 },
+      { workspace: 'ws_Banistmo', layerName: 'mancha_urbana_1', format: 'image/png', opacity: 0.8 },
     ];
   }
 
