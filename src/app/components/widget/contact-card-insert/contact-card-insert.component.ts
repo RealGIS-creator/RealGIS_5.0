@@ -98,9 +98,9 @@ export class ContactCardInsertComponent {
   optionsTipoProducto: string[] = ['PRESTAMO HIPOTECARIO', 'PRESTAMO PERSONAL', 'TARJETA DE CREDITO', 'PRESTAMO AUTO', 'TARJETA DEBITO'];
 
   constructor(
-    private dialogService: DialogService,
-    private sidebarShowDataService: SidebarShowDataService,
-    private contactCardAdminService: ContactCardAdminService
+    private readonly dialogService: DialogService,
+    private readonly sidebarShowDataService: SidebarShowDataService,
+    private readonly contactCardAdminService: ContactCardAdminService
   ) {
     this.dataObject.Telefonos = [] as unknown as InformationCard['Telefonos'];
     this.dataObject.Correos = [] as unknown as InformationCard['Correos'];
@@ -123,11 +123,11 @@ export class ContactCardInsertComponent {
   }
 
   clickSearcher(): void {
-    this.isVisible = this.isVisible ? false : true;
+    this.isVisible = !this.isVisible;
   }
 
   clickSearcherTypeDocument(): void {
-    this.isVisibleTypeDocument = this.isVisibleTypeDocument ? false : true;
+    this.isVisibleTypeDocument = !this.isVisibleTypeDocument;
   }
 
   get displayIcon() {
@@ -160,40 +160,40 @@ export class ContactCardInsertComponent {
   }
 
   editInformacionLaboral(): void {
-    this.isVisibleInformacionEmployment = this.isVisibleInformacionEmployment ? false : true;
+    this.isVisibleInformacionEmployment = !this.isVisibleInformacionEmployment;
   }
 
   editInformacionPersonal(): void {
-    this.isVisibleInformacionPersonal = this.isVisibleInformacionPersonal ? false : true;
+    this.isVisibleInformacionPersonal = !this.isVisibleInformacionPersonal;
   }
 
   AddTelefonoMovil(type: number = 0): void {
-    this.isAddTelefonoMovil = this.isAddTelefonoMovil ? false : true;
-    this.typeTelefono = type ? type : 0;
+    this.isAddTelefonoMovil = !this.isAddTelefonoMovil;
+    this.typeTelefono = type || 0;
     this.isAddTelefonoResidencial = false;
     this.isAddTelefonoOtro = false;
   }
 
   AddTelefonoResidencial(type: number = 0): void {
-    this.isAddTelefonoResidencial = this.isAddTelefonoResidencial ? false : true;
-    this.typeTelefono = type ? type : 0;
+    this.isAddTelefonoResidencial = !this.isAddTelefonoResidencial;
+    this.typeTelefono = type;
     this.isAddTelefonoMovil = false;
     this.isAddTelefonoOtro = false;
   }
 
   AddTelefonoOtro(type: number = 0): void {
-    this.isAddTelefonoOtro = this.isAddTelefonoOtro ? false : true;
-    this.typeTelefono = type ? type : 0;
+    this.isAddTelefonoOtro = !this.isAddTelefonoOtro;
+    this.typeTelefono = type || 0;
     this.isAddTelefonoMovil = false;
     this.isAddTelefonoResidencial = false;
   }
 
   AddEmail(): void {
-    this.isAddEmail = this.isAddEmail ? false : true;
+    this.isAddEmail = !this.isAddEmail;
   }
 
   AddFinca(): void {
-    this.isAddFinca = this.isAddFinca ? false : true;
+    this.isAddFinca = !this.isAddFinca;
   }
 
   selectTipoIdentificacion(nombreTipo: string, idTipo: string): void {
@@ -234,8 +234,6 @@ export class ContactCardInsertComponent {
     }
 
     this.dataObject.Telefonos = arr as unknown as typeof this.dataObject.Telefonos;
-
-    //console.log(this.dataObject);
   }
 
   closeTelefono(): void {
@@ -273,7 +271,6 @@ export class ContactCardInsertComponent {
 
     this.typeEmail = 0;
     this.nuevoEmail = '';
-    //console.log(this.dataObject);
   }
 
   closeEmail(): void {
@@ -289,7 +286,6 @@ export class ContactCardInsertComponent {
     }
 
     this.dataObject.Correos = arr as unknown as typeof this.dataObject.Correos;
-    //console.log(this.dataObject);
   }
 
   //fincas
@@ -314,7 +310,6 @@ export class ContactCardInsertComponent {
     this.dataObject.TipoPredio_Id = '';
     this.nuevaFinca = '';
     this.nuevaFincaDireccion = '';
-    //console.log(this.dataObject);
   }
 
   deleteFinca(id: string): void {
@@ -326,7 +321,6 @@ export class ContactCardInsertComponent {
     }
 
     this.dataObject.Fincas = arr as unknown as typeof this.dataObject.Fincas;
-    //console.log(this.dataObject);
   }
 
   resetMensajeAlerta(): void {
@@ -344,16 +338,13 @@ export class ContactCardInsertComponent {
   }
 
   save(): void {
-    //console.log('dataObject final: ', this.dataObject)
     if (this.validateData()) {
       this.contactCardAdminService.insertContactCard([this.dataObject]).subscribe((res) => {
-        //console.log('espuesta: ', res);
         this.isSaveaAvailable = true;
         if (res.verificarSalida) {
           this.saveData = res.WS_TarjetaContacto1[0];
           if (this.saveData) {
             this.isMainMenu = false;
-            //console.log('info guardada: ', this.saveData)
             this.message = res.mensajeSalida;
             this.isSave = true;
           } else {

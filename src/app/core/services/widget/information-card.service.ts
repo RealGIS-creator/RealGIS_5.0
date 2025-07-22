@@ -9,9 +9,9 @@ import { InformationCardObject } from '../../../interfaces/information-card';
 })
 export class InformationCardService {
 
-  private apiUrl = environment.backendGN;
+  private readonly apiUrl = environment.backendGN;
 
-  constructor(private http: HttpClient) { }
+  constructor(private readonly http: HttpClient) { }
 
   getSearchCriteria(): any[] {
     return [

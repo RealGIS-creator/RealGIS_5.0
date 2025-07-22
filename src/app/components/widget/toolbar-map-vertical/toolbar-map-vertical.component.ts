@@ -26,7 +26,7 @@ export class ToolbarMapVerticalComponent {
   @Output() locateUserEvent = new EventEmitter<void>();
   @Output() markPointEvent = new EventEmitter<void>();
 
-  constructor(private toolbarMapVerticalService: ToolbarMapVerticalService) {}
+  constructor(private readonly toolbarMapVerticalService: ToolbarMapVerticalService) {}
 
   ngOnInit() {
     this.getIcons();

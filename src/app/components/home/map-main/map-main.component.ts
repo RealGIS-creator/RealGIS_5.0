@@ -43,13 +43,13 @@ import { StatsToggleService } from '../../../core/services/widget/stats-toggle.s
 })
 export class MapMainComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('stats', { read: ElementRef, static: false })
-  private statsRef!: ElementRef<HTMLElement>;
+  private readonly statsRef!: ElementRef<HTMLElement>;
 
   private map!: L.Map;
   private plainLayer!: L.FeatureGroup<L.CircleMarker>;
   private markerCluster!: L.MarkerClusterGroup;
-  private wmsLayers: L.TileLayer.WMS[] = [];
-  private destroy$ = new Subject<void>();
+  private readonly wmsLayers: L.TileLayer.WMS[] = [];
+  private readonly destroy$ = new Subject<void>();
   // private configLayerControl: any;
 
   // Estado de marcado y zoom
@@ -63,17 +63,17 @@ export class MapMainComponent implements OnInit, AfterViewInit, OnDestroy {
   toolbarRightPx = 0;
   readonly statisticsHeight = 60;
   readonly toolbarOffset = 10;
-  private loadedTiles = new Set<string>();
-  private addedFeatureIds = new Set<string>();
+  private readonly loadedTiles = new Set<string>();
+  private readonly addedFeatureIds = new Set<string>();
 
   constructor(
-    private ngZone: NgZone,
-    private cd: ChangeDetectorRef,
-    private locationSvc: LocationService,
-    private geometrySvc: GeometryService,
-    private mapSvc: MapService,
-    private dialog: DialogService,
-    private statsToggle: StatsToggleService
+    private readonly ngZone: NgZone,
+    private readonly cd: ChangeDetectorRef,
+    private readonly locationSvc: LocationService,
+    private readonly geometrySvc: GeometryService,
+    private readonly mapSvc: MapService,
+    private readonly dialog: DialogService,
+    private readonly statsToggle: StatsToggleService
   ) { }
 
   ngOnInit(): void {
@@ -112,9 +112,7 @@ export class MapMainComponent implements OnInit, AfterViewInit, OnDestroy {
                   };
                   if (target instanceof L.CircleMarker) {
                     target.setStyle(highlightOpts);
-                  }
-
-                  // const { lat: tLat, lng: tLng } = target.getLatLng();
+                  };
                   target
                     .bindPopup(
                       // `Lng: ${tLng.toFixed(6)}, Lat: ${tLat.toFixed(6)}`,
@@ -184,7 +182,6 @@ export class MapMainComponent implements OnInit, AfterViewInit, OnDestroy {
         this.geometrySvc.getWMSLayersParams(cfg)
       );
       this.wmsLayers.push(layer);
-      //layer.addTo(this.map);
     });
   }
 
@@ -363,38 +360,6 @@ export class MapMainComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe(json => {
         if (json) this.addCircles(json);
       });
-
-    // const zoom = this.map.getZoom();
-    // const tileSize = this.getTileSizeForZoom(zoom);
-    // const bounds = this.map.getBounds();
-
-    // // Calcula tiles visibles
-    // const xMin = Math.floor(bounds.getWest() / tileSize);
-    // const xMax = Math.floor(bounds.getEast() / tileSize);
-    // const yMin = Math.floor(bounds.getSouth() / tileSize);
-    // const yMax = Math.floor(bounds.getNorth() / tileSize);
-
-    // const requests: Array<Promise<any>> = [];
-    // for (let x = xMin; x <= xMax; x++) {
-    //   for (let y = yMin; y <= yMax; y++) {
-    //     requests.push(
-    //       this.geometrySvc
-    //         .getGeoJsonData(
-    //           y * tileSize + tileSize,
-    //           y * tileSize,
-    //           (x + 1) * tileSize,
-    //           x * tileSize
-    //         )
-    //         .toPromise()
-    //     );
-    //   }
-    // }
-
-    // // Una vez se resuelvan todas las promesas, actualizamos cluster de una sola vez
-    // Promise.all(requests).then(resps => {
-    //   this.markerCluster.clearLayers();
-    //   resps.forEach(resp => this.addCircles(resp.SDT_GeoJson));
-    // });
   }
 
   private getTileSizeForZoom(z: number): number {
@@ -404,33 +369,6 @@ export class MapMainComponent implements OnInit, AfterViewInit, OnDestroy {
     if (z <= 15) return 0.5;
     return 0.25;
   }
-
-  /** Añade circleMarkers al cluster, filtrando por viewport y coloreando **/
-  // private addCircles(data: any): void {
-  //   const bounds = this.map.getBounds();
-  //   const features = (data.features || data).filter((feat: any) => {
-  //     const [lng, lat] = feat.geometry.coordinates;
-  //     return bounds.contains([lat, lng]);
-  //   });
-
-  //   features.forEach((feat: any) => {
-  //     const [lng, lat] = feat.geometry.coordinates;
-  //     const opts: L.CircleMarkerOptions = {
-  //       radius: 6,
-  //       fillOpacity: 0.8,
-  //       color: '#000',
-  //       weight: 1,
-  //       fillColor: feat.properties.TipoDireccionCod === '1' ? 'green' : 'orange',
-  //     };
-  //     const circle = L.circleMarker([lat, lng], opts)
-  //       .on('click', e => this.onFeatureClick(e, feat));
-  //     this.markerCluster.addLayer(circle);
-  //   });
-
-  //   console.log('info cluster: ', this.markerCluster)
-  //   this.mapSvc.setMarkerClusterGroup(this.markerCluster);
-  // }
-
 
   private addCircles(data: any): void {
     const greenOpts: L.CircleMarkerOptions = { radius: 6, fillColor: '#157d35', color: '#000', weight: 1, opacity: 1, fillOpacity: 0.8 };
@@ -464,7 +402,6 @@ export class MapMainComponent implements OnInit, AfterViewInit, OnDestroy {
     this.mapSvc.setMarkerClusterGroup(this.markerCluster);
   }
 
-
   private createCircleDivIcon(opts: L.CircleMarkerOptions): L.DivIcon {
     const size = opts.radius! * 2;
     const border = opts.weight ?? 0;
@@ -474,7 +411,6 @@ export class MapMainComponent implements OnInit, AfterViewInit, OnDestroy {
     const html = `<div style="width:${size}px;height:${size}px;background-color:${color};border-radius:50%;opacity:${fillOpacity};"></div>`;
     return L.divIcon({ className: '', html, iconSize: [size, size], iconAnchor: [size / 2, size / 2] });
   }
-
 
   /** Maneja clic en circleMarker **/
   private onFeatureClick(e: L.LeafletMouseEvent, feat: any): void {
@@ -490,8 +426,6 @@ export class MapMainComponent implements OnInit, AfterViewInit, OnDestroy {
   // ─── Mark Mode ──────────────────────────────────────────────────────────────
 
   toggleMarkMode(): void {
-    // this.markMode = !this.markMode;
-
      this.map
       .locate({ setView: true, maxZoom: 16 })
       .on('locationfound', e => {

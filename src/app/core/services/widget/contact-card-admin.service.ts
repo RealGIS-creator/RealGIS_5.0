@@ -9,9 +9,9 @@ import { InformationCardObject2 } from '../../../interfaces/information-card';
 })
 export class ContactCardAdminService {
 
-  private apiUrl = environment.backendGN;
+  private readonly apiUrl = environment.backendGN;
   
-  constructor(private http: HttpClient) { }
+  constructor(private readonly http: HttpClient) { }
 
   updateContactCard(data: any): Observable<any> {
     const url = `${this.apiUrl}/WS_TarjetaContactoUpdate`;

@@ -8,8 +8,8 @@ export class OnlyNumberDirective {
   private readonly digitRegex = /^[0-9]*$/;
 
   constructor(
-    private el: ElementRef<HTMLInputElement>,
-    private renderer: Renderer2
+    private readonly el: ElementRef<HTMLInputElement>,
+    private readonly renderer: Renderer2
   ) {}
 
   private filterToDigits(value: string): string {

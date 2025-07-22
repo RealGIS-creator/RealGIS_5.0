@@ -21,7 +21,7 @@ export class MovableCardComponent {
   @Input() showHeader = true;
   @Input() showFooter = true;
 
-  constructor(private elRef: ElementRef) {}
+  constructor(private readonly elRef: ElementRef) {}
 
   ngOnInit(): void {
     this.position = { x: this.initialX, y: this.initialY };

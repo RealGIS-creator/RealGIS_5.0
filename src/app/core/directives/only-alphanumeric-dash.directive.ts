@@ -7,7 +7,7 @@ export class OnlyAlphanumericDashDirective {
 
   private readonly allowedRegex = /^[A-Za-z0-9-]*$/;
 
-  constructor(private el: ElementRef<HTMLInputElement>, private renderer: Renderer2) {}
+  constructor(private readonly el: ElementRef<HTMLInputElement>, private readonly renderer: Renderer2) {}
 
   @HostListener('input', ['$event'])
   onInput(event: Event): void {

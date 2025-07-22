@@ -1,12 +1,10 @@
-import { ChangeDetectorRef, Component, inject } from '@angular/core';
-import { infoSeacher } from '../../../interfaces/info-searcher';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { SearchCriteria } from '../../../interfaces/search-criteria';
 import { DownloadSidebarService } from '../../../core/services/widget/download-sidebar.service';
 import { CommonModule } from '@angular/common';
 import { ExportableService } from '../../../core/services/shared/exportable.service';
 import { FeatureCollection } from 'geojson';
 import { MapService } from '../../../core/services/home/map/map.service';
-import { GeoJsonData, GeoJsonDataBaseCliente } from '../../../interfaces/geoJson';
 
 @Component({
   selector: 'app-download',
@@ -27,10 +25,10 @@ export class DownloadComponent {
   geojson!: FeatureCollection;
 
   constructor(
-    private downloadSidebarService: DownloadSidebarService,
-    private cdr: ChangeDetectorRef,
-    private mapService: MapService,
-    private exportableService: ExportableService
+    private readonly downloadSidebarService: DownloadSidebarService,
+    private readonly cdr: ChangeDetectorRef,
+    private readonly mapService: MapService,
+    private readonly exportableService: ExportableService
   ) {
   }
 
@@ -47,7 +45,7 @@ export class DownloadComponent {
   }
 
   clickSearcher(): void {
-    this.isVisible = this.isVisible ? false : true;
+    this.isVisible = !this.isVisible;
   }
 
   selectOption(option: any) {
@@ -131,34 +129,6 @@ export class DownloadComponent {
     }
   }
 
-  // private handleExport(
-  //   response: ClientResponse | GeoJsonDataBaseCliente,
-  //   type: number
-  // ): void {
-  //   switch (type) {
-  //     case 1: // CSV
-  //       this.exportableService.exportLargeDataToCsvZip(
-  //         (response as ClientResponse).SDT_BaseCliente,
-  //         'BaseClienteCSV'
-  //       );
-  //       break;
-  //     case 2: // Excel
-  //       this.exportableService.exportLargeDataToExcelZip(
-  //         (response as ClientResponse).SDT_BaseCliente,
-  //         'BaseClienteXLSX'
-  //       );
-  //       break;
-  //     case 3: // Shapefile
-  //       this.exportableService.exportToShapefile(
-  //         (response as GeoJsonDataBaseCliente).SDT_BaseClienteGeoJson,
-  //         'BaseClienteShapeFile'
-  //       );
-  //       break;
-  //     default:
-  //       console.warn('Tipo de descarga desconocido');
-  //   }
-  // }
-
   getInfoClient(): void {
     if (this.isLoading) return; 
 
@@ -195,9 +165,4 @@ export class DownloadComponent {
         }
       });
   }
-
-  // isGeojsonValid(): boolean {
-  //   return Array.isArray(this.geojson!.features)
-  //       && this.geojson.features.length > 0;
-  // }
 }

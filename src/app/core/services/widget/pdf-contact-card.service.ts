@@ -8,7 +8,7 @@ import jsPDF from 'jspdf';
 })
 export class PdfContactCardService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private readonly http: HttpClient) { }
 
   private async loadSVG(url: string): Promise<string> {
     return firstValueFrom(this.http.get(url, { responseType: 'text' }));
@@ -28,7 +28,6 @@ export class PdfContactCardService {
         canvas.height = height;
         const ctx = canvas.getContext('2d');
         if (!ctx) {
-          reject('No se pudo obtener el contexto 2D');
           return;
         }
         ctx.drawImage(img, 0, 0, width, height);
@@ -37,7 +36,6 @@ export class PdfContactCardService {
       };
       img.onerror = (err) => {
         URL.revokeObjectURL(url);
-        reject(err);
       };
       img.src = url;
     });
@@ -75,7 +73,7 @@ export class PdfContactCardService {
     // Calcular dimensiones para header conservando su relación de aspecto
     let headerProps = pdf.getImageProperties(headerImage);
     const headerAspectRatio = headerProps.width / headerProps.height;
-    const computedHeaderWidth = pageWidth; // Ocupa todo el ancho
+    const computedHeaderWidth = pageWidth; // Ocupa el ancho
     const computedHeaderHeight = computedHeaderWidth / headerAspectRatio;
 
     // Calcular dimensiones para footer conservando su relación de aspecto
@@ -230,8 +228,6 @@ export class PdfContactCardService {
     posY += 1;
     pdf.setFont('Helvetica', 'normal');
     if (contactoData.TipoDireccion_Id === '2' || contactoData.TipoDireccion_Id === '2') {
-      // posY += 7;
-      // pdf.text(`Nombre: ${contactoData.Direccion}`, marginX, posY);
 
       posY += 7;
       checkAddPage(9);
@@ -246,32 +242,17 @@ export class PdfContactCardService {
       });
     }
 
-    // const laboralDireccionFiltro = contactoData.Direcciones
-    //   .filter((element: any) => element.TipoDireccionCod === '2' || element.TipoDireccionCod === '3');
-
-    // const laboralDireccion = laboralDireccionFiltro.map((element: any) => element.DireccionesLugTra).join(' - ');
-    // const direcciones = laboralDireccionFiltro.map((element: any) => element.Direccion).join(' - ');
-
     const telefonos = contactoData.Telefonos
       .filter((element: any) => element.TipoTelefonoCod === '4' && element.TelefonoEst == 'A')
       .map((element: any) => `(${element.TelefonoPre}) ${element.TelefonoNum}`)
       .join('- ');
 
-    // if (laboralDireccion) {
-    //   posY += 7;
-    //   pdf.text(`Nombre: ${laboralDireccion}`, marginX, posY);
-    // }
     if (telefonos) {
       posY += 7;
       pdf.text(`Teléfono: ${telefonos}`, marginX, posY);
     }
-    // if (direcciones) {
-    //   posY += 7;
-    //   pdf.text(`Dirección Laboral: ${direcciones}`, marginX, posY);
-    // }
+
     if (contactoData.TipoDireccion_Id === '2' || contactoData.TipoDireccion_Id === '2') {
-      // posY += 7;
-      // pdf.text(`Dirección Laboral: ${contactoData.DireccionesLugTra}`, marginX, posY);
 
       posY += 7;
       checkAddPage(9);
@@ -286,8 +267,6 @@ export class PdfContactCardService {
       });
     }
 
-
-
     // --- Información Personal ---
     posY += 10;
     checkAddPage(9);
@@ -295,17 +274,8 @@ export class PdfContactCardService {
     pdf.text("Información Personal", marginX, posY);
     posY += 1;
     pdf.setFont('Helvetica', 'normal');
-    // const direccionesResidenciales = contactoData.Direcciones
-    // .filter((element: any) => element.TipoDireccionCod === '1').map((element: any) => element.DireccionesLugTra).join(' - ');
 
-    // if (direccionesResidenciales) {
-    //   posY += 7;
-    //   pdf.text(`Dirección Residencial: ${direccionesResidenciales}`, marginX, posY);
-    // }
     if (contactoData.TipoDireccion_Id === '1') {
-      // posY += 7;
-      // pdf.text(`Dirección Residencial: ${contactoData.Direccion}`, marginX, posY);
-
       posY += 7;
       checkAddPage(9);
 
@@ -408,7 +378,6 @@ export class PdfContactCardService {
     const totalPages = (pdf.internal as any).getNumberOfPages();
     for (let i = 1; i <= totalPages; i++) {
       pdf.setPage(i);
-      // (pdf as any).setGState(new (pdf as any).GState({ opacity: 0.2 }));
       pdf.addImage(headerImage, 'PNG', 0, 0, pageWidth, computedHeaderHeight);
       pdf.addImage(footerImage, 'PNG', 0, pageHeight - computedFooterHeight, pageWidth, computedFooterHeight);
       // Agregar marca de agua central 
@@ -417,7 +386,6 @@ export class PdfContactCardService {
       const centerX = (pageWidth - watermarkWidth) / 2;
       const centerY = (pageHeight - watermarkHeight) / 2;
       pdf.addImage(watermarkImage, 'PNG', centerX, centerY, watermarkWidth, watermarkHeight);
-      // (pdf as any).setGState(new (pdf as any).GState({ opacity: 1 }));
     }
 
     pdf.save(`idcredito-${contactoData.AcreditadoNumCuen}`);

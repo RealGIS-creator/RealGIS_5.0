@@ -6,7 +6,7 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class SidebarShowDataService {
 
-  private dataSubject = new BehaviorSubject<any>(null);  
+  private readonly dataSubject = new BehaviorSubject<any>(null);  
   data$ = this.dataSubject.asObservable();  
 
   constructor() {}

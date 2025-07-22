@@ -19,7 +19,7 @@ export class GeometryService {
 
 
   getGeoJsonData(north: number, south: number, east:number, west:number): Observable<any> {
-    
+
     const url = `${this.apiUrl}/WS_GeoJsonSP`;
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
@@ -35,7 +35,7 @@ export class GeometryService {
   }
 
   getLayer(layer: string): Observable<any> {
-    const url = this.geoServerUrl + 'ows?service=wfs&request=GetFeature&typeName=' + layer + '&outputFormat=application/json';  
+    const url = this.geoServerUrl + 'ows?service=wfs&request=GetFeature&typeName=' + layer + '&outputFormat=application/json';
     const header = this.headers.append('Content-Type', 'application/json');
 
     const httpOptions = {
@@ -59,10 +59,11 @@ export class GeometryService {
       { workspace: 'ws_Banistmo', layerName: 'Cobertura_del_suelo', format: 'image/png', opacity: 0.8 },
       { workspace: 'ws_Banistmo', layerName: 'sucursales', format: 'image/png', opacity: 0.8 },
       { workspace: 'ws_Banistmo', layerName: 'buffer_sucursales', format: 'image/png', opacity: 0.8 },
-      { workspace: 'ws_Banistmo', layerName: 'corregimiento_centro', format: 'image/png', opacity: 0.8 },
-      { workspace: 'ws_Banistmo', layerName: 'distrito_centro', format: 'image/png', opacity: 0.8 },
-      { workspace: 'ws_Banistmo', layerName: 'mancha_urbana_centro', format: 'image/png', opacity: 0.8 },
-      { workspace: 'ws_Banistmo', layerName: 'mancha_urbana_1', format: 'image/png', opacity: 0.8 },
+      { workspace: 'ws_Banistmo', layerName: 'Empresas', format: 'image/png', opacity: 0.8 },
+      { workspace: 'ws_Banistmo', layerName: 'Instituciones', format: 'image/png', opacity: 0.8 },
+      { workspace: 'ws_Banistmo', layerName: 'Rutas', format: 'image/png', opacity: 0.8 },
+      { workspace: 'ws_Banistmo', layerName: 'Metas', format: 'image/png', opacity: 0.8 },
+      { workspace: 'ws_Banistmo', layerName: 'Visitas', format: 'image/png', opacity: 0.8 },
     ];
   }
 
@@ -82,7 +83,7 @@ export class GeometryService {
     return params;
   }
 
-  
+
   getWMSLayersURL() {
     const geoserverUrl = this.geoServerUrl + 'ws_Banistmo' + "/wms?&request=GetMap";
     return geoserverUrl;
@@ -98,5 +99,5 @@ export class GeometryService {
     window.alert(errorMessage);
     return throwError(errorMessage);
   }
-  
+
 }

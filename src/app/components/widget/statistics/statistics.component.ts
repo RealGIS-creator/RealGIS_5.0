@@ -1,4 +1,4 @@
-import { Component, ViewChild, ChangeDetectorRef, OnInit, OnDestroy, ViewChildren, QueryList } from '@angular/core';
+import { Component, ChangeDetectorRef, OnInit, OnDestroy, ViewChildren, QueryList } from '@angular/core';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartOptions } from 'chart.js';
 import { Subscription } from 'rxjs';
@@ -12,7 +12,7 @@ import { MapService } from '../../../core/services/home/map/map.service';
   styleUrl: './statistics.component.less'
 })
 export class StatisticsComponent implements OnInit, OnDestroy {
-  @ViewChildren(BaseChartDirective) private charts!: QueryList<BaseChartDirective>;
+  @ViewChildren(BaseChartDirective) private readonly charts!: QueryList<BaseChartDirective>;
   private sub!: Subscription;
 
   public pieData!: ChartConfiguration<'pie'>['data'];
@@ -31,8 +31,8 @@ export class StatisticsComponent implements OnInit, OnDestroy {
   };
 
   constructor(
-    private mapService: MapService,
-    private cd: ChangeDetectorRef
+    private readonly mapService: MapService,
+    private readonly cd: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ContactCardComponent } from '../contact-card/contact-card.component';
 import { DialogService } from '../../../core/services/shared/dialog.service';
@@ -33,10 +33,10 @@ export class SearcherSidebarComponent {
   });
 
   constructor(
-    private searcherSidebarService: SearcherSidebarService,
-    private cdr: ChangeDetectorRef,
-    private fb: FormBuilder,
-    private dialogService: DialogService
+    private readonly searcherSidebarService: SearcherSidebarService,
+    private readonly cdr: ChangeDetectorRef,
+    private readonly fb: FormBuilder,
+    private readonly dialogService: DialogService
   ) {
   }
 
@@ -49,7 +49,7 @@ export class SearcherSidebarComponent {
   }
 
   clickSearcher(): void {
-    this.isVisible = this.isVisible ? false : true;
+    this.isVisible = !this.isVisible;
   }
 
   selectOption(option: string) {
@@ -100,7 +100,6 @@ export class SearcherSidebarComponent {
     }
     this.dialogService.closeAll();
     this.dialogService.open({ component: ContactCardComponent, data: data });
-    // this.dialogService.open({ component: ContactCardComponent, data: { data: this.dataFilter!.name } });
   }
 
   trackByAcreditado(_: number, item: infoSeacher): string {

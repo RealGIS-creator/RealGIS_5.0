@@ -5,12 +5,12 @@ import { Directive, ElementRef, HostListener, Renderer2 } from '@angular/core';
 })
 export class EmailFormatDirective {
 
-  private allowedCharsRegex = /[^a-zA-Z0-9@._%+\-]/g;
-  private emailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
+  private readonly allowedCharsRegex = /[^a-zA-Z0-9@._%+\-]/g;
+  private readonly emailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
 
   constructor(
-    private el: ElementRef<HTMLInputElement>,
-    private renderer: Renderer2
+    private readonly el: ElementRef<HTMLInputElement>,
+    private readonly renderer: Renderer2
   ) {}
 
   @HostListener('input')

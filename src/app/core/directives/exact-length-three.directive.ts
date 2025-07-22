@@ -5,12 +5,12 @@ import { Directive, ElementRef, HostListener, Renderer2 } from '@angular/core';
 })
 export class ExactLengthThreeDirective {
 
-  private editRegex = /^[0-9]{0,3}$/;
-  private exactRegex = /^[0-9]{1,3}$/;
+  private readonly editRegex = /^[0-9]{0,3}$/;
+  private readonly exactRegex = /^[0-9]{1,3}$/;
 
   constructor(
-    private el: ElementRef<HTMLInputElement>,
-    private renderer: Renderer2
+    private readonly el: ElementRef<HTMLInputElement>,
+    private readonly renderer: Renderer2
   ) { }
 
   @HostListener('input')

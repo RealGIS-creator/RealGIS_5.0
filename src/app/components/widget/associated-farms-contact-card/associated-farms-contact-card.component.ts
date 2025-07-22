@@ -1,4 +1,4 @@
-import { Component, Input, SimpleChanges } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MovableCardComponent } from '../../shared/movable-card/movable-card.component';
 import { BehaviorSubject } from 'rxjs';
 import { CommonModule } from '@angular/common';

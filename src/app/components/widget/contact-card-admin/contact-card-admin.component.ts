@@ -77,22 +77,19 @@ export class ContactCardAdminComponent {
   ngOnInit(): void {
     this.data = this.data$.value._value;
     this.selectedOption = this.data.TipoProductoNom
-    //console.log(this.data);
     this.data.Telefonos.forEach((t: any) => {
       if (t.TipoTelefono_Id == '4') {
         this.telefonoLaboral = t.TelefonoNum;
         this.telefonoPreLaboral = t.TelefonoPre;
       }
     });
-    //console.log(this.data.Telefonos)
-    //console.log(this.data.AcreditadoIdenti);
   }
 
   constructor(
-    private dialogService: DialogService,
-    private sidebarShowDataService: SidebarShowDataService,
-    private contactCardAdminService: ContactCardAdminService,
-    private pdfContactCardService: PdfContactCardService
+    private readonly dialogService: DialogService,
+    private readonly sidebarShowDataService: SidebarShowDataService,
+    private readonly contactCardAdminService: ContactCardAdminService,
+    private readonly pdfContactCardService: PdfContactCardService
   ) { }
 
   close(): void {
@@ -111,7 +108,7 @@ export class ContactCardAdminComponent {
   }
 
   clickSearcher(): void {
-    this.isVisible = this.isVisible ? false : true;
+    this.isVisible = !this.isVisible;
   }
 
   get hasLaboralTipo4(): boolean {
@@ -140,43 +137,43 @@ export class ContactCardAdminComponent {
   }
 
   editDiasMora(): void {
-    this.isVisibleDiasMora = this.isVisibleDiasMora ? false : true;
+    this.isVisibleDiasMora = !this.isVisibleDiasMora;
   }
 
   editSaldoProducto(): void {
-    this.isVisibleSaldoProducto = this.isVisibleSaldoProducto ? false : true;
+    this.isVisibleSaldoProducto = !this.isVisibleSaldoProducto;
   }
 
   editInformacionLaboral(): void {
-    this.isVisibleInformacionEmployment = this.isVisibleInformacionEmployment ? false : true;
+    this.isVisibleInformacionEmployment = !this.isVisibleInformacionEmployment;
   }
 
   editInformacionPersonal(): void {
-    this.isVisibleInformacionPersonal = this.isVisibleInformacionPersonal ? false : true;
+    this.isVisibleInformacionPersonal = !this.isVisibleInformacionPersonal;
   }
 
   editGeolocalizacion(): void {
-    this.isVisibleGeolocalizacion = this.isVisibleGeolocalizacion ? false : true;
+    this.isVisibleGeolocalizacion = !this.isVisibleGeolocalizacion;
   }
 
   // ----- telefono
   AddTelefonoMovil(type: number = 0): void {
-    this.isAddTelefonoMovil = this.isAddTelefonoMovil ? false : true;
-    this.typeTelefono = type ? type : 0;
+    this.isAddTelefonoMovil = !this.isAddTelefonoMovil;
+    this.typeTelefono = type || 0;
     this.isAddTelefonoResidencial = false;
     this.isAddTelefonoOtro = false;
   }
 
   AddTelefonoResidencial(type: number = 0): void {
-    this.isAddTelefonoResidencial = this.isAddTelefonoResidencial ? false : true;
-    this.typeTelefono = type ? type : 0;
+    this.isAddTelefonoResidencial = !this.isAddTelefonoResidencial;
+    this.typeTelefono = type;
     this.isAddTelefonoMovil = false;
     this.isAddTelefonoOtro = false
   }
 
   AddTelefonoOtro(type: number = 0): void {
-    this.isAddTelefonoOtro = this.isAddTelefonoOtro ? false : true;
-    this.typeTelefono = type ? type : 0;
+    this.isAddTelefonoOtro = !this.isAddTelefonoOtro;
+    this.typeTelefono = type;
     this.isAddTelefonoMovil = false;
     this.isAddTelefonoResidencial = false;
   }
@@ -210,8 +207,6 @@ export class ContactCardAdminComponent {
         ? { ...t, TelefonoEst: 'I' }
         : t
     );
-
-    //console.log(this.data);
   }
 
   closeTelefono(): void {
@@ -226,7 +221,7 @@ export class ContactCardAdminComponent {
 
   // ------- correos
   AddEmail(): void {
-    this.isAddEmail = this.isAddEmail ? false : true;
+    this.isAddEmail = !this.isAddEmail;
   }
 
   onTipoEmail(selectedOption: number): void {
@@ -249,7 +244,6 @@ export class ContactCardAdminComponent {
     this.typeEmail = 0;
 
     this.closeEmail();
-    //this.cdr.markForCheck();
   }
 
   closeEmail(): void {
@@ -266,7 +260,7 @@ export class ContactCardAdminComponent {
 
   // ------ fincas
   AddFinca(): void {
-    this.isAddFinca = this.isAddFinca ? false : true;
+    this.isAddFinca = !this.isAddFinca;
   }
 
   newFinca(): void {

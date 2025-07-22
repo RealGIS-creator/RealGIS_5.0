@@ -1,736 +1,1215 @@
-<!-- <ng-container *ngIf="dataObject; else loading">  -->
-
-<app-movable-card *ngIf="isMainMenu" [initialX]="10" [initialY]="10" [paramWidth]="25"
-    [headerClass]="'card-header text-white'" [showFooter]="true">
-    <div class="card-title">
-        <div class="d-flex justify-content-between align-items-center">
-            <b>Crear Tarjeta de Contacto</b>
-            <div>
-                <img class="icon button-header" src="assets/icon/company_white.svg" alt="">
-                <img class="icon icon-header button-header" src="assets/icon/contact_card_minimize.svg" alt=""
-                    (click)="minimize()">
-                <img class="icon icon-header button-header" src="assets/icon/contact_card_close.svg" alt=""
-                    (click)="close()">
-            </div>
-        </div>
-    </div>
-
+<app-movable-card
+  *ngIf="isMainMenu"
+  [initialX]="10"
+  [initialY]="10"
+  [paramWidth]="25"
+  [headerClass]="'card-header text-white'"
+  [showFooter]="true"
+>
+  <div class="card-title">
     <div class="d-flex justify-content-between align-items-center">
-        <div>
-            <!-- ID DE CRÉDITO -->
-            <div class="d-flex align-items-center mb-1 field-group">
-                <label for="idCredito" class="me-2 mb-0 label-sm">ID DE CRÉDITO:</label>
-                <input id="idCredito" name="idCredito" type="text" class="form-control bg-none-input input-sm"
-                    OnlyNumber [(ngModel)]="idCredito" autocomplete="off">
-            </div>
+      <b>Crear Tarjeta de Contacto</b>
+      <div>
+        <img
+          class="icon button-header"
+          src="assets/icon/company_white.svg"
+          alt=""
+        />
+        <img
+          class="icon icon-header button-header"
+          src="assets/icon/contact_card_minimize.svg"
+          alt=""
+          (click)="minimize()"
+          (keydown)="minimize()"
+        />
+        <img
+          class="icon icon-header button-header"
+          src="assets/icon/contact_card_close.svg"
+          alt=""
+          (click)="close()"
+          (keydown)="close()"
+        />
+      </div>
+    </div>
+  </div>
 
-            <!-- Identificación -->
-            <div class="d-flex align-items-center mb-1 field-group">
-                <!-- <div class="col-6"> -->
-                    <div class="d-flex align-items-center gap-2 custom-field-group">
-                        <label for="identificacion" class="me-2 mb-0 label-sm">Identificación:</label>
-                        <input id="identificacion" name="identificacion" id="identificacion" type="text"
-                            class="form-control bg-none-input input-sm" OnlyAlphanumericDash
-                            [(ngModel)]="identificacion" autocomplete="off">
+  <div class="d-flex justify-content-between align-items-center">
+    <div>
+      <!-- ID DE CRÉDITO -->
+      <div class="d-flex align-items-center mb-1 field-group">
+        <label for="idCredito" class="me-2 mb-0 label-sm">ID DE CRÉDITO:</label>
+        <input
+          id="idCredito"
+          name="idCredito"
+          type="text"
+          class="form-control bg-none-input input-sm"
+          OnlyNumber
+          [(ngModel)]="idCredito"
+          autocomplete="off"
+        />
+      </div>
 
-                        <!-- <div class="content-select flex-shrink-0">
-                            <div class="search-container-option">
-                                <div class="select-option" (click)="clickSearcherTypeDocument()">
-                                    {{ selectedOptionTypeDocument }}
-                                    <img class="search-icon" [src]="'assets/icon/' + displayIcon" alt="icono desplegar">
-                                </div>
-                            </div>
-                            <div class="form-select-option content-select-type-doc" *ngIf="isVisibleTypeDocument">
-                                <div class="search-container-option">
-                                    <div class="form-select-option" *ngIf="isVisibleTypeDocument">
-                                        <div class="search-container-option">
-                                            <p class="option option-hover" (click)="selectTipoIdentificacion('CC','1')">
-                                                CC
-                                            </p>
-                                            <p class="option option-hover"
-                                                (click)="selectTipoIdentificacion('Nit','2')">
-                                                Nit
-                                            </p>
-                                            <p class="option option-hover" (click)="selectTipoIdentificacion('E','4')">
-                                                E
-                                            </p>
-                                            <p class="option option-hover" (click)="selectTipoIdentificacion('N','5')">
-                                                N
-                                            </p>
-                                            <p class="option option-hover" (click)="selectTipoIdentificacion('PE','6')">
-                                                PE
-                                            </p>
-                                            <p class="option option-hover" (click)="selectTipoIdentificacion('PA','7')">
-                                                PA
-                                            </p>
-                                            <p class="option option-hover"
-                                                (click)="selectTipoIdentificacion('Otro','3')">
-                                                Otro
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> -->
-                    </div>
-                <!-- </div> -->
-            </div>
-
-            <!-- Tipo Identificacion -->
-            <div class="d-flex align-items-center mb-1 field-group">
-                <div class="content-select flex-shrink-0">
-                    <div class="search-container-option">
-                        <div class="select-option" (click)="clickSearcherTypeDocument()">
-                            {{ selectedOptionTypeDocument }}
-                            <img class="search-icon" [src]="'assets/icon/' + displayIconTD" alt="icono desplegar">
-                        </div>
-                    </div>
-                    <div class="form-select-option content-select-type-doc" *ngIf="isVisibleTypeDocument">
-                        <div class="search-container-option">
-                            <div class="form-select-option" *ngIf="isVisibleTypeDocument">
-                                <div class="search-container-option">
-                                    <p class="option option-hover" (click)="selectTipoIdentificacion('Cédula Ciudadanía','1')">
-                                        Cédula Ciudadanía
-                                    </p>
-                                    <p class="option option-hover" (click)="selectTipoIdentificacion('Nit','2')">
-                                        Nit
-                                    </p>
-                                    <p class="option option-hover" (click)="selectTipoIdentificacion('Extranjeros Residentes','4')">
-                                        Extranjeros Residentes
-                                    </p>
-                                    <p class="option option-hover" (click)="selectTipoIdentificacion('Cédula Naturalización','5')">
-                                        Cédula Naturalización
-                                    </p>
-                                    <p class="option option-hover" (click)="selectTipoIdentificacion('Residencia Permanente','6')">
-                                        Residencia Permanente
-                                    </p>
-                                    <p class="option option-hover" (click)="selectTipoIdentificacion('Pasaporte','7')">
-                                        Pasaporte
-                                    </p>
-                                    <p class="option option-hover" (click)="selectTipoIdentificacion('Otro','3')">
-                                        Otro
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Nombre -->
-            <div class="d-flex align-items-center mb-1 field-group">
-                <label for="nombre" class="me-2 mb-0 label-sm">Nombre:</label>
-                <input id="nombre" name="nombre" type="text" class="form-control bg-none-input input-sm"
-                    OnlyAlphanumeric [(ngModel)]="nombre" autocomplete="off">
-            </div>
-
-            <!-- No. Acreditado -->
-            <div class="d-flex align-items-center mb-1 field-group">
-                <label for="noAcreditado" class="me-2 mb-0 label-sm">No. Acreditado:</label>
-                <input id="noAcreditado" name="noAcreditado" type="text" class="form-control bg-none-input input-sm"
-                    OnlyNumber [(ngModel)]="noAcreditado" autocomplete="off">
-            </div>
-
-            <!-- CIS -->
-            <div class="d-flex align-items-center mb-1 field-group">
-                <label for="cis" class="me-2 mb-0 label-sm">CIS:</label>
-                <input id="cis" name="cis" type="text" class="form-control bg-none-input input-sm" OnlyNumber
-                    [(ngModel)]="cis" autocomplete="off">
-            </div>
-
+      <!-- Identificación -->
+      <div class="d-flex align-items-center mb-1 field-group">
+        <div class="d-flex align-items-center gap-2 custom-field-group">
+          <label for="identificacion" class="me-2 mb-0 label-sm"
+            >Identificación:</label
+          >
+          <input
+            id="identificacion"
+            name="identificacion"
+            id="identificacion"
+            type="text"
+            class="form-control bg-none-input input-sm"
+            OnlyAlphanumericDash
+            [(ngModel)]="identificacion"
+            autocomplete="off"
+          />
         </div>
-        <img class="icon-user" src="assets/icon/contact_card_user.svg" alt="icono desplegar">
-    </div>
+      </div>
 
-    <div class="col">
-        <div class="title">Estrategia</div>
-        <span class="pointer badge bg-property-input" [ngClass]="{'bg-active': dataObject.TipoEstrategia_Id == '3'}"
-            (click)="onEstrategia('TDD', '3')">TDD</span>
-        <span class="pointer badge bg-property-input" [ngClass]="{'bg-active': dataObject.TipoEstrategia_Id == '2'}"
-            (click)="onEstrategia('TDC', '2')">TDC</span>
-        <span class="pointer badge bg-property-input" [ngClass]="{'bg-active': dataObject.TipoEstrategia_Id == '4'}"
-            (click)="onEstrategia('TOKENIZACION', '4')">TOKENIZACIÓN</span>
-        <span class="pointer badge bg-property-input" [ngClass]="{'bg-active': dataObject.TipoEstrategia_Id == '1'}"
-            (click)="onEstrategia('DESCUENTO DIRECTO', '1')">DESCUENTO DIRECTO</span>
-    </div>
-
-    <!-- Tipo Producto / Dias Mora -->
-    <div class="row">
-        <div class="col">
-            <div class="title mt-2">Tipo de producto</div>
-            <div class="col">
-                <div class="content-select content-seacher">
-                    <div class="search-container-option">
-                        <div class="select-option" (click)="clickSearcher()">
-                            {{ selectedOption }}
-                            <img class="search-icon" [src]="'assets/icon/' + displayIcon" alt="icono desplegar">
-                        </div>
-                    </div>
-                </div>
+      <!-- Tipo Identificacion -->
+      <div class="d-flex align-items-center mb-1 field-group">
+        <div class="content-select flex-shrink-0">
+          <div class="search-container-option">
+            <div class="select-option" (click)="clickSearcherTypeDocument()" (keydown)="clickSearcherTypeDocument()">
+              {{ selectedOptionTypeDocument }}
+              <img
+                class="search-icon"
+                [src]="'assets/icon/' + displayIconTD"
+                alt="icono desplegar"
+              />
+            </div>
+          </div>
+          <div
+            class="form-select-option content-select-type-doc"
+            *ngIf="isVisibleTypeDocument"
+          >
+            <div class="search-container-option">
+              <div class="form-select-option" *ngIf="isVisibleTypeDocument">
                 <div class="search-container-option">
-                    <div class="form-select-option" *ngIf="isVisible">
-                        <div class="search-container-option">
-                            <p class="option option-hover" (click)="selectTipoProducto('FINANCOMER', '1')">
-                                FINANCOMER
-                            </p>
-                            <p class="option option-hover" (click)="selectTipoProducto('PRESTAMO HIPOTECARIO', '2')">
-                                PRESTAMO HIPOTECARIO
-                            </p>
-                            <p class="option option-hover" (click)="selectTipoProducto('PRESTAMO PERSONAL', '3')">
-                                PRESTAMO PERSONAL
-                            </p>
-                            <p class="option option-hover" (click)="selectTipoProducto('TARJETA DE CREDITO', '4')">
-                                TARJETA DE CREDITO
-                            </p>
-                            <p class="option option-hover" (click)="selectTipoProducto('PRESTAMO AUTO', '5')">
-                                PRESTAMO AUTO
-                            </p>
-                            <p class="option option-hover" (click)="selectTipoProducto('TARJETA DEBITO', '5')">
-                                TARJETA DEBITO
-                            </p>
-                        </div>
-                    </div>
+                  <p
+                    class="option option-hover"
+                    (click)="selectTipoIdentificacion('Cédula Ciudadanía', '1')"
+                    (keydown)="selectTipoIdentificacion('Cédula Ciudadanía', '1')"
+                  >
+                    Cédula Ciudadanía
+                  </p>
+                  <p
+                    class="option option-hover"
+                    (click)="selectTipoIdentificacion('Nit', '2')"
+                    (keydown)="selectTipoIdentificacion('Nit', '2')"
+                  >
+                    Nit
+                  </p>
+                  <p
+                    class="option option-hover"
+                    (click)="
+                      selectTipoIdentificacion('Extranjeros Residentes', '4')
+                    "
+                    (keydown)="selectTipoIdentificacion('Extranjeros Residentes', '4')"
+                  >
+                    Extranjeros Residentes
+                  </p>
+                  <p
+                    class="option option-hover"
+                    (click)="
+                      selectTipoIdentificacion('Cédula Naturalización', '5')
+                    "
+                    (keydown)="selectTipoIdentificacion('Cédula Naturalización', '5')"
+                  >
+                    Cédula Naturalización
+                  </p>
+                  <p
+                    class="option option-hover"
+                    (click)="
+                      selectTipoIdentificacion('Residencia Permanente', '6')
+                    "
+                    (keydown)="selectTipoIdentificacion('Residencia Permanente', '6')"
+                  >
+                    Residencia Permanente
+                  </p>
+                  <p
+                    class="option option-hover"
+                    (click)="selectTipoIdentificacion('Pasaporte', '7')"
+                    (keydown)="selectTipoIdentificacion('Pasaporte', '7')"
+                  >
+                    Pasaporte
+                  </p>
+                  <p
+                    class="option option-hover"
+                    (click)="selectTipoIdentificacion('Otro', '3')"
+                    (keydown)="selectTipoIdentificacion('Otro', '3')"
+                  >
+                    Otro
+                  </p>
                 </div>
+              </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nombre -->
+      <div class="d-flex align-items-center mb-1 field-group">
+        <label for="nombre" class="me-2 mb-0 label-sm">Nombre:</label>
+        <input
+          id="nombre"
+          name="nombre"
+          type="text"
+          class="form-control bg-none-input input-sm"
+          OnlyAlphanumeric
+          [(ngModel)]="nombre"
+          autocomplete="off"
+        />
+      </div>
+
+      <!-- No. Acreditado -->
+      <div class="d-flex align-items-center mb-1 field-group">
+        <label for="noAcreditado" class="me-2 mb-0 label-sm"
+          >No. Acreditado:</label
+        >
+        <input
+          id="noAcreditado"
+          name="noAcreditado"
+          type="text"
+          class="form-control bg-none-input input-sm"
+          OnlyNumber
+          [(ngModel)]="noAcreditado"
+          autocomplete="off"
+        />
+      </div>
+
+      <!-- CIS -->
+      <div class="d-flex align-items-center mb-1 field-group">
+        <label for="cis" class="me-2 mb-0 label-sm">CIS:</label>
+        <input
+          id="cis"
+          name="cis"
+          type="text"
+          class="form-control bg-none-input input-sm"
+          OnlyNumber
+          [(ngModel)]="cis"
+          autocomplete="off"
+        />
+      </div>
+    </div>
+    <img
+      class="icon-user"
+      src="assets/icon/contact_card_user.svg"
+      alt="icono desplegar"
+    />
+  </div>
+
+  <div class="col">
+    <div class="title">Estrategia</div>
+    <span
+      class="pointer badge bg-property-input"
+      [ngClass]="{ 'bg-active': dataObject.TipoEstrategia_Id == '3' }"
+      (click)="onEstrategia('TDD', '3')"
+      (keydown)="onEstrategia('TDD', '3')"
+      >TDD</span
+    >
+    <span
+      class="pointer badge bg-property-input"
+      [ngClass]="{ 'bg-active': dataObject.TipoEstrategia_Id == '2' }"
+      (click)="onEstrategia('TDC', '2')"
+      (keydown)="onEstrategia('TDC', '2')"
+      >TDC</span
+    >
+    <span
+      class="pointer badge bg-property-input"
+      [ngClass]="{ 'bg-active': dataObject.TipoEstrategia_Id == '4' }"
+      (click)="onEstrategia('TOKENIZACION', '4')"
+      (keydown)="onEstrategia('TOKENIZACION', '4')"
+      >TOKENIZACIÓN</span
+    >
+    <span
+      class="pointer badge bg-property-input"
+      [ngClass]="{ 'bg-active': dataObject.TipoEstrategia_Id == '1' }"
+      (click)="onEstrategia('DESCUENTO DIRECTO', '1')"
+      (keydown)="onEstrategia('DESCUENTO DIRECTO', '1')"
+      >DESCUENTO DIRECTO</span
+    >
+  </div>
+
+  <!-- Tipo Producto / Dias Mora -->
+  <div class="row">
+    <div class="col">
+      <div class="title mt-2">Tipo de producto</div>
+      <div class="col">
+        <div class="content-select content-seacher">
+          <div class="search-container-option">
+            <div class="select-option" (click)="clickSearcher()" (keydown)="clickSearcher()">
+              {{ selectedOption }}
+              <img
+                class="search-icon"
+                [src]="'assets/icon/' + displayIcon"
+                alt="icono desplegar"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="search-container-option">
+          <div class="form-select-option" *ngIf="isVisible">
+            <div class="search-container-option">
+              <p
+                class="option option-hover"
+                (click)="selectTipoProducto('FINANCOMER', '1')"
+                (keydown)="selectTipoProducto('FINANCOMER', '1')"
+              >
+                FINANCOMER
+              </p>
+              <p
+                class="option option-hover"
+                (click)="selectTipoProducto('PRESTAMO HIPOTECARIO', '2')"
+                (keydown)="selectTipoProducto('PRESTAMO HIPOTECARIO', '2')"
+              >
+                PRESTAMO HIPOTECARIO
+              </p>
+              <p
+                class="option option-hover"
+                (click)="selectTipoProducto('PRESTAMO PERSONAL', '3')"
+                (keydown)="selectTipoProducto('PRESTAMO PERSONAL', '3')"
+              >
+                PRESTAMO PERSONAL
+              </p>
+              <p
+                class="option option-hover"
+                (click)="selectTipoProducto('TARJETA DE CREDITO', '4')"
+                (keydown)="selectTipoProducto('TARJETA DE CREDITO', '4')"
+              >
+                TARJETA DE CREDITO
+              </p>
+              <p
+                class="option option-hover"
+                (click)="selectTipoProducto('PRESTAMO AUTO', '5')"
+                (keydown)="selectTipoProducto('PRESTAMO AUTO', '5')"
+              >
+                PRESTAMO AUTO
+              </p>
+              <p
+                class="option option-hover"
+                (click)="selectTipoProducto('TARJETA DEBITO', '5')"
+                (keydown)="selectTipoProducto('TARJETA DEBITO', '5')"
+              >
+                TARJETA DEBITO
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="title mt-2">Dias de mora / Gaveta</div>
+      <div class="col">
+        <div class="d-flex align-items-center">
+          <input
+            type="text"
+            name="diasMora"
+            id="diasMora"
+            pattern="^[0-9]+$"
+            class="form-control bg-none-input bg-none-input-sm"
+            placeholder="Dias Mora"
+            OnlyNumber
+            [(ngModel)]="dataObject.CuentasDiasMoraGave"
+            autocomplete="off"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Saldo de Producto -->
+  <div class="row">
+    <div class="col-6">
+      <div class="title mt-2">Saldo de Producto</div>
+      <div class="d-flex align-items-center">
+        <input
+          type="text"
+          name="saldo"
+          id="saldo"
+          class="form-control bg-none-input bg-none-input-sm"
+          pattern="^-?\d+(,\d*)?$"
+          #saldoModel="ngModel"
+          OnlyDecimalComma
+          placeholder="Saldo Producto"
+          [(ngModel)]="dataObject.CuentasSalPro"
+          autocomplete="off"
+        />
+      </div>
+    </div>
+  </div>
+
+  <!-- informacion laboral -->
+  <div class="pointer-defaul">
+    <div
+      class="bg-info mt-3 d-flex justify-content-between align-items-center"
+      (click)="editInformacionLaboral()"
+      (keydown)="editInformacionLaboral()"
+    >
+      <div class="title">Información Laboral</div>
+      <div class="badge bg-property">
+        <b>Añadir</b>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="isVisibleInformacionEmployment">
+      <div class="col">
+        <b>Nombre:</b>
+        <div class="list-unstyled">
+          <ng-container>
+            <input
+              type="text"
+              name="nombreDireccion"
+              id="nombreDireccion"
+              #direccionLaboral="ngModel"
+              class="form-control bg-none-input bg-none-input-sm"
+              placeholder="Nombre"
+              [disabled]="!isVisibleInformacionEmployment"
+              NoQuotes
+              [(ngModel)]="direccionLugarNombreLaboral"
+              autocomplete="off"
+            />
+
+            <div
+              class="text-danger mt-1"
+              *ngIf="
+                direccionLaboral.invalid &&
+                (direccionLaboral.dirty || direccionLaboral.touched)
+              "
+            >
+              <div *ngIf="direccionLaboral.errors?.['noQuotes']">
+                No se permiten comillas en la dirección.
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+      <div class="col">
+        <b>Teléfono:</b>
+        <ul class="list-unstyled">
+          <ng-container>
+            <input
+              type="text"
+              name="telPreModelLab"
+              id="telPreModelLab"
+              class="form-control bg-property-input"
+              [disabled]="!isVisibleInformacionEmployment"
+              ExactLengthThree
+              #telPreModelLab="ngModel"
+              [(ngModel)]="telefonoPreLaboral"
+              autocomplete="off"
+              maxlength="3"
+              pattern="^[0-9]{1,3}$"
+            />
+
+            <input
+              type="text"
+              name="telModelLab"
+              id="telModelLab"
+              class="form-control bg-none-input bg-none-input-sm"
+              #telModelLab="ngModel"
+              pattern="^[0-9]{7,10}$"
+              maxlength="10"
+              [disabled]="!isVisibleInformacionEmployment"
+              ExactLengthTen
+              [(ngModel)]="telefonoNumLaboral"
+              autocomplete="off"
+            />
+
+            <!-- Mensaje de errores -->
+            <div class="row">
+              <div class="col">
+                <div
+                  class="text-danger"
+                  *ngIf="
+                    telPreModelLab.invalid &&
+                    (telPreModelLab.dirty || telPreModelLab.touched)
+                  "
+                >
+                  <div *ngIf="telPreModelLab.errors?.['pattern']">
+                    Prefijo: Debe ingresar entre 1 y 3 dígitos.
+                  </div>
+                  <div *ngIf="telPreModelLab.errors?.['maxlength']">
+                    Prefijo: Máximo 3 dígitos permitidos.
+                  </div>
+                  <!-- Error de la directiva -->
+                  <div
+                    *ngIf="
+                      !telPreModelLab.errors &&
+                      (telPreModelLab.viewModel?.length < 1 ||
+                        telPreModelLab.viewModel?.length > 3)
+                    "
+                  >
+                    <em>Prefijo: Debe ingresar entre 1 y 3 dígitos.</em>
+                  </div>
+                </div>
+
+                <div
+                  class="text-danger"
+                  *ngIf="
+                    telModelLab.invalid &&
+                    (telModelLab.dirty || telModelLab.touched)
+                  "
+                >
+                  <div *ngIf="telModelLab.errors?.['pattern']">
+                    Número: Debe tener entre 7 y 10 dígitos.
+                  </div>
+                  <div *ngIf="telModelLab.errors?.['maxlength']">
+                    Número: Máximo 10 dígitos permitidos.
+                  </div>
+                  <!-- Error de la directiva -->
+                  <div
+                    *ngIf="
+                      telModelLab.valid &&
+                      telModelLab.touched &&
+                      telModelLab.viewModel.length !== 10
+                    "
+                  >
+                    <em>Número: Debe tener entre 7 y 10 dígitos.</em>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </ul>
+      </div>
+      <div class="col">
+        <b>Dirección Laboral:</b>
+        <ul class="list-unstyled">
+          <li>
+            <textarea
+              name="direccionLaboral"
+              id="direccionLaboral"
+              class="form-control bg-none-input textarea-text"
+              [disabled]="!isVisibleInformacionEmployment"
+              NoQuotes
+              [(ngModel)]="direccionNombreLaboral"
+              rows="1"
+              placeholder="Dirección"
+              autocomplete="off"
+            >
+            </textarea>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Informacion Personal -->
+  <div class="pointer-defaul">
+    <div
+      class="bg-info mt-3 d-flex justify-content-between align-items-center"
+      (click)="editInformacionPersonal()"
+      (keydown)="editInformacionPersonal()"
+    >
+      <div class="title">Información Personal</div>
+      <div class="badge bg-property">
+        <b>Añadir</b>
+      </div>
+    </div>
+    <div *ngIf="isVisibleInformacionPersonal">
+      <div class="row">
+        <div class="col-6">
+          <b>Dirección Residencial:</b>
+          <textarea
+            name="direccionPersonal"
+            id="direccionPersonal"
+            class="form-control bg-none-input"
+            textarea-text
+            [hidden]="
+              direccionLugarNombreLaboral != '' || direccionNombreLaboral != ''
+            "
+            NoQuotes
+            [(ngModel)]="direccionNombrePersonal"
+            rows="1"
+            placeholder="Dirección"
+          >
+          </textarea>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <b>Teléfonos de Contacto:</b>
+          <div class="d-flex align-items-center">
+            <div class=""><b>Móvil(es)</b>:</div>
+            <div
+              class="pointer badge bg-property"
+              [ngClass]="{ 'bg-active': isAddTelefonoMovil == true }"
+              (click)="AddTelefonoMovil(1)"
+              (keydown)="AddTelefonoMovil(1)"
+            >
+              <b>Añadir</b>
+            </div>
+          </div>
+
+          <div class="row g-1" *ngIf="(dataObject.Telefonos ?? []).length > 0">
+            <div *ngFor="let personal of dataObject.Telefonos" class="col-auto">
+              <div
+                *ngIf="personal.TipoTelefonoCod == '1'"
+                class="d-flex align-items-center"
+              >
+                <div class="badge bg-property">
+                  <b>{{ personal.TelefonoPre }}</b>
+                </div>
+                <div class="badge bg-property me-1">
+                  <b>{{ personal.TelefonoNum }}</b>
+                </div>
+                <img
+                  class="pointer icon button-header me-1"
+                  src="assets/icon/delete.svg"
+                  alt="Eliminar"
+                  (click)="deleteTelefono(personal.Telefono_Id)"
+                  (keydown)="deleteTelefono(personal.Telefono_Id)"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex align-items-center mt-2">
+        <div><b>Residencial(es)</b>:</div>
+        <div
+          class="pointer badge bg-property"
+          [ngClass]="{ 'bg-active': isAddTelefonoResidencial == true }"
+          (click)="AddTelefonoResidencial(2)"
+          (keydown)="AddTelefonoResidencial(2)"
+        >
+          <b>Añadir</b>
+        </div>
+      </div>
+      <div class="row g-1">
+        <div class="row g-1" *ngIf="(dataObject.Telefonos ?? []).length > 0">
+          <div *ngFor="let personal of dataObject.Telefonos" class="col-auto">
+            <div
+              *ngIf="
+                personal.TipoTelefonoCod == '2' ||
+                personal.TipoTelefonoCod == '3'
+              "
+              class="d-flex align-items-center"
+            >
+              <div class="badge bg-property">
+                <b>{{ personal.TelefonoPre }}</b>
+              </div>
+              <div class="badge bg-property me-1">
+                <b>{{ personal.TelefonoNum }}</b>
+              </div>
+              <img
+                class="pointer icon button-header me-1"
+                src="assets/icon/delete.svg"
+                alt="Eliminar"
+                (click)="deleteTelefono(personal.Telefono_Id)"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex align-items-center mt-2">
+        <div><b>Otros</b>:</div>
+        <div
+          class="pointer badge bg-property"
+          [ngClass]="{ 'bg-active': isAddTelefonoOtro == true }"
+          (click)="AddTelefonoOtro(5)"
+        >
+          <b>Añadir</b>
+        </div>
+      </div>
+      <div class="row g-1" *ngIf="(dataObject.Telefonos ?? []).length > 0">
+        <div *ngFor="let personal of dataObject.Telefonos" class="col-auto">
+          <div
+            *ngIf="personal.TipoTelefonoCod == '5'"
+            class="d-flex align-items-center"
+          >
+            <div class="badge bg-property">
+              <b>{{ personal.TelefonoPre }}</b>
+            </div>
+            <div class="badge bg-property me-1">
+              <b>{{ personal.TelefonoNum }}</b>
+            </div>
+            <img
+              class="pointer icon button-header me-1"
+              src="assets/icon/delete.svg"
+              alt="Eliminar"
+              (click)="deleteTelefono(personal.Telefono_Id)"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex align-items-center mt-2">
+        <div><b>Email de contacto</b>:</div>
+        <div
+          class="pointer badge bg-property"
+          [ngClass]="{ 'bg-active': isAddEmail == true }"
+          (click)="AddEmail()"
+          (keydown)="AddEmail()"
+        >
+          <b>Añadir</b>
+        </div>
+      </div>
+      <ng-container *ngIf="(dataObject.Correos ?? []).length > 0">
+        <div
+          class="row g-1"
+          *ngFor="let personal of dataObject.Correos; let i = index"
+        >
+          <div class="col-auto mt-2">
+            <div class="d-flex align-items-center">
+              <div class="badge bg-property">
+                <b>{{ i + 1 }}. {{ personal.CorreoElec }}</b>
+              </div>
+              <img
+                class="pointer icon button-header"
+                src="assets/icon/delete.svg"
+                alt="icono desplegar"
+                (click)="deleteEmail(personal.Correo_Id)"
+                (keydown)="deleteEmail(personal.Correo_Id)"
+              />
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+
+  <div class="mt-3 pointer-defaul">
+    <div class="d-flex align-items-center">
+      <div class="title mt-2">FINCAS ASOCIADAS</div>
+      <div
+        class="pointer badge bg-property"
+        [ngClass]="{ 'bg-active': isAddFinca == true }"
+        (click)="AddFinca()"
+        (keydown)="AddFinca()"
+      >
+        <b>Añadir</b>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-5"><b>Número de Finca/Folio</b></div>
+      <div class="col"><b>Dirección</b></div>
+      <div class="col"><b></b></div>
+    </div>
+    <ng-container *ngIf="(dataObject.Fincas ?? []).length > 0">
+      <div class="row" *ngFor="let dataObject of dataObject.Fincas">
+        <div class="col-5">
+          <div class="badge bg-property">
+            <b>
+              <ng-container *ngIf="dataObject.FincaFolio == ''"
+                >NN</ng-container
+              >
+              <ng-container *ngIf="dataObject.FincaFolio != ''">{{
+                dataObject.FincaFolio
+              }}</ng-container>
+            </b>
+          </div>
         </div>
         <div class="col">
-            <div class="title mt-2">Dias de mora / Gaveta</div>
-            <div class="col">
-                <div class="d-flex align-items-center">
-                    <input type="text" name="diasMora" id="diasMora" pattern="^[0-9]+$"
-                        class="form-control bg-none-input bg-none-input-sm" placeholder="Dias Mora" OnlyNumber
-                        [(ngModel)]="dataObject.CuentasDiasMoraGave" autocomplete="off">
-                </div>
-            </div>
+          <ng-container *ngIf="dataObject.FincaDireccion == ''">
+            <div class="badge bg-property">NN</div>
+          </ng-container>
+          <ng-container *ngIf="dataObject.FincaDireccion != ''">
+            <textarea
+              class="form-control bg-property"
+              rows="1"
+              [(ngModel)]="dataObject.FincaDireccion"
+              textarea-text
+              disabled
+            >
+            </textarea>
+          </ng-container>
         </div>
-    </div>
-
-    <!-- Saldo de Producto -->
-    <div class="row">
-        <div class="col-6">
-            <div class="title mt-2">Saldo de Producto</div>
-            <div class="d-flex align-items-center">
-                <input type="text" name="saldo" id="saldo" class="form-control bg-none-input bg-none-input-sm"
-                    pattern="^-?\d+(,\d*)?$" #saldoModel="ngModel" OnlyDecimalComma placeholder="Saldo Producto"
-                    [(ngModel)]="dataObject.CuentasSalPro" autocomplete="off">
-
-                <!-- <div class="text-info mt-1" *ngIf="saldoModel.touched">
-                    <div *ngIf="saldoModel.errors?.['pattern']">
-                        Formato inválido: solo se permiten dígitos y una única coma.
-                    </div>
-                </div> -->
-            </div>
+        <div class="col">
+          <img
+            class="pointer icon button-header"
+            src="assets/icon/delete.svg"
+            alt="icono desplegar"
+            (click)="deleteFinca(dataObject.Finca_Id)"
+            (keydown)="deleteFinca(dataObject.Finca_Id)"
+          />
         </div>
-    </div>
-
-    <!-- informacion laboral -->
-    <div class="pointer-defaul">
-        <div class="bg-info mt-3 d-flex justify-content-between align-items-center" (click)="editInformacionLaboral()">
-            <div class="title">Información Laboral</div>
-            <div class="badge bg-property">
-                <b>Añadir</b>
-            </div>
-        </div>
-
-        <div class="row" *ngIf="isVisibleInformacionEmployment">
-            <div class="col">
-                <b>Nombre:</b>
-                <div class="list-unstyled">
-                    <ng-container>
-                        <input type="text" name="nombreDireccion" id="nombreDireccion" #direccionLaboral="ngModel"
-                            class="form-control bg-none-input bg-none-input-sm" placeholder="Nombre"
-                            [disabled]="!isVisibleInformacionEmployment" NoQuotes
-                            [(ngModel)]="direccionLugarNombreLaboral" autocomplete="off">
-
-                        <div class="text-danger mt-1"
-                            *ngIf="direccionLaboral.invalid && (direccionLaboral.dirty || direccionLaboral.touched)">
-                            <div *ngIf="direccionLaboral.errors?.['noQuotes']">
-                                No se permiten comillas en la dirección.
-                            </div>
-                        </div>
-                    </ng-container>
-                </div>
-            </div>
-            <div class="col">
-                <b>Teléfono:</b>
-                <ul class="list-unstyled">
-                    <ng-container>
-                        <input type="text" name="telPreModelLab" id="telPreModelLab"
-                            class="form-control bg-property-input" [disabled]="!isVisibleInformacionEmployment"
-                            ExactLengthThree #telPreModelLab="ngModel" [(ngModel)]="telefonoPreLaboral"
-                            autocomplete="off" maxlength="3" pattern="^[0-9]{1,3}$">
-
-                        <input type="text" name="telModelLab" id="telModelLab"
-                            class="form-control bg-none-input bg-none-input-sm" #telModelLab="ngModel"
-                            pattern="^[0-9]{7,10}$" maxlength="10" [disabled]="!isVisibleInformacionEmployment"
-                            ExactLengthTen [(ngModel)]="telefonoNumLaboral" autocomplete="off">
-
-                        <!-- Mensaje de errores -->
-                        <div class="row">
-                            <div class="col">
-                                <div class="text-danger"
-                                    *ngIf="telPreModelLab.invalid && (telPreModelLab.dirty || telPreModelLab.touched)">
-                                    <div *ngIf="telPreModelLab.errors?.['pattern']">
-                                        Prefijo: Debe ingresar entre 1 y 3 dígitos.
-                                    </div>
-                                    <div *ngIf="telPreModelLab.errors?.['maxlength']">
-                                        Prefijo: Máximo 3 dígitos permitidos.
-                                    </div>
-                                    <!-- Error de la directiva -->
-                                    <div
-                                        *ngIf="!telPreModelLab.errors && (telPreModelLab.viewModel?.length < 1 || telPreModelLab.viewModel?.length > 3)">
-                                        <em>Prefijo: Debe ingresar entre 1 y 3 dígitos.</em>
-                                    </div>
-                                </div>
-
-                                <div class="text-danger"
-                                    *ngIf="telModelLab.invalid && (telModelLab.dirty || telModelLab.touched)">
-                                    <div *ngIf="telModelLab.errors?.['pattern']">
-                                        Número: Debe tener entre 7 y 10 dígitos.
-                                    </div>
-                                    <div *ngIf="telModelLab.errors?.['maxlength']">
-                                        Número: Máximo 10 dígitos permitidos.
-                                    </div>
-                                    <!-- Error de la directiva -->
-                                    <div
-                                        *ngIf="telModelLab.valid && telModelLab.touched && telModelLab.viewModel.length !== 10">
-                                        <em>Número: Debe tener entre 7 y 10 dígitos.</em>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </ng-container>
-                </ul>
-            </div>
-            <div class="col">
-                <b>Dirección Laboral:</b>
-                <ul class="list-unstyled">
-                    <li>
-                        <textarea name="direccionLaboral" id="direccionLaboral" class="form-control bg-none-input textarea-text" 
-                            [disabled]="!isVisibleInformacionEmployment" NoQuotes [(ngModel)]="direccionNombreLaboral"
-                            rows="1" placeholder="Dirección" autocomplete="off">
-                        </textarea>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    <!-- Informacion Personal -->
-    <div class="pointer-defaul">
-        <div class="bg-info mt-3 d-flex justify-content-between align-items-center" (click)="editInformacionPersonal()">
-            <div class="title">Información Personal</div>
-            <div class="badge bg-property">
-                <b>Añadir</b>
-            </div>
-        </div>
-        <div *ngIf="isVisibleInformacionPersonal">
-            <div class="row">
-                <div class="col-6"><b>Dirección Residencial:</b>
-                    <textarea name="direccionPersonal" id="direccionPersonal" class="form-control bg-none-input" textarea-text
-                        [hidden]="direccionLugarNombreLaboral != '' || direccionNombreLaboral != ''" NoQuotes
-                        [(ngModel)]="direccionNombrePersonal" rows="1" placeholder="Dirección">
-                    </textarea>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col"><b>Teléfonos de Contacto:</b>
-                    <div class="d-flex align-items-center">
-                        <div class=""><b>Móvil(es)</b>:</div>
-                        <div class="pointer badge bg-property" [ngClass]="{'bg-active': isAddTelefonoMovil == true}"
-                            (click)="AddTelefonoMovil(1)"><b>Añadir</b>
-                        </div>
-                    </div>
-
-                    <div class="row g-1" *ngIf="(dataObject.Telefonos ?? []).length > 0">
-                        <div *ngFor="let personal of dataObject.Telefonos" class="col-auto">
-                            <div *ngIf="personal.TipoTelefonoCod == '1'" class="d-flex align-items-center">
-                                <div class="badge bg-property"><b>{{ personal.TelefonoPre }}</b></div>
-                                <div class="badge bg-property me-1"><b>{{ personal.TelefonoNum }}</b></div>
-                                <img class="pointer icon button-header me-1" src="assets/icon/delete.svg" alt="Eliminar"
-                                    (click)="deleteTelefono(personal.Telefono_Id)">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="d-flex align-items-center mt-2">
-                <div><b>Residencial(es)</b>:</div>
-                <div class="pointer badge bg-property" [ngClass]="{'bg-active': isAddTelefonoResidencial == true}"
-                    (click)="AddTelefonoResidencial(2)"><b>Añadir</b>
-                </div>
-            </div>
-            <div class="row g-1">
-                <div class="row g-1" *ngIf="(dataObject.Telefonos ?? []).length > 0">
-                    <div *ngFor="let personal of dataObject.Telefonos" class="col-auto">
-                        <div *ngIf="personal.TipoTelefonoCod == '2' || personal.TipoTelefonoCod == '3'"
-                            class="d-flex align-items-center">
-                            <div class="badge bg-property"><b>{{ personal.TelefonoPre }}</b></div>
-                            <div class="badge bg-property me-1"><b>{{ personal.TelefonoNum }}</b></div>
-                            <img class="pointer icon button-header me-1" src="assets/icon/delete.svg" alt="Eliminar"
-                                (click)="deleteTelefono(personal.Telefono_Id)">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="d-flex align-items-center mt-2">
-                <div><b>Otros</b>:</div>
-                <div class="pointer badge bg-property" [ngClass]="{'bg-active': isAddTelefonoOtro == true}"
-                    (click)="AddTelefonoOtro(5)"><b>Añadir</b>
-                </div>
-            </div>
-            <div class="row g-1" *ngIf="(dataObject.Telefonos ?? []).length > 0">
-                <div *ngFor="let personal of dataObject.Telefonos" class="col-auto">
-                    <div *ngIf="personal.TipoTelefonoCod == '5'" class="d-flex align-items-center">
-                        <div class="badge bg-property"><b>{{ personal.TelefonoPre }}</b></div>
-                        <div class="badge bg-property me-1"><b>{{ personal.TelefonoNum }}</b></div>
-                        <img class="pointer icon button-header me-1" src="assets/icon/delete.svg" alt="Eliminar"
-                            (click)="deleteTelefono(personal.Telefono_Id)">
-                    </div>
-                </div>
-            </div>
-
-            <div class="d-flex align-items-center mt-2">
-                <div><b>Email de contacto</b>:</div>
-                <div class="pointer badge bg-property" [ngClass]="{'bg-active': isAddEmail == true}"
-                    (click)="AddEmail()">
-                    <b>Añadir</b>
-                </div>
-            </div>
-            <ng-container *ngIf="(dataObject.Correos ?? []).length > 0">
-                <div class="row g-1" *ngFor="let personal of dataObject.Correos; let i = index">
-                    <div class="col-auto mt-2">
-                        <div class="d-flex align-items-center">
-                            <div class="badge bg-property"><b>{{ i + 1 }}. {{ personal.CorreoElec }}</b></div>
-                            <img class="pointer icon button-header" src="assets/icon/delete.svg" alt="icono desplegar"
-                                (click)="deleteEmail(personal.Correo_Id)">
-                        </div>
-                    </div>
-                </div>
-            </ng-container>
-        </div>
-    </div>
-
-    <div class="mt-3 pointer-defaul">
-        <div class="d-flex align-items-center">
-            <div class="title mt-2">FINCAS ASOCIADAS</div>
-            <div class="pointer badge bg-property" [ngClass]="{'bg-active': isAddFinca == true}" (click)="AddFinca()">
-                <b>Añadir</b>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-5"><b>Número de Finca/Folio</b></div>
-            <div class="col"><b>Dirección</b></div>
-            <div class="col"><b></b></div>
-        </div>
-        <ng-container *ngIf="(dataObject.Fincas ?? []).length > 0">
-            <div class="row" *ngFor="let dataObject of dataObject.Fincas">
-                <div class="col-5">
-                    <div class="badge bg-property">
-                        <b>
-                            <ng-container *ngIf="dataObject.FincaFolio == ''">NN</ng-container>
-                            <ng-container *ngIf="dataObject.FincaFolio != ''">{{ dataObject.FincaFolio }}</ng-container>
-                        </b>
-                    </div>
-                </div>
-                <div class="col">
-                    <!-- <div class="badge bg-property">
-                        <b>
-                            <ng-container *ngIf="dataObject.FincaDireccion == ''">NN</ng-container>
-                            <ng-container *ngIf="dataObject.FincaDireccion != ''">{{ dataObject.FincaDireccion }}</ng-container>
-                        </b>
-                    </div> -->
-                    <ng-container *ngIf="dataObject.FincaDireccion == ''">
-                        <div class="badge bg-property">NN</div>
-                    </ng-container>
-                    <ng-container *ngIf="dataObject.FincaDireccion != ''">
-                        <textarea class="form-control bg-property" rows="1" [(ngModel)]="dataObject.FincaDireccion" textarea-text
-                            disabled>
-                        </textarea>
-                    </ng-container>
-                </div>
-                <div class="col">
-                    <img class="pointer icon button-header" src="assets/icon/delete.svg" alt="icono desplegar"
-                        (click)="deleteFinca(dataObject.Finca_Id)">
-                </div>
-            </div>
-        </ng-container>
-    </div>
-
-    <!-- Geodomicilio -->
-    <ng-container *ngIf="direccionNombrePersonal || direccionLugarNombreLaboral || direccionNombreLaboral">
-        <div class="bg-info location mt-3 d-flex justify-content-center align-items-center">
-
-            <!-- Longitud -->
-            <div class="me-2">
-                <input type="text" name="longitud" id="longitud" class="form-control bg-none-input"
-                    placeholder="Longitud" OnlyDecimal2IntDirective [(ngModel)]="geoDomicilioLongi" #longModel="ngModel"
-                    autocomplete="off" required pattern="^-?\d{1,2}\.\d{5,}$"
-                    title="1-2 dígitos enteros, punto y mínimo 5 decimales">
-
-                <div class="row mt-2" *ngIf="longModel.invalid && (longModel.dirty || longModel.touched)">
-                    <div class="col-8 text-danger">
-                        <div *ngIf="longModel.errors?.['required']">
-                            La longitud es obligatoria.
-                        </div>
-                        <div *ngIf="longModel.errors?.['pattern']">
-                            Longitud inválido: 1-2 dígitos enteros, punto y al menos 5 decimales.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <span class="mx-1">/</span>
-
-            <!-- Latitud -->
-            <div>
-                <input type="text" name="latitud" id="latitud" class="form-control bg-none-input" placeholder="Latitud"
-                    OnlyDecimal3IntDirective [(ngModel)]="geoDomicilioLati" #latModel="ngModel" autocomplete="off"
-                    required pattern="^-?\d{1,3}\.\d{5,}$" title="Hasta 3 dígitos enteros y mínimo 5 decimales">
-
-                <div class="row mt-2" *ngIf="latModel.invalid && (latModel.dirty || latModel.touched)">
-                    <div class="col-8 text-danger">
-                        <div *ngIf="latModel.errors?.['required']">
-                            La latitud es obligatoria.
-                        </div>
-                        <div *ngIf="latModel.errors?.['pattern']">
-                            Latitud inválida: hasta 3 dígitos enteros y mínimo 5 decimales.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <img class="icon button-header ms-3" src="assets/icon/contact_card_location.svg" alt="icono desplegar">
-
-        </div>
+      </div>
     </ng-container>
+  </div>
 
-    <div class="card-footer d-flex justify-content-center align-items-center" (click)="save()" *ngIf="isSaveaAvailable">
-        {{ isSaveaAvailable ? 'Guardar' : 'Cargando...' }}
+  <!-- Geodomicilio -->
+  <ng-container
+    *ngIf="
+      direccionNombrePersonal ||
+      direccionLugarNombreLaboral ||
+      direccionNombreLaboral
+    "
+  >
+    <div
+      class="bg-info location mt-3 d-flex justify-content-center align-items-center"
+    >
+      <!-- Longitud -->
+      <div class="me-2">
+        <input
+          type="text"
+          name="longitud"
+          id="longitud"
+          class="form-control bg-none-input"
+          placeholder="Longitud"
+          OnlyDecimal2IntDirective
+          [(ngModel)]="geoDomicilioLongi"
+          #longModel="ngModel"
+          autocomplete="off"
+          required
+          pattern="^-?\d{1,2}\.\d{5,}$"
+          title="1-2 dígitos enteros, punto y mínimo 5 decimales"
+        />
+
+        <div
+          class="row mt-2"
+          *ngIf="longModel.invalid && (longModel.dirty || longModel.touched)"
+        >
+          <div class="col-8 text-danger">
+            <div *ngIf="longModel.errors?.['required']">
+              La longitud es obligatoria.
+            </div>
+            <div *ngIf="longModel.errors?.['pattern']">
+              Longitud inválido: 1-2 dígitos enteros, punto y al menos 5
+              decimales.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <span class="mx-1">/</span>
+
+      <!-- Latitud -->
+      <div>
+        <input
+          type="text"
+          name="latitud"
+          id="latitud"
+          class="form-control bg-none-input"
+          placeholder="Latitud"
+          OnlyDecimal3IntDirective
+          [(ngModel)]="geoDomicilioLati"
+          #latModel="ngModel"
+          autocomplete="off"
+          required
+          pattern="^-?\d{1,3}\.\d{5,}$"
+          title="Hasta 3 dígitos enteros y mínimo 5 decimales"
+        />
+
+        <div
+          class="row mt-2"
+          *ngIf="latModel.invalid && (latModel.dirty || latModel.touched)"
+        >
+          <div class="col-8 text-danger">
+            <div *ngIf="latModel.errors?.['required']">
+              La latitud es obligatoria.
+            </div>
+            <div *ngIf="latModel.errors?.['pattern']">
+              Latitud inválida: hasta 3 dígitos enteros y mínimo 5 decimales.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <img
+        class="icon button-header ms-3"
+        src="assets/icon/contact_card_location.svg"
+        alt="icono desplegar"
+      />
     </div>
+  </ng-container>
+
+  <div
+    class="card-footer d-flex justify-content-center align-items-center"
+    (click)="save()"
+    (keydown)="save()"
+    *ngIf="isSaveaAvailable"
+  >
+    {{ isSaveaAvailable ? "Guardar" : "Cargando..." }}
+  </div>
 </app-movable-card>
 
 <!-- Telefono -->
-<app-movable-card *ngIf="isAddTelefonoMovil || isAddTelefonoResidencial || isAddTelefonoOtro" [initialX]="500"
-    [initialY]="150" [paramWidth]="20" [showHeader]="true">
-    <div class="card-title">
-        <div class="d-flex justify-content-between align-items-center">
-            <b>
-                <span [ngSwitch]="typeTelefono">
-                    <ng-container *ngSwitchCase="1">Añadir Teléfono Móvil</ng-container>
-                    <ng-container *ngSwitchCase="2">Añadir Teléfono Residencial</ng-container>
-                    <ng-container *ngSwitchCase="5">Añadir Teléfono Otros</ng-container>
-                    <ng-container *ngSwitchDefault></ng-container>
-                </span>
-            </b>
-            <div>
-                <img class="icon-header button-header" src="assets/icon/contact_card_close.svg" alt=""
-                    (click)="closeTelefono()">
-            </div>
-        </div>
+<app-movable-card
+  *ngIf="isAddTelefonoMovil || isAddTelefonoResidencial || isAddTelefonoOtro"
+  [initialX]="500"
+  [initialY]="150"
+  [paramWidth]="20"
+  [showHeader]="true"
+>
+  <div class="card-title">
+    <div class="d-flex justify-content-between align-items-center">
+      <b>
+        <span [ngSwitch]="typeTelefono">
+          <ng-container *ngSwitchCase="1">Añadir Teléfono Móvil</ng-container>
+          <ng-container *ngSwitchCase="2"
+            >Añadir Teléfono Residencial</ng-container
+          >
+          <ng-container *ngSwitchCase="5">Añadir Teléfono Otros</ng-container>
+          <ng-container *ngSwitchDefault></ng-container>
+        </span>
+      </b>
+      <div>
+        <img
+          class="icon-header button-header"
+          src="assets/icon/contact_card_close.svg"
+          alt=""
+          (click)="closeTelefono()"
+          (keydown)="closeTelefono()"
+        />
+      </div>
     </div>
-    <div class="align-items-center">
-        <div class="row">
-            <div class="col">
-                <input type="text" name="numberPreTel" id="numberPreTel" pattern="^[0-9]{1,3}$" required
-                    class="form-control bg-property-input" ExactLengthThree #telPreModel="ngModel" maxlength="3"
-                    ExactLengthThree [(ngModel)]="nuevoTelefonoPre" placeholder="Prefijo" autocomplete="off">
-            </div>
+  </div>
+  <div class="align-items-center">
+    <div class="row">
+      <div class="col">
+        <input
+          type="text"
+          name="numberPreTel"
+          id="numberPreTel"
+          pattern="^[0-9]{1,3}$"
+          required
+          class="form-control bg-property-input"
+          ExactLengthThree
+          #telPreModel="ngModel"
+          maxlength="3"
+          ExactLengthThree
+          [(ngModel)]="nuevoTelefonoPre"
+          placeholder="Prefijo"
+          autocomplete="off"
+        />
+      </div>
 
-            <div class="col g-0">
-                <input type="text" name="numberTel" id="numberTel" pattern="^[0-9]{7,10}$" required
-                    class="form-control bg-property-input" #telModel="ngModel" maxlength="10" ExactLengthTen
-                    placeholder="Número" [(ngModel)]="nuevoTelefono" autocomplete="off">
-            </div>
+      <div class="col g-0">
+        <input
+          type="text"
+          name="numberTel"
+          id="numberTel"
+          pattern="^[0-9]{7,10}$"
+          required
+          class="form-control bg-property-input"
+          #telModel="ngModel"
+          maxlength="10"
+          ExactLengthTen
+          placeholder="Número"
+          [(ngModel)]="nuevoTelefono"
+          autocomplete="off"
+        />
+      </div>
 
-            <div class="col">
-                <button class="pointer btn badge bg-active" (click)="newTelefono()"
-                    [disabled]="telPreModel.invalid || telModel.invalid">Guardar</button>
-            </div>
-        </div>
-
-        <!-- Mensaje de errores -->
-        <div class="row">
-            <div class="col">
-                <div class="text-danger" *ngIf="telPreModel.invalid && (telPreModel.dirty || telPreModel.touched)">
-                    <div *ngIf="telPreModel.errors?.['pattern']">
-                        Prefijo: Debe ingresar entre 1 y 3 dígitos.
-                    </div>
-                    <div *ngIf="telPreModel.errors?.['maxlength']">
-                        Prefijo: Máximo 3 dígitos permitidos.
-                    </div>
-                    <!-- Error de la directiva -->
-                    <div
-                        *ngIf="!telPreModel.errors && (telPreModel.viewModel?.length < 1 || telPreModel.viewModel?.length > 3)">
-                        <em>Prefijo: Debe ingresar entre 1 y 3 dígitos.</em>
-                    </div>
-                </div>
-
-                <div class="text-danger" *ngIf="telModel.invalid && (telModel.dirty || telModel.touched)">
-                    <div *ngIf="telModel.errors?.['pattern']">
-                        Número: Debe tener mínimo 7 dígitos.
-                    </div>
-                    <div *ngIf="telModel.errors?.['maxlength']">
-                        Número: Máximo 10 dígitos permitidos.
-                    </div>
-                    <!-- Error de la directiva -->
-                    <div *ngIf="telModel.valid && telModel.touched && telModel.viewModel.length !== 10">
-                        <em>Número: Debe tener mínimo 7 dígitos.</em>
-                    </div>
-                </div>
-            </div>
-        </div>
+      <div class="col">
+        <button
+          class="pointer btn badge bg-active"
+          (click)="newTelefono()"
+          [disabled]="telPreModel.invalid || telModel.invalid"
+        >
+          Guardar
+        </button>
+      </div>
     </div>
+
+    <!-- Mensaje de errores -->
+    <div class="row">
+      <div class="col">
+        <div
+          class="text-danger"
+          *ngIf="
+            telPreModel.invalid && (telPreModel.dirty || telPreModel.touched)
+          "
+        >
+          <div *ngIf="telPreModel.errors?.['pattern']">
+            Prefijo: Debe ingresar entre 1 y 3 dígitos.
+          </div>
+          <div *ngIf="telPreModel.errors?.['maxlength']">
+            Prefijo: Máximo 3 dígitos permitidos.
+          </div>
+          <!-- Error de la directiva -->
+          <div
+            *ngIf="
+              !telPreModel.errors &&
+              (telPreModel.viewModel?.length < 1 ||
+                telPreModel.viewModel?.length > 3)
+            "
+          >
+            <em>Prefijo: Debe ingresar entre 1 y 3 dígitos.</em>
+          </div>
+        </div>
+
+        <div
+          class="text-danger"
+          *ngIf="telModel.invalid && (telModel.dirty || telModel.touched)"
+        >
+          <div *ngIf="telModel.errors?.['pattern']">
+            Número: Debe tener mínimo 7 dígitos.
+          </div>
+          <div *ngIf="telModel.errors?.['maxlength']">
+            Número: Máximo 10 dígitos permitidos.
+          </div>
+          <!-- Error de la directiva -->
+          <div
+            *ngIf="
+              telModel.valid &&
+              telModel.touched &&
+              telModel.viewModel.length !== 10
+            "
+          >
+            <em>Número: Debe tener mínimo 7 dígitos.</em>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </app-movable-card>
 
 <!-- Email -->
-<app-movable-card *ngIf="isAddEmail" [initialX]="500" [initialY]="248" [paramWidth]="20" [showHeader]="true">
-    <div class="card-title">
-        <div class="d-flex justify-content-between align-items-center">
-            <b>
-                Añadir Email de Contacto
-            </b>
-            <div>
-                <img class="icon-header button-header" src="assets/icon/contact_card_close.svg" alt=""
-                    (click)="closeEmail()">
-            </div>
-        </div>
+<app-movable-card
+  *ngIf="isAddEmail"
+  [initialX]="500"
+  [initialY]="248"
+  [paramWidth]="20"
+  [showHeader]="true"
+>
+  <div class="card-title">
+    <div class="d-flex justify-content-between align-items-center">
+      <b> Añadir Email de Contacto </b>
+      <div>
+        <img
+          class="icon-header button-header"
+          src="assets/icon/contact_card_close.svg"
+          alt=""
+          (click)="closeEmail()"
+          (keydown)="closeEmail()"
+        />
+      </div>
     </div>
-    <div class="align-items-center">
-        <div class="row">
-            <div class="col-8">
-                <input type="email" name="email" id="email" class="form-control bg-property-input" placeholder="Email"
-                    EmailFormat #emailModel="ngModel" [(ngModel)]="nuevoEmail" autocomplete="off" required
-                    pattern="^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$">
-            </div>
-        </div>
-
-        <div class="row mt-2">
-            <div class="col-4">
-                <span class="pointer badge bg-strategy" [ngClass]="{'bg-active': typeEmail == 1}"
-                    (click)="onTipoEmail(1)">Personal</span>
-            </div>
-            <div class="col-4">
-                <span class="pointer badge bg-strategy" [ngClass]="{'bg-active': typeEmail == 2}"
-                    (click)="onTipoEmail(2)">Laboral</span>
-            </div>
-            <div class="col">
-                <button class="pointer btn badge bg-active" (click)="newEmail()"
-                    [disabled]="emailModel.invalid || !typeEmail">Guardar</button>
-            </div>
-        </div>
-
-        <div class="row mt-2">
-            <div class="col-8">
-                <div class="text-danger" *ngIf="emailModel.invalid && (emailModel.dirty || emailModel.touched)">
-                    <div *ngIf="emailModel.errors?.['required']">
-                        El email es obligatorio.
-                    </div>
-                    <div *ngIf="emailModel.errors?.['pattern']">
-                        Formato de email inválido.
-                    </div>
-                </div>
-            </div>
-        </div>
+  </div>
+  <div class="align-items-center">
+    <div class="row">
+      <div class="col-8">
+        <input
+          type="email"
+          name="email"
+          id="email"
+          class="form-control bg-property-input"
+          placeholder="Email"
+          EmailFormat
+          #emailModel="ngModel"
+          [(ngModel)]="nuevoEmail"
+          autocomplete="off"
+          required
+          pattern="^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$"
+        />
+      </div>
     </div>
+
+    <div class="row mt-2">
+      <div class="col-4">
+        <span
+          class="pointer badge bg-strategy"
+          [ngClass]="{ 'bg-active': typeEmail == 1 }"
+          (click)="onTipoEmail(1)"
+          (keydown)="onTipoEmail(1)"
+          >Personal</span
+        >
+      </div>
+      <div class="col-4">
+        <span
+          class="pointer badge bg-strategy"
+          [ngClass]="{ 'bg-active': typeEmail == 2 }"
+          (click)="onTipoEmail(2)"
+          (keydown)="onTipoEmail(2)"
+          >Laboral</span
+        >
+      </div>
+      <div class="col">
+        <button
+          class="pointer btn badge bg-active"
+          (click)="newEmail()"
+          [disabled]="emailModel.invalid || !typeEmail"
+        >
+          Guardar
+        </button>
+      </div>
+    </div>
+
+    <div class="row mt-2">
+      <div class="col-8">
+        <div
+          class="text-danger"
+          *ngIf="emailModel.invalid && (emailModel.dirty || emailModel.touched)"
+        >
+          <div *ngIf="emailModel.errors?.['required']">
+            El email es obligatorio.
+          </div>
+          <div *ngIf="emailModel.errors?.['pattern']">
+            Formato de email inválido.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </app-movable-card>
 
 <!-- Finca -->
-<app-movable-card *ngIf="isAddFinca" [initialX]="500" [initialY]="380" [paramWidth]="20" [showHeader]="true">
-    <div class="card-title">
-        <div class="d-flex justify-content-between align-items-center">
-            <b>
-                Añadir Número de finca/folio
-            </b>
-            <div>
-                <img class="icon-header button-header" src="assets/icon/contact_card_close.svg" alt=""
-                    (click)="closeFinca()">
-            </div>
-        </div>
+<app-movable-card
+  *ngIf="isAddFinca"
+  [initialX]="500"
+  [initialY]="380"
+  [paramWidth]="20"
+  [showHeader]="true"
+>
+  <div class="card-title">
+    <div class="d-flex justify-content-between align-items-center">
+      <b> Añadir Número de finca/folio </b>
+      <div>
+        <img
+          class="icon-header button-header"
+          src="assets/icon/contact_card_close.svg"
+          alt=""
+          (click)="closeFinca()"
+          (keydown)="closeFinca()"
+        />
+      </div>
     </div>
-    <div class="align-items-center">
-        <div class="row">
-            <div class="col">
-                <input type="text" name="folio" id="folio" class="form-control bg-property-input"
-                    placeholder="Finca/Folio" [(ngModel)]="nuevaFinca" autocomplete="off">
-            </div>
-        </div>
-
-        <div class="row mt-1">
-            <div class="col">
-                <textarea name="fincaDireccion" id="fincaDireccion" class="form-control bg-property-input" textarea-text
-                    [(ngModel)]="nuevaFincaDireccion" rows="2" placeholder="Dirección" autocomplete="off">
-                </textarea>
-            </div>
-        </div>
-
-        <div class="row mt-1">
-            <div class="col">
-                <span class="pointer badge bg-property"
-                    [ngClass]="{'bg-active': dataObject.TipoPredioNom == 'Residencial'}"
-                    (click)="onPredio('Residencial', '1')">Residencial</span>
-                <span class="pointer badge bg-property"
-                    [ngClass]="{'bg-active': dataObject.TipoPredioNom == 'Comercial'}"
-                    (click)="onPredio('Comercial', '2')">Comercial</span>
-                <span class="pointer badge bg-property"
-                    [ngClass]="{'bg-active': dataObject.TipoPredioNom == 'Industrial'}"
-                    (click)="onPredio('Industrial', '3')">Industrial</span>
-            </div>
-        </div>
-
-        <div class="row mt-1">
-            <div class="col">
-                <button class="pointer btn badge bg-active" (click)="newFinca()">Guardar</button>
-            </div>
-        </div>
-
+  </div>
+  <div class="align-items-center">
+    <div class="row">
+      <div class="col">
+        <input
+          type="text"
+          name="folio"
+          id="folio"
+          class="form-control bg-property-input"
+          placeholder="Finca/Folio"
+          [(ngModel)]="nuevaFinca"
+          autocomplete="off"
+        />
+      </div>
     </div>
+
+    <div class="row mt-1">
+      <div class="col">
+        <textarea
+          name="fincaDireccion"
+          id="fincaDireccion"
+          class="form-control bg-property-input"
+          textarea-text
+          [(ngModel)]="nuevaFincaDireccion"
+          rows="2"
+          placeholder="Dirección"
+          autocomplete="off"
+        >
+        </textarea>
+      </div>
+    </div>
+
+    <div class="row mt-1">
+      <div class="col">
+        <span
+          class="pointer badge bg-property"
+          [ngClass]="{ 'bg-active': dataObject.TipoPredioNom == 'Residencial' }"
+          (click)="onPredio('Residencial', '1')"
+          (keydown)="onPredio('Residencial', '1')"
+          >Residencial</span
+        >
+        <span
+          class="pointer badge bg-property"
+          [ngClass]="{ 'bg-active': dataObject.TipoPredioNom == 'Comercial' }"
+          (click)="onPredio('Comercial', '2')"
+          (keydown)="onPredio('Comercial', '2')"
+          >Comercial</span
+        >
+        <span
+          class="pointer badge bg-property"
+          [ngClass]="{ 'bg-active': dataObject.TipoPredioNom == 'Industrial' }"
+          (click)="onPredio('Industrial', '3')"
+          (keydown)="onPredio('Industrial', '3')"
+          >Industrial</span
+        >
+      </div>
+    </div>
+
+    <div class="row mt-1">
+      <div class="col">
+        <button class="pointer btn badge bg-active" (click)="newFinca()">
+          Guardar
+        </button>
+      </div>
+    </div>
+  </div>
 </app-movable-card>
 
 <!-- Mensaje Alerta -->
-<app-movable-card *ngIf="isMensajeAlerta" [initialX]="500" [initialY]="380" [paramWidth]="20" [showHeader]="true">
-    <div class="card-title">
-        <div class="d-flex justify-content-between align-items-center">
-            <img class="icon button-header" src="assets/icon/company_white.svg" alt="">
-            <img class="icon icon-header button-header" src="assets/icon/contact_card_close.svg" alt="" (click)="close()">
-        </div>
+<app-movable-card
+  *ngIf="isMensajeAlerta"
+  [initialX]="500"
+  [initialY]="380"
+  [paramWidth]="20"
+  [showHeader]="true"
+>
+  <div class="card-title">
+    <div class="d-flex justify-content-between align-items-center">
+      <img
+        class="icon button-header"
+        src="assets/icon/company_white.svg"
+        alt=""
+      />
+      <img
+        class="icon icon-header button-header"
+        src="assets/icon/contact_card_close.svg"
+        alt=""
+        (click)="close()"
+        (keydown)="close()"
+      />
     </div>
-    <div>
-        <p class="alerta">{{ mensajeAlerta }}</p>
-    </div>
+  </div>
+  <div>
+    <p class="alerta">{{ mensajeAlerta }}</p>
+  </div>
 </app-movable-card>
 
-<app-movable-card *ngIf="!isSaveaAvailable" [initialX]="500" [initialY]="240" [paramWidth]="20" [showHeader]="true">
-    <!-- <div class="card-title">
-        <div class="d-flex justify-content-between align-items-center">
-            <img class="icon button-header" src="assets/icon/company_white.svg" alt="">
-            <img class="icon icon-header button-header" src="assets/icon/contact_card_close.svg" alt="" (click)="close()">
-        </div>
-    </div> -->
-    <div>
-        <p class="alerta-carga">Cargando ...</p>
-    </div>
+<app-movable-card
+  *ngIf="!isSaveaAvailable"
+  [initialX]="500"
+  [initialY]="240"
+  [paramWidth]="20"
+  [showHeader]="true"
+>
+  <div>
+    <p class="alerta-carga">Cargando ...</p>
+  </div>
 </app-movable-card>
 
-<app-movable-card *ngIf="isSave" [initialX]="10" [initialY]="10" [paramWidth]="25" [showHeader]="true">
-    <div class="card-title">
-        <div class="d-flex justify-content-between align-items-center">
-            <img class="icon button-header" src="assets/icon/company_white.svg" alt="">
-            <img class="icon icon-header button-header" src="assets/icon/contact_card_close.svg" alt="" (click)="close()">
-        </div>
+<app-movable-card
+  *ngIf="isSave"
+  [initialX]="10"
+  [initialY]="10"
+  [paramWidth]="25"
+  [showHeader]="true"
+>
+  <div class="card-title">
+    <div class="d-flex justify-content-between align-items-center">
+      <img
+        class="icon button-header"
+        src="assets/icon/company_white.svg"
+        alt=""
+      />
+      <img
+        class="icon icon-header button-header"
+        src="assets/icon/contact_card_close.svg"
+        alt=""
+        (click)="close()"
+      />
     </div>
-    <div>
-        {{ message }}
+  </div>
+  <div>
+    {{ message }}
 
-        <div *ngIf="!errorSave">
-            <button class="pointer btn badge bg-active" (click)="goTC()">Ir a la TC</button>
-        </div>
+    <div *ngIf="!errorSave">
+      <button class="pointer btn badge bg-active" (click)="goTC()">
+        Ir a la TC
+      </button>
     </div>
+  </div>
 </app-movable-card>
 
-<!-- </ng-container>
-    <ng-template #loading>
-        <p>Cargando información...</p>
-    </ng-template> -->

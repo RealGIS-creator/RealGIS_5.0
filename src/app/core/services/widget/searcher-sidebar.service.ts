@@ -10,9 +10,9 @@ import { SearchCriteria } from '../../../interfaces/search-criteria';
 })
 export class SearcherSidebarService {
 
-  private apiUrl = environment.backendGN;
+  private readonly apiUrl = environment.backendGN;
 
-  constructor(private http: HttpClient) { }
+  constructor(private readonly http: HttpClient) { }
 
   getSearchCriteria(): SearchCriteria[] {
     return [

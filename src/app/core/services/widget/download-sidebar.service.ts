@@ -9,12 +9,12 @@ import { MapService } from '../home/map/map.service';
 })
 export class DownloadSidebarService {
 
-  private apiUrl = environment.backendGN;
+  private readonly apiUrl = environment.backendGN;
   private paramsId: string[] = [];
 
   constructor(
-    private http: HttpClient,
-    private mapService: MapService
+    private readonly http: HttpClient,
+    private readonly mapService: MapService
   ) { 
     this.mapService.selectedIds$.subscribe(ids => {
       this.paramsId = ids;

@@ -24,18 +24,18 @@ export class ToolbarComponent implements OnInit, OnDestroy {
   imagesDefault: ToolBar[] = [];
   private map!: L.Map;
   private drawLayer!: L.LayerGroup;
-  private subs = new Subscription();
+  private readonly subs = new Subscription();
   currentPolygon: L.Polygon | null = null;
   private currentPolyline: L.Polyline | null = null;
   drawing = false;
   allMarkers: L.Marker[] = [];
 
   private markerClusterGroup: L.MarkerClusterGroup | null = null;
-  private subscriptions = new Subscription();
+  private readonly subscriptions = new Subscription();
 
   constructor(
-    private toolbarService: ToolbarService,
-    private mapService: MapService
+    private readonly toolbarService: ToolbarService,
+    private readonly mapService: MapService
   ) { }
 
   ngOnInit() {
@@ -199,8 +199,6 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     const ids = insideMarkers
       .map(m => (m as any).feature?.properties?.Direccion_Id)
       .filter((id): id is string => typeof id === 'string');
-
-    //console.log('IDs dentro del polígono:', ids);
 
     // 4. Enviamos al servicio
     this.mapService.setSelectedIds(ids);

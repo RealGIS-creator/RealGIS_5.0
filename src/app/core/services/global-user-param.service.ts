@@ -7,7 +7,7 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class GlobalUserParamService {
 
-  private _params$ = new BehaviorSubject<Params | null>(null);
+  private readonly _params$ = new BehaviorSubject<Params | null>(null);
 
   readonly params$ = this._params$.asObservable();
 

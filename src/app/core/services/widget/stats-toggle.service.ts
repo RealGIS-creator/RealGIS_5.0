@@ -6,7 +6,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 })
 export class StatsToggleService {
 
-  private stateSubject = new BehaviorSubject<boolean>(false);
+  private readonly stateSubject = new BehaviorSubject<boolean>(false);
   readonly state$: Observable<boolean> = this.stateSubject.asObservable();
 
   show(): void {

@@ -2,10 +2,10 @@
     <ul class="mt-4">
         <li *ngFor="let img of imagesDefault" class="item-position">
             <ng-container *ngIf="img.allow?.includes(paramsUser)">
-                <img class="icon-sidebar mb-2 img-fluid" [src]="'assets/icon/' + img.image + '_' + img.type + '.svg'" (click)="onChangeImage(img.id, img.type)" [alt]="img.image">
+                <img class="icon-sidebar mb-2 img-fluid" [src]="'assets/icon/' + img.image + '_' + img.type + '.svg'" (click)="onChangeImage(img.id, img.type)" (keydown)="onChangeImage(img.id, img.type)" [alt]="img.label">
     
                 <div class="window-sidebar" [ngClass]="{'show': activeIndex === img.id}">
-                    <p class="label-image" (click)="openDialog(img)"> {{ img.label }} </p>
+                    <p class="label-image" (click)="openDialog(img)" (keydown)="openDialog(img)"> {{ img.label }} </p>
                 </div>
             </ng-container>
         </li>

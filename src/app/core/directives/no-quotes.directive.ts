@@ -18,11 +18,11 @@ import {
   ]
 })
 export class NoQuotesDirective implements Validator {
-  private ERROR_CLASS = 'quote-block-error';
+  private readonly ERROR_CLASS = 'quote-block-error';
 
   constructor(
-    private el: ElementRef<HTMLInputElement | HTMLTextAreaElement>,
-    private renderer: Renderer2
+    private readonly el: ElementRef<HTMLInputElement | HTMLTextAreaElement>,
+    private readonly renderer: Renderer2
   ) { }
 
   validate(control: AbstractControl): ValidationErrors | null {

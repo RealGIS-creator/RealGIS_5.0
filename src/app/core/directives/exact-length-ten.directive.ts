@@ -5,11 +5,11 @@ import { Directive, ElementRef, HostListener, Renderer2 } from '@angular/core';
 })
 export class ExactLengthTenDirective {
 
-  private exactRegex = /^[0-9]{7,10}$/;
+  private readonly exactRegex = /^[0-9]{7,10}$/;
 
   constructor(
-    private el: ElementRef<HTMLInputElement>,
-    private renderer: Renderer2
+    private readonly el: ElementRef<HTMLInputElement>,
+    private readonly renderer: Renderer2
   ) {}
 
   @HostListener('input')

@@ -4,12 +4,12 @@ import { Directive, ElementRef, HostListener, Renderer2 } from '@angular/core';
   selector: '[OnlyDecimal3IntDirective]'
 })
 export class OnlyDecimal3IntDirectiveDirective {
-  private editRegex = /^-?\d{0,3}(?:\.\d*)?$/;
-  private finalRegex = /^-?\d{1,3}\.\d{5,}$/;
+  private readonly editRegex = /^-?\d{0,3}(?:\.\d*)?$/;
+  private readonly finalRegex = /^-?\d{1,3}\.\d{5,}$/;
 
   constructor(
-    private el: ElementRef<HTMLInputElement>,
-    private renderer: Renderer2
+    private readonly el: ElementRef<HTMLInputElement>,
+    private readonly renderer: Renderer2
   ) { }
 
   @HostListener('input')

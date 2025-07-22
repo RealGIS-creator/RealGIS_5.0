@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ComponentRef, inject } from '@angular/core';
+import { Component, ComponentRef } from '@angular/core';
 import { SideBar } from '../../../interfaces/sidebar';
 import { SearcherSidebarComponent } from '../../widget/searcher-sidebar/searcher-sidebar.component';
 import { GenericDialogComponent } from '../../shared/generic-dialog/generic-dialog.component';
@@ -8,9 +8,7 @@ import { SidebarService } from '../../../core/services/home/sidebar.service';
 import { Subscription } from 'rxjs';
 import { DownloadComponent } from '../../widget/download/download.component';
 import { ContactCardInsertComponent } from '../../widget/contact-card-insert/contact-card-insert.component';
-import { StatisticsComponent } from '../../widget/statistics/statistics.component';
 import { StatsToggleService } from '../../../core/services/widget/stats-toggle.service';
-import { Params } from '@angular/router';
 import { GlobalUserParamService } from '../../../core/services/global-user-param.service';
 
 @Component({
@@ -24,16 +22,16 @@ export class SidebarComponent {
   activeIndex: number | null = null;
   imagesDefault: SideBar[] = [];
   
-  dialog: ComponentRef<GenericDialogComponent> | null | any = null;
+  dialog: ComponentRef<GenericDialogComponent> | null = null;
 
   private dialogSub!: Subscription;
   paramsUser: string = '';
 
   constructor(
-    private sidebarService: SidebarService,
-    private dialogService: DialogService,
-    private statsToggleService: StatsToggleService,
-    private globalUserParamService: GlobalUserParamService
+    private readonly sidebarService: SidebarService,
+    private readonly dialogService: DialogService,
+    private readonly statsToggleService: StatsToggleService,
+    private readonly globalUserParamService: GlobalUserParamService
     // private sidebarShowDataService: SidebarShowDataService
   ) {}
 
@@ -42,15 +40,12 @@ export class SidebarComponent {
 
     this.dialogSub = this.dialogService.activeDialog$.subscribe(dialogRef => {
       if (!dialogRef) {
-        //console.log('No hay diálogo activo');
         this.resetImagesToDark();
       }
     });
 
     this.globalUserParamService.params$.subscribe(p => {
       this.paramsUser = p?.['role'];
-      // console.log('rol sidebar:', this.paramsUser)
-      // console.log('rol sidebar:', p)
     });
   }
 
@@ -64,10 +59,8 @@ export class SidebarComponent {
     this.activeIndex = this.activeIndex === id ? null : id;
 
     this.imagesDefault.forEach((element) => {
-      element.type = element.type == 'ligth' ? 'dark' : 'dark';
+      element.type = element.type === 'ligth' ? 'dark' : 'ligth';
     });
-
-    // this.imagesDefault[id - 1].type = type == 'dark' ? 'ligth' : 'dark';
      
     if (type == 'dark') {
       this.imagesDefault[id - 1].type = 'ligth';
@@ -95,7 +88,6 @@ export class SidebarComponent {
         break;
       case 3:
           this.onShowStatistcs();
-          // componentToLoad = StatisticsComponent;
           break;
       case 4:
         componentToLoad = ContactCardInsertComponent;

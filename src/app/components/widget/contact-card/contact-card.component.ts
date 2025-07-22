@@ -32,15 +32,15 @@ export class ContactCardComponent {
 
   dialogRef!: ComponentRef<any>;
 
-  private dialogService = inject(DialogService);
-  private sidebarShowDataService = inject(SidebarShowDataService);
-  private pdfContactCardService = inject(PdfContactCardService);
+  private readonly dialogService = inject(DialogService);
+  private readonly sidebarShowDataService = inject(SidebarShowDataService);
+  private readonly pdfContactCardService = inject(PdfContactCardService);
 
   constructor(
-    private informationCardService: InformationCardService, 
-    private cdRef: ChangeDetectorRef,
-    private locationService: LocationService,
-    private globalUserParamService: GlobalUserParamService
+    private readonly informationCardService: InformationCardService, 
+    private readonly cdRef: ChangeDetectorRef,
+    private readonly locationService: LocationService,
+    private readonly globalUserParamService: GlobalUserParamService
   )
   {}
 
@@ -64,7 +64,7 @@ export class ContactCardComponent {
 
   private getInformationCard(): void {
     this.informationCardService.getInformacionCard(this.data.filterName + 'F', this.data.filterValue, this.data.idAdress).subscribe((response) =>{
-      if (response && response.SDT_TarjetaContacto && response.SDT_TarjetaContacto.length) {
+      if (response?.SDT_TarjetaContacto?.length) {
         this.infoUserCard = response.SDT_TarjetaContacto[0];
         this.cdRef.detectChanges();
         // this.selectAddress()
@@ -83,15 +83,11 @@ export class ContactCardComponent {
   }
 
   showInformationPersonal(): void {
-    this.isVisibleInformacionPersonal = this.isVisibleInformacionPersonal
-      ? false
-      : true;
+    this.isVisibleInformacionPersonal = !this.isVisibleInformacionPersonal;
   }
 
   showInformationEmployment(): void {
-    this.isVisibleInformacionEmployment = this.isVisibleInformacionEmployment
-      ? false
-      : true;
+    this.isVisibleInformacionEmployment = !this.isVisibleInformacionEmployment;
   }
 
   get displayIconPersonal() {
@@ -133,7 +129,6 @@ export class ContactCardComponent {
 
   updateContactCard(): void {
     this.dialogService.closeAll();
-    // this.close();
     this.dialogRef = this.dialogService.open({ component: ContactCardAdminComponent, data: JSON.parse(JSON.stringify(this.infoUserCard))});
   }
 }

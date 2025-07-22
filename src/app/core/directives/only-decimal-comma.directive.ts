@@ -7,8 +7,8 @@ export class OnlyDecimalCommaDirective {
   private readonly FOCUS_MSG = 'Recuerda: puedes usar una sola coma (,) como separador decimal y un signo menos (-) al inicio para valores negativos';
 
   constructor(
-    private el: ElementRef<HTMLInputElement>,
-    private renderer: Renderer2
+    private readonly el: ElementRef<HTMLInputElement>,
+    private readonly renderer: Renderer2
   ) {}
 
   @HostListener('focus')

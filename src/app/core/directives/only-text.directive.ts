@@ -8,8 +8,8 @@ export class OnlyTextDirective {
   private readonly letterRegex = /^[a-zA-Z]$/;
 
   constructor(
-    private el: ElementRef<HTMLInputElement>,
-    private renderer: Renderer2) { }
+    private readonly el: ElementRef<HTMLInputElement>,
+    private readonly renderer: Renderer2) { }
 
   @HostListener('keypress', ['$event'])
   onKeyPress(event: KeyboardEvent): void {

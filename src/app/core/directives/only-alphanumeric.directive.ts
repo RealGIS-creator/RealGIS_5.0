@@ -7,8 +7,8 @@ export class OnlyAlphanumericDirective {
   private readonly charRegex = /^[A-Za-z0-9 ]$/;
 
   constructor(
-    private el: ElementRef<HTMLInputElement>,
-    private renderer: Renderer2
+    private readonly el: ElementRef<HTMLInputElement>,
+    private readonly renderer: Renderer2
   ) {}
 
   private filterValue(value: string): string {

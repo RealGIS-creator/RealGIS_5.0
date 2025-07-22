@@ -15,11 +15,11 @@ export class FooterComponent {
     cursorCoords: [number, number] | null = null;
     zoomLevel: number | null = null;
 
-    private subscriptions: Subscription = new Subscription();
+    private readonly subscriptions: Subscription = new Subscription();
 
     constructor(
-        private footerService: FooterService,
-        private mapService: MapService
+        private readonly footerService: FooterService,
+        private readonly mapService: MapService
     ) { }
 
     ngOnInit() {
