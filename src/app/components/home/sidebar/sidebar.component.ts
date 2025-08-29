@@ -59,7 +59,7 @@ export class SidebarComponent {
     this.activeIndex = this.activeIndex === id ? null : id;
 
     this.imagesDefault.forEach((element) => {
-      element.type = element.type === 'ligth' ? 'dark' : 'ligth';
+      element.type = 'dark';
     });
      
     if (type == 'dark') {

@@ -11,9 +11,9 @@ import { WmsParams } from '../../../../interfaces/wmsParams';
 })
 export class GeometryService {
 
-  private apiUrl = environment.backendGN;
-  private geoServerUrl = environment.geoserverURL;
-  private headers = new HttpHeaders();
+  private readonly apiUrl = environment.backendGN;
+  private readonly geoServerUrl = environment.geoserverURL;
+  private readonly headers = new HttpHeaders();
 
   constructor(private http: HttpClient) { }
 
@@ -58,12 +58,7 @@ export class GeometryService {
       { workspace: 'ws_Banistmo', layerName: 'SINAP', format: 'image/png', opacity: 0.8 },
       { workspace: 'ws_Banistmo', layerName: 'Cobertura_del_suelo', format: 'image/png', opacity: 0.8 },
       { workspace: 'ws_Banistmo', layerName: 'sucursales', format: 'image/png', opacity: 0.8 },
-      { workspace: 'ws_Banistmo', layerName: 'buffer_sucursales', format: 'image/png', opacity: 0.8 },
-      { workspace: 'ws_Banistmo', layerName: 'Empresas', format: 'image/png', opacity: 0.8 },
-      { workspace: 'ws_Banistmo', layerName: 'Instituciones', format: 'image/png', opacity: 0.8 },
-      { workspace: 'ws_Banistmo', layerName: 'Rutas', format: 'image/png', opacity: 0.8 },
-      { workspace: 'ws_Banistmo', layerName: 'Metas', format: 'image/png', opacity: 0.8 },
-      { workspace: 'ws_Banistmo', layerName: 'Visitas', format: 'image/png', opacity: 0.8 },
+      { workspace: 'ws_Banistmo', layerName: 'buffer_sucursales', format: 'image/png', opacity: 0.8 }
     ];
   }
 

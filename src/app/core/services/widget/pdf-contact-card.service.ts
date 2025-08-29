@@ -232,7 +232,7 @@ export class PdfContactCardService {
       posY += 7;
       checkAddPage(9);
 
-      const fullLabDir = `Nombre: ${contactoData.Direccion}`;
+      const fullLabDir = `Nombre: ${contactoData.DireccionesLugTra}`;
       const maxWidth = pageWidth - marginX * 2;
       const labLines = pdf.splitTextToSize(fullLabDir, maxWidth);
       labLines.forEach((line: string, i: number) => {
@@ -257,7 +257,7 @@ export class PdfContactCardService {
       posY += 7;
       checkAddPage(9);
 
-      const fullLabDir = `Dirección Laboral: ${contactoData.DireccionesLugTra}`;
+      const fullLabDir = `Dirección Laboral: ${contactoData.Direccion}`;
       const maxWidth = pageWidth - marginX * 2;
       const labLines = pdf.splitTextToSize(fullLabDir, maxWidth);
       labLines.forEach((line: string, i: number) => {
