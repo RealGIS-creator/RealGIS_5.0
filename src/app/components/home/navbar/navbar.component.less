@@ -2,11 +2,18 @@
 
 .navbar {
     background-color: #fff !important;
-    height: 5rem;
+    height: 8.5dvh;
+    padding: 0;
 }
 
 .logo {
-    height: 3.5rem;
+   max-height: 70%;  /* relativo al navbar */
+  height: auto;
+}
+
+.navbar .logo {
+  display: block;
+  margin: auto;
 }
 
 .search-icon {
@@ -37,20 +44,20 @@
     outline: none;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1200px) {
     .navbar {
-        height: 4rem;
+        height: 8dvh;
     }
     .logo {
-        height: 2.5rem;
+        height: 5.5dvh;
     }
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 768px) {
     .navbar {
-        height: 5rem;
+        height: 7.4dvh;
     }
     .logo {
-        height: 3.5rem;
+        height: 5dvh;
     }
 }

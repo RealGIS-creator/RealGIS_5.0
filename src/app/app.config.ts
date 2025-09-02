@@ -12,8 +12,8 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     provideCharts(withDefaultRegisterables()),
-    provideHttpClient(withInterceptors([sessionIdInterceptorInterceptor, httpErrorInterceptor])), //produccion
-    // provideHttpClient(), //prueba
-    provideAppInitializer(initializeToken) //produccion
+    // provideHttpClient(withInterceptors([sessionIdInterceptorInterceptor, httpErrorInterceptor])), //produccion
+    provideHttpClient(), //prueba
+    // provideAppInitializer(initializeToken) //produccion
   ]
 };
