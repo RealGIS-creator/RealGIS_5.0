@@ -5,34 +5,26 @@
   left: 97%;
   transform: translateX(-50%);
   background-color: #fff;
-  padding: 9px 16px;
-  border-radius: 25px;
-  width: 0em;
+  padding: 1vmin 0.5vmin; 
+  border-radius: 3vmin;   
+  width: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-
-  @media (min-width: 480px) and (max-width: 1199px) {
-    padding: 7px 13px;
-  }
-
-  @media (min-width: 1200px) and (max-width: 1600px) {
-    padding: 9px 14px;
-  }
 }
 
 ul {
   list-style: none;
-  padding: 0px;
+  padding: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 0px;
+  margin: 0;
 }
 
 .icon-tool {
-  height: 2.7dvh;
-  margin-bottom: 4px;
+  height: 2.6vmin;       
+  margin-bottom: 0px; 
   cursor: pointer;
 }
 
@@ -46,35 +38,37 @@ ul {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 130px;
-  padding: 0px;
-  margin: -16px;
+  width: 6vmin;   
+  height: 15vmin; 
+  padding: 0;
+  margin: -2vmin; 
 }
 
 input[type="range"] {
+  padding: 0px;
+  margin: 0px;
   transform: rotate(-90deg);
   -webkit-appearance: none;
   appearance: none;
   background: transparent;
   cursor: grab;
-  height: 30px;
-  width: 90px;
+  height: 4vmin;  
+  width: 10vmin;   
 }
 
 input[type="range"]::-webkit-slider-runnable-track {
   background-color: @light-gray;
-  border-radius: 2rem;
-  height: 0.5rem;
+  border-radius: 1.8rem;
+  height: 0.6vmin; 
 }
 
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  margin-top: -4px;
+  margin-top: -0.4vmin;
   background-color: @primary-color;
   transition: background 0.3s ease-in-out;
   border-radius: 50%;
-  height: 1rem;
-  width: 1rem;
+  height: 1.6vmin; 
+  width: 1.6vmin;  
 }

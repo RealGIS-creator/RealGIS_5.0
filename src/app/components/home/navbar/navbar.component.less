@@ -1,14 +1,18 @@
-@import '../../../../styles/variables.less';
+@import "../../../../styles/variables.less";
 
 .navbar {
-    background-color: #fff !important;
-    height: 8.5dvh;
-    padding: 0;
+  background-color: #fff !important;
+  //   height: 8.5dvh;
+  padding: 0;
+
+  height: 8vh;
+  min-height: 2rem;
+  max-height: 6rem;
 }
 
 .logo {
-   max-height: 70%;  /* relativo al navbar */
-  height: auto;
+  height: 6vh;
+  max-height: 4rem;
 }
 
 .navbar .logo {
@@ -17,47 +21,42 @@
 }
 
 .search-icon {
-    position: absolute;
-    left: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 1.2rem;
-    height: auto;
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.2rem;
+  height: auto;
 }
 
 .search-container {
-    position: relative;
-    width: 35rem;
+  position: relative;
+  width: 35rem;
 }
 
 .search {
-    width: 100%;
-    height: 2rem;
-    padding-left: 2.5rem;
-    border-radius: 17px;
-    background-color: @light-gray;
-    border-color: rgb(202, 202, 202);
-    text-align: center;
+  width: 100%;
+  height: 2rem;
+  padding-left: 2.5rem;
+  border-radius: 17px;
+  background-color: @light-gray;
+  border-color: rgb(202, 202, 202);
+  text-align: center;
 }
 
 .search&:focus {
-    outline: none;
+  outline: none;
 }
 
-@media (min-width: 1200px) {
-    .navbar {
-        height: 8dvh;
-    }
-    .logo {
-        height: 5.5dvh;
-    }
-}
+// @media (min-width: 1200px) {
+//   .navbar {
+//     height: 8dvh;
+//   }
 
-@media (min-width: 768px) {
-    .navbar {
-        height: 7.4dvh;
-    }
-    .logo {
-        height: 5dvh;
-    }
-}
+// }
+
+// @media (min-width: 768px) {
+//   .navbar {
+//     height: 7.4dvh;
+//   }
+// }

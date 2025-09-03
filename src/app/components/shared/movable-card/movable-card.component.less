@@ -1,39 +1,26 @@
 @import "../../../../styles/variables.less";
 
 .card {
-    position: absolute;
-    z-index: 1000;
-    max-width: 30rem;
-    min-width: 10rem;
+  position: absolute;
+  z-index: 1000;
+  max-width: 40vw; // máximo 40% del ancho visible
+  max-height: 60vh; // máximo 60% del alto visible
+  min-width: 8rem;
 }
 
 .card-header {
-    background-color: @secondary-color;
-    border-color: @secondary-color;
+  background-color: @secondary-color;
+  border-color: @secondary-color;
 }
 
 .card-footer {
-    background-color: @secondary-color;
-    border-color: @secondary-color;
-    padding: 0px;
-    margin: 0px;
+  background-color: @secondary-color;
+  border-color: @secondary-color;
+  padding: 0px;
+  margin: 0px;
 }
 
 .card-body {
-    max-height: 32rem;
-    overflow-y: auto;
-}
-
-@media (min-width: 768px) {
-    .card {
-        max-width: 22rem;
-        max-height: 26rem;
-    }
-}
-
-@media (min-width: 1200px) {
-    .card {
-        max-width: 70rem;
-        max-height: 32rem
-    }
+  max-height: 32rem;
+  overflow-y: auto;
 }

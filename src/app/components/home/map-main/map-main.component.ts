@@ -211,7 +211,7 @@ export class MapMainComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const overlays: Record<string, L.Layer> = {
       // 'Marcadores individuales': this.plainLayer,
-      'Marcadores agrupados (Cluster)': this.markerCluster,
+      'Clientes Georreferenciados': this.markerCluster,
     };
     this.wmsLayers.forEach(layer => {
       const raw = (layer.options.layers as string) || '';
