@@ -6,12 +6,14 @@ import { ToolbarService } from '../../../core/services/widget/toolbar.service';
 import { Subscription } from 'rxjs';
 import * as turf from '@turf/turf';
 import { MapService } from '../../../core/services/home/map/map.service';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 // IMPORTS Geoman:
 import '@geoman-io/leaflet-geoman-free';
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
 
 import type { Feature, FeatureCollection, Polygon } from 'geojson';
+import { LocationService } from '../../../core/services/home/map/location.service';
 
 @Component({
   selector: 'app-toolbar',
@@ -29,19 +31,21 @@ export class ToolbarComponent implements OnInit, OnDestroy {
   private currentPolyline: L.Polyline | null = null;
   drawing = false;
   allMarkers: L.Marker[] = [];
+  zoomLevel = 8;
 
   private markerClusterGroup: L.MarkerClusterGroup | null = null;
   private readonly subscriptions = new Subscription();
 
   constructor(
     private readonly toolbarService: ToolbarService,
-    private readonly mapService: MapService
-  ) { }
+    private readonly mapService: MapService,
+    private readonly locationService: LocationService
+  ) {}
 
   ngOnInit() {
     this.getIcons();
     this.subs.add(
-      this.mapService.map$.subscribe(m => {
+      this.mapService.map$.subscribe((m) => {
         if (m && !this.map) {
           this.map = m;
           this.initGeoman();
@@ -50,9 +54,8 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     );
 
     this.subscriptions.add(
-      this.mapService.markerClusterGroup$.subscribe(group => {
-        this.markerClusterGroup = group
-        //console.log('llega info', this.markerClusterGroup)
+      this.mapService.markerClusterGroup$.subscribe((group) => {
+        this.markerClusterGroup = group;
       })
     );
   }
@@ -67,7 +70,8 @@ export class ToolbarComponent implements OnInit, OnDestroy {
   }
 
   resetMap(): void {
-    this.map.setView([ 8.6, -80.0 ], 8);
+    const location = this.locationService.getLocationInitial();
+    this.map.setView([location.location[0], location.location[1]], location.zoom);
   }
 
   onChangeImage(id: number, type: string): void {
@@ -92,7 +96,9 @@ export class ToolbarComponent implements OnInit, OnDestroy {
   }
 
   private initGeoman() {
-    if (!this.map) { return; }
+    if (!this.map) {
+      return;
+    }
 
     this.drawLayer = new L.LayerGroup().addTo(this.map);
 
@@ -109,8 +115,8 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     //   dragMode: false,
     //   cutPolygon: false,
     //   removalMode: false,
-    //   drawPolygon: true    
-    // });                       
+    //   drawPolygon: true
+    // });
 
     this.map.on('pm:create', (e: any) => {
       if (e.shape === 'Polygon' || e.shape === 'Rectangle') {
@@ -143,7 +149,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
   enablePolylineDraw() {
     this.map?.pm.enableDraw('Line', {
       finishOn: 'dblclick',
-      pathOptions: { color: '#0000ff' }
+      pathOptions: { color: '#0000ff' },
     });
     this.drawing = true;
   }
@@ -153,12 +159,12 @@ export class ToolbarComponent implements OnInit, OnDestroy {
       this.drawLayer.removeLayer(this.currentPolygon);
       this.currentPolygon = null;
     }
-  
+
     if (this.currentPolyline) {
       this.drawLayer.removeLayer(this.currentPolyline);
       this.currentPolyline = null;
     }
-  
+
     this.mapService.setSelectedIds([]);
     this.map.pm.disableDraw();
     this.drawing = false;
@@ -168,28 +174,34 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
     const featureCollection: FeatureCollection = {
       type: 'FeatureCollection',
-      features: this.allMarkers.map(marker => (marker as any).toGeoJSON())
+      features: this.allMarkers.map((marker) => (marker as any).toGeoJSON()),
     };
     this.mapService.setSelectedGeoJson(featureCollection);
   }
 
   private selectPointsInPolygon(polygon: L.Polygon) {
-    if (!this.map || !this.markerClusterGroup) { return; }
+    if (!this.map || !this.markerClusterGroup) {
+      return;
+    }
 
     const polyGeo = polygon.toGeoJSON() as Feature<Polygon>;
 
     // 1. Sacamos TODOS los marcadores del cluster
     this.allMarkers = this.markerClusterGroup.getAllChildMarkers
       ? this.markerClusterGroup.getAllChildMarkers()
-      : this.markerClusterGroup.getLayers().flatMap(layer => {
-        const sub = layer as any;
-        return sub.getAllChildMarkers ? sub.getAllChildMarkers() : (layer instanceof L.Marker ? [layer] : []);
-      });
+      : this.markerClusterGroup.getLayers().flatMap((layer) => {
+          const sub = layer as any;
+          return sub.getAllChildMarkers
+            ? sub.getAllChildMarkers()
+            : layer instanceof L.Marker
+            ? [layer]
+            : [];
+        });
 
-      //console.log('todos los geoJson: ', this.allMarkers)
+    //console.log('todos los geoJson: ', this.allMarkers)
 
     // 2. Filtramos sólo los que están dentro del polígono
-    const insideMarkers = this.allMarkers.filter(marker => {
+    const insideMarkers = this.allMarkers.filter((marker) => {
       const { lat, lng } = marker.getLatLng();
       const pt = turf.point([lng, lat]);
       return turf.booleanPointInPolygon(pt, polyGeo);
@@ -197,7 +209,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
     // 3. Extraemos únicamente la Direccion_Id de cada marker.feature.properties
     const ids = insideMarkers
-      .map(m => (m as any).feature?.properties?.Direccion_Id)
+      .map((m) => (m as any).feature?.properties?.Direccion_Id)
       .filter((id): id is string => typeof id === 'string');
 
     // 4. Enviamos al servicio
@@ -205,10 +217,9 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
     const featureCollection: FeatureCollection = {
       type: 'FeatureCollection',
-      features: insideMarkers.map(marker => (marker as any).toGeoJSON())
+      features: insideMarkers.map((marker) => (marker as any).toGeoJSON()),
     };
     this.mapService.setSelectedGeoJson(featureCollection);
-
   }
 
   private handlePolyline(layer: L.Polyline) {
@@ -219,7 +230,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     this.drawLayer.addLayer(layer);
     this.measurePolyline(layer);
   }
-  
+
   private measurePolyline(line: L.Polyline) {
     const latlngs = line.getLatLngs() as L.LatLng[];
     let totalMeters = 0;

@@ -61,8 +61,8 @@ export class MapMainComponent implements OnInit, AfterViewInit, OnDestroy {
   showStatistics = false;
   toolbarLeftPx = 0;
   toolbarRightPx = 0;
-  readonly statisticsHeight = 60;
-  readonly toolbarOffset = 10;
+  readonly statisticsHeight = 50;
+  readonly toolbarOffset = 0;
   private readonly loadedTiles = new Set<string>();
   private readonly addedFeatureIds = new Set<string>();
 
