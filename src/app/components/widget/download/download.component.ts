@@ -36,7 +36,7 @@ export class DownloadComponent {
     this.getSearchCriteria();
 
     this.mapService.selectedIds$.subscribe(ids => {
-      console.log('Ahora en el servicio tengo estos Direccion_Id:', ids);
+      // console.log('Ahora en el servicio tengo estos Direccion_Id:', ids);
     });
   }
 

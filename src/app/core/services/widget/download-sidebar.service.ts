@@ -18,7 +18,7 @@ export class DownloadSidebarService {
   ) { 
     this.mapService.selectedIds$.subscribe(ids => {
       this.paramsId = ids;
-      console.log('Ahora en el servicio tengo estos Direccion_Id 22:', ids);
+      // console.log('Ahora en el servicio tengo estos Direccion_Id 22:', ids);
     });
   }
 

@@ -26,16 +26,16 @@ export class LocationService {
        this.breakpointObserver
       .observe([
         '(max-width: 767px)', // small
-        '(min-width: 768px) and (max-width: 1199px)', // medium
+        '(min-width: 768px) and (max-width: 1500px)', // medium
         '(min-width: 1200px)', // large
       ]).subscribe(result => {
       if (result.breakpoints['(max-width: 767px)']) {
         this.zoomLevel = 5;  // Pantalla pequeña
       } 
-      else if (result.breakpoints['(min-width: 768px) and (max-width: 1199px)']) {
+      else if (result.breakpoints['(min-width: 768px) and (max-width: 1500px)']) {
         this.zoomLevel = 7;  // Pantalla mediana
       } 
-      else if (result.breakpoints['(min-width: 1200px)']) {
+      else if (result.breakpoints['(min-width: 1501px)']) {
         this.zoomLevel = 8;  // Pantalla grande
       }
     });

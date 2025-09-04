@@ -10,15 +10,15 @@ import { GlobalUserParamService } from '../global-user-param.service';
 })
 export class TokenService {
 
-  private apiUrl = environment.backendGN;
+  private readonly apiUrl = environment.backendGN;
   private token: string | null = null;
 
-  constructor(private http: HttpClient,
-    private globalParams :GlobalUserParamService
+  constructor(private readonly http: HttpClient,
+    private readonly globalParams: GlobalUserParamService
   ) { }
 
   async genexusToken(): Promise<void> {
-    console.log('primero el servicio')
+    // console.log('primero el servicio') 
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });

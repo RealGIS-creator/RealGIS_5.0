@@ -524,7 +524,7 @@ export class ContactCardInsertComponent {
       filterValue: this.saveData.AcreditadoNumCuen,
       idAdress: this.saveData.Direccion_Id
     }
-    console.log('dataObject: ', dataObject)
+    // console.log('dataObject: ', dataObject)
     this.close();
     this.dialogService.open({ component: ContactCardComponent, data: dataObject });
   }
