@@ -7,25 +7,53 @@
   padding: 0px;
   z-index: 1000;
   margin: 0px;
-  border-radius: 55px!important;
+  border-radius: 0px!important;
   max-width: 20rem;
-  // overflow-y: auto;
+
+  width: clamp(16rem, 80vw, 22rem); 
+  max-height: 80vh; 
+  // overflow-y: auto; /* scroll interno si se pasa */
 }
 
-@media (min-width: 768px) {
+// @media (min-width: 768px) {
+//   .dialog-container {
+//     max-width: 18rem;
+//     left: 213px;
+//     border-radius: 0px!important;
+//   }
+// }
+
+// @media (min-width: 1200px) {
+//   .dialog-container {
+//     max-width: 18rem;
+//     left: 230px;
+//     border-radius: 0px!important;
+//   }
+// }
+
+/* Para pantallas pequeñas (móviles) */
+@media (max-width: 767px) {
   .dialog-container {
-    max-width: 18rem;
-    left: 213px;
+    width: 90vw;      /* ocupa casi todo el ancho */
+    max-height: 85vh; /* más alto en móviles */
+    padding: 0.75rem;
     border-radius: 0px!important;
-    // overflow-y: auto;
   }
 }
 
+/* Para tablets y escritorio mediano */
+@media (min-width: 768px) and (max-width: 1199px) {
+  .dialog-container {
+    width: clamp(15rem, 50vw, 16rem);
+    max-height: 80vh;
+    border-radius: 0px!important;
+  }
+}
+
+/* Escritorios grandes */
 @media (min-width: 1200px) {
   .dialog-container {
-    max-width: 18rem;
-    left: 230px;
-    border-radius: 0px!important;
-    // overflow-y: auto;
+    width: 17rem;
+    max-height: 75vh;
   }
 }
